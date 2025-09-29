@@ -26,10 +26,10 @@ export function Benefits() {
         <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
           <div className="text-gray-500 mb-2">voice_input.wav</div>
           <div className="text-gray-800">
-            "Hello, can you translate this to Spanish?"
+            &ldquo;Hello, can you translate this to Spanish?&rdquo;
           </div>
           <div className="mt-2 text-emerald-600">
-            → "Hola, ¿puedes traducir esto al español?"
+            → &ldquo;Hola, ¿puedes traducir esto al español?&rdquo;
           </div>
         </div>
       ),
@@ -95,7 +95,7 @@ export function Benefits() {
       ),
       mockup: (
         <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">Search: "security issues"</div>
+          <div className="text-gray-500 mb-2">Search: &ldquo;security issues&rdquo;</div>
           <div className="space-y-2">
             <div className="text-gray-800">
               auth.tsx:94 - malicious accounts
@@ -136,11 +136,11 @@ export function Benefits() {
         <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
           <div className="text-gray-500 mb-2">Custom Terms</div>
           <div className="space-y-1">
-            <div className="text-gray-800">• "griptile" → "Greptile"</div>
+            <div className="text-gray-800">• &ldquo;griptile&rdquo; → &ldquo;Greptile&rdquo;</div>
             <div className="text-gray-800">
-              • "API keys" → "authentication tokens"
+              • &ldquo;API keys&rdquo; → &ldquo;authentication tokens&rdquo;
             </div>
-            <div className="text-gray-800">• "dev ops" → "DevOps"</div>
+            <div className="text-gray-800">• &ldquo;dev ops&rdquo; → &ldquo;DevOps&rdquo;</div>
           </div>
         </div>
       ),
