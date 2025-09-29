@@ -18,9 +18,7 @@ export function Navigation() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <span className="text-lg font-medium text-emerald-700">
-              thinking sound lab
-            </span>
+            <span className="text-lg font-medium text-emerald-700">Invook</span>
           </div>
 
           {/* Desktop Navigation Links and Download Button */}

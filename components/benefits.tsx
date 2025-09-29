@@ -1,7 +1,7 @@
 export function Benefits() {
   const benefits = [
     {
-      tag: "VOICE TO TEXT",
+      tag: "100+ LANGUAGES",
       title: "Translation",
       description:
         "Convert voice to text in multiple languages with advanced AI technology for seamless communication.",
@@ -72,10 +72,10 @@ export function Benefits() {
       ),
     },
     {
-      tag: "AI SEARCH",
-      title: "Context Aware Search",
+      tag: "COMMAND MODE",
+      title: "Command Mode",
       description:
-        "Search through your voice notes and documents with AI that understands context and meaning.",
+        "Dictation that answers instead of transcribing. Ask questions and get instant responses through voice commands.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -95,17 +95,15 @@ export function Benefits() {
       ),
       mockup: (
         <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">Search: &ldquo;security issues&rdquo;</div>
+          <div className="text-gray-500 mb-2">
+            Voice: &ldquo;What&rsquo;s the weather like?&rdquo;
+          </div>
           <div className="space-y-2">
-            <div className="text-gray-800">
-              auth.tsx:94 - malicious accounts
+            <div className="text-emerald-600">
+              ➤ Currently 72°F and sunny in San Francisco
             </div>
-            <div className="text-gray-800">
-              validation.js:23 - input sanitization
-            </div>
-            <div className="text-gray-800">
-              security.md:15 - vulnerability notes
-            </div>
+            <div className="text-emerald-600">➤ High: 75°F, Low: 65°F</div>
+            <div className="text-gray-600 mt-2">Answered in 0.8 seconds</div>
           </div>
         </div>
       ),
@@ -136,11 +134,93 @@ export function Benefits() {
         <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
           <div className="text-gray-500 mb-2">Custom Terms</div>
           <div className="space-y-1">
-            <div className="text-gray-800">• &ldquo;griptile&rdquo; → &ldquo;Greptile&rdquo;</div>
+            <div className="text-gray-800">
+              • &ldquo;griptile&rdquo; → &ldquo;Greptile&rdquo;
+            </div>
             <div className="text-gray-800">
               • &ldquo;API keys&rdquo; → &ldquo;authentication tokens&rdquo;
             </div>
-            <div className="text-gray-800">• &ldquo;dev ops&rdquo; → &ldquo;DevOps&rdquo;</div>
+            <div className="text-gray-800">
+              • &ldquo;dev ops&rdquo; → &ldquo;DevOps&rdquo;
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      tag: "AUTO PASTE",
+      title: "Auto Paste",
+      description:
+        "Automatically paste transcribed content to the focused text field in any application - Notion, Slack, email, or any app.",
+      arrow: (
+        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
+          <svg
+            className="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </div>
+      ),
+      mockup: (
+        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
+          <div className="text-gray-500 mb-2">Active: Slack - #general</div>
+          <div className="space-y-2">
+            <div className="text-gray-800">
+              🎤 &ldquo;Let&rsquo;s schedule the meeting for tomorrow&rdquo;
+            </div>
+            <div className="text-emerald-600 mt-1">
+              ✓ Auto-pasted to Slack message box
+            </div>
+            <div className="text-gray-600 mt-2">
+              Also works: Notion, Gmail, Discord, VS Code...
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      tag: "DICTIONARY",
+      title: "Dictionary",
+      description:
+        "Custom key-value word mappings that expand shortcuts into full content like URLs, addresses, or templates.",
+      arrow: (
+        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
+          <svg
+            className="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </div>
+      ),
+      mockup: (
+        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
+          <div className="text-gray-500 mb-2">Dictionary Mappings</div>
+          <div className="space-y-1">
+            <div className="text-gray-800">
+              • &ldquo;calendar&rdquo; → https://calendly.com/mt45st
+            </div>
+            <div className="text-gray-800">
+              • &ldquo;address&rdquo; → 123 Main St, San Francisco, CA
+            </div>
+            <div className="text-gray-800">
+              • &ldquo;email sig&rdquo; → Best regards, John Doe
+            </div>
           </div>
         </div>
       ),
@@ -151,8 +231,8 @@ export function Benefits() {
     <section>
       <div className="p-4 sm:p-6 md:p-8 lg:p-16">
         {/* Heading Section */}
-        <div className="text-left mb-8 lg:mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black tracking-tight mb-2">
+        <div className="text-left mb-12 lg:mb-16 mt-8 lg:mt-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black tracking-tight mb-4">
             Your second partner
           </h2>
           <p className="text-base font-mono text-black/80 max-w-2xl leading-relaxed">
@@ -162,7 +242,7 @@ export function Benefits() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <div
               key={index}
@@ -192,6 +272,7 @@ export function Benefits() {
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
