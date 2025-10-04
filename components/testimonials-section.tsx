@@ -5,8 +5,8 @@ const testimonials = [
     name: "Sarah Chen",
     title: "Product Manager",
     company: "TechCorp",
-    avatar: "/avatars/sarah.jpg",
     companyLogo: "🏢",
+    gender: "female",
   },
   {
     quote:
@@ -14,8 +14,8 @@ const testimonials = [
     name: "Michael Roberts",
     title: "Software Engineer",
     company: "DevTools Inc",
-    avatar: "/avatars/michael.jpg",
     companyLogo: "💻",
+    gender: "male",
   },
   {
     quote:
@@ -23,8 +23,8 @@ const testimonials = [
     name: "Emily Watson",
     title: "Engineering Lead",
     company: "InnovateLabs",
-    avatar: "/avatars/emily.jpg",
     companyLogo: "⚡",
+    gender: "female",
   },
   {
     quote:
@@ -32,8 +32,8 @@ const testimonials = [
     name: "David Park",
     title: "CTO",
     company: "GlobalTech",
-    avatar: "/avatars/david.jpg",
     companyLogo: "🌍",
+    gender: "male",
   },
   {
     quote:
@@ -41,8 +41,8 @@ const testimonials = [
     name: "Jennifer Lee",
     title: "Security Officer",
     company: "SecureData",
-    avatar: "/avatars/jennifer.jpg",
     companyLogo: "🔒",
+    gender: "female",
   },
   {
     quote:
@@ -50,10 +50,46 @@ const testimonials = [
     name: "Robert Kim",
     title: "Design Lead",
     company: "CreativeStudio",
-    avatar: "/avatars/robert.jpg",
     companyLogo: "🎨",
+    gender: "male",
   },
 ];
+
+const FaceAvatar = ({ gender }: { gender: string }) => {
+  if (gender === "male") {
+    return (
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="20" cy="16" r="6" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M8 32C8 26 12 24 20 24C28 24 32 26 32 32"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  } else {
+    return (
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="20" cy="16" r="6" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M8 32C8 26 12 24 20 24C28 24 32 26 32 32"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M14 12C14 12 16 10 20 10C24 10 26 12 26 12"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+};
 
 export function TestimonialsSection() {
   return (
@@ -80,16 +116,27 @@ export function TestimonialsSection() {
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="bg-gray-100/50 border border-gray-300 p-6 flex flex-col justify-between"
+            className="bg-gray-100/50 border border-gray-300 p-6 flex flex-col justify-between relative"
           >
-            <p className="text-gray-700 font-mono text-sm leading-relaxed mb-6">
-              &quot;{testimonial.quote}&quot;
-            </p>
+            {/* Corner squares */}
+            <div className="absolute top-0 left-0 w-2 h-2 bg-gray-400"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 bg-gray-400"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 bg-gray-400"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 bg-gray-400"></div>
+
+            <div>
+              <p className="text-gray-700 font-mono text-sm leading-relaxed mb-6">
+                &quot;{testimonial.quote}&quot;
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full border-t border-gray-300 my-4"></div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-lg">
-                  {testimonial.name.charAt(0)}
+                <div className="text-gray-600">
+                  <FaceAvatar gender={testimonial.gender} />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 text-sm">

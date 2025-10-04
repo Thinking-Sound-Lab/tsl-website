@@ -12,7 +12,7 @@ export function ContextSearch() {
             AI Screen Analysis
           </h3>
 
-          <p className="text-gray-700 text-sm leading-relaxed mb-6 font-mono">
+          <p className="text-gray-700 text-base leading-relaxed mb-6 font-mono">
             Ask questions about anything on your screen without copy-pasting. AI
             analyzes screen content and provides instant answers about what
             you&rsquo;re viewing.

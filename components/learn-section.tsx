@@ -209,7 +209,7 @@ export function LearnSection() {
           You speak, we listen
         </h2>
 
-        <p className="text-gray-600 text-sm leading-relaxed mb-8 font-mono">
+        <p className="text-gray-600 text-base leading-relaxed mb-8 font-mono">
           Master the essential features to boost your productivity
         </p>
 

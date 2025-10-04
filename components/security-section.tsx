@@ -90,7 +90,7 @@ export function SecuritySection() {
             Security first design
           </h2>
 
-          <p className="text-gray-600 text-[14px] lg:text-base leading-relaxed mb-8 font-mono">
+          <p className="text-gray-600 text-base lg:text-base leading-relaxed mb-8 font-mono">
             Your privacy is our priority. We never store or access your data
             without your permission. All the data are encrypted both in transit
             and at rest.
