@@ -232,10 +232,10 @@ export function Benefits() {
       <div className="p-4 sm:p-6 md:p-8 lg:p-16">
         {/* Heading Section */}
         <div className="text-left mb-12 lg:mb-16 mt-8 lg:mt-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
             Your second partner
           </h2>
-          <p className="text-base font-mono text-black/80 max-w-2xl leading-relaxed">
+          <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
             AI-powered features that understand your workflow and help you work
             faster and smarter
           </p>
@@ -272,7 +272,6 @@ export function Benefits() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

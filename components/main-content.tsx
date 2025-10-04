@@ -3,11 +3,14 @@ import { Partners } from "@/components/partners";
 import { Benefits } from "@/components/benefits";
 import { ContextSearch } from "@/components/context-search";
 import { AnimatedBoxes } from "@/components/animated-boxes";
+import { LearnSection } from "@/components/learn-section";
+import { SecuritySection } from "@/components/security-section";
+import { TestimonialsSection } from "@/components/testimonials-section";
 
 export function MainContent() {
   return (
     <div className="textured-beige-bg">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
         {/* Single stitched border container for all content */}
         <div className="stitched-border">
           <Hero />
@@ -32,6 +35,12 @@ export function MainContent() {
             <AnimatedBoxes />
           </div>
           <ContextSearch />
+          <LearnSection />
+          <SecuritySection />
+          <div className="">
+            <AnimatedBoxes />
+          </div>
+          <TestimonialsSection />
         </div>
       </div>
     </div>

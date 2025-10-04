@@ -4,11 +4,11 @@ export function ContextSearch() {
       <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center min-h-[200px]">
         {/* Left Side - Content (2 columns) - Vertically centered */}
         <div className="lg:col-span-2 flex flex-col justify-center">
-          <div className="text-xs font-mono text-emerald-700 font-medium mb-2 tracking-wide">
+          <div className="text-base font-mono text-emerald-700 font-medium mb-2 tracking-wide">
             [CONTEXT AWARE SEARCH]
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+          <h3 className="text-3xl sm:text-4xl font-bold text-gray-700 mb-2 leading-tight">
             AI Screen Analysis
           </h3>
 

@@ -373,6 +373,65 @@ html {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Scrolling text animations */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-33.33%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 20s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 20s linear infinite;
+}
+
+.animate-scroll-left-fast {
+  animation: scroll-left 15s linear infinite;
+}
+
+.animate-scroll-right-fast {
+  animation: scroll-right 15s linear infinite;
+}
+
+.animate-scroll-left-slow {
+  animation: scroll-left 25s linear infinite;
+}
+
+.animate-scroll-right-slow {
+  animation: scroll-right 25s linear infinite;
+}
+
+.animate-scroll-left-slower {
+  animation: scroll-left 30s linear infinite;
+}
+
+.animate-scroll-right-slower {
+  animation: scroll-right 30s linear infinite;
+}
+
+.animate-scroll-left-fastest {
+  animation: scroll-left 12s linear infinite;
+}
+
+.animate-scroll-right-fastest {
+  animation: scroll-right 12s linear infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
