@@ -160,7 +160,7 @@ export function LearnSection() {
                       <h3 className="text-2xl font-bold text-gray-700 mb-2">
                         {feature.title}
                       </h3>
-                      <p className="text-gray-700 font-mono text-[14px] leading-loose">
+                      <div className="text-gray-700 font-mono text-[14px] leading-loose">
                         {feature.id === "ask" ? "Press" : "Hold"}{" "}
                         <KeyboardKey
                           keys={feature.shortcuts.mac}
@@ -172,7 +172,7 @@ export function LearnSection() {
                           platform="windows"
                         />{" "}
                         on Windows to start {feature.title.toLowerCase()}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -271,7 +271,7 @@ export function LearnSection() {
                   <h3 className="text-xl font-bold text-gray-700 mb-2 tracking-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-700 font-mono text-sm leading-loose">
+                  <div className="text-gray-700 font-mono text-sm leading-loose">
                     {feature.id === "ask" ? "Press" : "Hold"}{" "}
                     <KeyboardKey keys={feature.shortcuts.mac} platform="mac" />{" "}
                     on Mac or{" "}
@@ -280,7 +280,7 @@ export function LearnSection() {
                       platform="windows"
                     />{" "}
                     on Windows to start {feature.title.toLowerCase()}
-                  </p>
+                  </div>
                 </div>
               </div>
 

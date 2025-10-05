@@ -9,7 +9,7 @@ export function Hero() {
         {/* Top section - Main headline */}
         <div className="max-w-full sm:max-w-2xl lg:max-w-3xl mt-8 sm:mt-12 lg:mt-16 xl:mt-20 relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-emerald-700 tracking-tight text-balance">
-            The On-Demand <br /> AI Dictation and <br /> Search Anywhere
+            The On-Demand <br /> AI Dictation and <br /> AI Search
           </h1>
         </div>
 

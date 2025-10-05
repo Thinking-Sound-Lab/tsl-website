@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
 
   return (
     <nav
-      className="fixed top-0 left-0 w-full border-b-[0.5px] z-50"
+      className="fixed top-12 left-0 w-full border-b-[0.5px] z-50"
       style={{
         backgroundColor: "rgb(241 239 235)",
         borderBottomColor: "#b0b0b0",
@@ -26,7 +27,7 @@ export function Navigation() {
             {/* Navigation Links */}
             <div className="flex items-center space-x-8">
               <a
-                href="#pricing"
+                href="/pricing"
                 className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
               >
                 <svg
@@ -44,46 +45,135 @@ export function Navigation() {
                 </svg>
                 <span>Pricing</span>
               </a>
-              <a
-                href="#enterprise"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+              <div
+                className="relative"
+                onMouseEnter={() => setIsResourcesOpen(true)}
+                onMouseLeave={() => setIsResourcesOpen(false)}
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <button
+                  className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                  onClick={() => setIsResourcesOpen(!isResourcesOpen)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-                <span>Enterprise</span>
-              </a>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                  <span>Resources</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isResourcesOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {isResourcesOpen && (
+                  <div
+                    className="absolute top-full left-0 pt-2 w-48 animate-fadeSlideIn"
+                  >
+                    <div
+                      className="border border-gray-300 shadow-lg"
+                      style={{ backgroundColor: "rgb(241 239 235)" }}
+                    >
+                      <a
+                        href="/about"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span>About</span>
+                      </a>
+                      <a
+                        href="/career"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span>Career</span>
+                      </a>
+                      <a
+                        href="/getting-started"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                          />
+                        </svg>
+                        <span>Getting Started</span>
+                      </a>
+                      <a
+                        href="/use-cases"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        <span>Use Case</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
               <a
-                href="#resources"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
-                </svg>
-                <span>Resources</span>
-              </a>
-              <a
-                href="#blog"
+                href="/research"
                 className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
               >
                 <svg
@@ -99,7 +189,7 @@ export function Navigation() {
                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                   />
                 </svg>
-                <span>Blog</span>
+                <span>Research</span>
               </a>
             </div>
 
@@ -153,7 +243,7 @@ export function Navigation() {
           >
             <div className="flex flex-col space-y-4">
               <a
-                href="#pricing"
+                href="/pricing"
                 className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -172,48 +262,88 @@ export function Navigation() {
                 </svg>
                 <span>Pricing</span>
               </a>
-              <a
-                href="#enterprise"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div>
+                <button
+                  className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1 w-full"
+                  onClick={() => setIsResourcesOpen(!isResourcesOpen)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-                <span>Enterprise</span>
-              </a>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                  <span>Resources</span>
+                  <svg
+                    className={`w-3 h-3 ml-auto transition-transform duration-200 ${
+                      isResourcesOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {isResourcesOpen && (
+                  <div className="ml-8 mt-2 space-y-2 animate-fadeSlideIn">
+                    <a
+                      href="/about"
+                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      About
+                    </a>
+                    <a
+                      href="/career"
+                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Career
+                    </a>
+                    <a
+                      href="/getting-started"
+                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Getting Started
+                    </a>
+                    <a
+                      href="/use-cases"
+                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Use Case
+                    </a>
+                  </div>
+                )}
+              </div>
               <a
-                href="#resources"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
-                </svg>
-                <span>Resources</span>
-              </a>
-              <a
-                href="#blog"
+                href="/research"
                 className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -230,7 +360,7 @@ export function Navigation() {
                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                   />
                 </svg>
-                <span>Blog</span>
+                <span>Research</span>
               </a>
             </div>
           </div>

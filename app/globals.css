@@ -432,6 +432,22 @@ html {
   animation: scroll-right 12s linear infinite;
 }
 
+/* Dropdown animation */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeSlideIn {
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
