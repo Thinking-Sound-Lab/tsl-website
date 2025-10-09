@@ -448,6 +448,255 @@ html {
   animation: fadeSlideIn 0.2s ease-out;
 }
 
+/* Slow spin animation for 3D mesh */
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Research content styles - following markdown best practices */
+.content-styles {
+  max-width: 75ch;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Reset default margins */
+.content-styles > *:first-child {
+  margin-top: 0 !important;
+}
+
+.content-styles > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Headings */
+.content-styles h1,
+.content-styles h2,
+.content-styles h3,
+.content-styles h4,
+.content-styles h5,
+.content-styles h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #374151;
+  scroll-margin-top: 6rem;
+}
+
+.content-styles h1 {
+  font-size: 2em;
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 0.3em;
+  margin-top: 0;
+}
+
+.content-styles h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.3em;
+}
+
+.content-styles h3 {
+  font-size: 1.25em;
+}
+
+.content-styles h4 {
+  font-size: 1em;
+}
+
+.content-styles h5 {
+  font-size: 0.875em;
+}
+
+.content-styles h6 {
+  font-size: 0.85em;
+  color: #6b7280;
+}
+
+/* Paragraphs */
+.content-styles p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Lists */
+.content-styles ul,
+.content-styles ol {
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: #4b5563;
+}
+
+.content-styles ul {
+  list-style-type: disc;
+}
+
+.content-styles ol {
+  list-style-type: decimal;
+}
+
+.content-styles li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  line-height: 1.6;
+}
+
+.content-styles li > p {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.content-styles li + li {
+  margin-top: 0.25em;
+}
+
+/* Nested lists */
+.content-styles ul ul,
+.content-styles ul ol,
+.content-styles ol ul,
+.content-styles ol ol {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Links */
+.content-styles a {
+  color: #059669;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.content-styles a:hover {
+  color: #047857;
+  text-decoration: underline;
+}
+
+/* Strong and emphasis */
+.content-styles strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.content-styles em {
+  font-style: italic;
+}
+
+/* Inline code */
+.content-styles code {
+  background-color: rgba(175, 184, 193, 0.2);
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Code blocks */
+.content-styles pre {
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.content-styles pre code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+/* Blockquotes */
+.content-styles blockquote {
+  margin: 0 0 16px 0;
+  padding: 0 1em;
+  color: #6b7280;
+  border-left: 0.25em solid #d1d5db;
+}
+
+.content-styles blockquote > :first-child {
+  margin-top: 0;
+}
+
+.content-styles blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* Horizontal rules */
+.content-styles hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #e5e7eb;
+  border: 0;
+}
+
+/* Tables */
+.content-styles table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-top: 0;
+  margin-bottom: 16px;
+  width: 100%;
+  overflow: auto;
+}
+
+.content-styles table th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #d1d5db;
+}
+
+.content-styles table td {
+  padding: 6px 13px;
+  border: 1px solid #d1d5db;
+}
+
+.content-styles table tr {
+  background-color: #ffffff;
+  border-top: 1px solid #d1d5db;
+}
+
+.content-styles table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/* Images */
+.content-styles img {
+  max-width: 100%;
+  height: auto;
+  box-sizing: content-box;
+  background-color: #ffffff;
+}
+
+/* Task lists */
+.content-styles input[type="checkbox"] {
+  margin: 0 0.2em 0.25em -1.6em;
+  vertical-align: middle;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

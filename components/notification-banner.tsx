@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 export function NotificationBanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,12 +91,12 @@ export function NotificationBanner() {
           <span className="sm:hidden">
             Research problems we&apos;re solving{" "}
           </span>
-          <a
+          <Link
             href="/research"
             className="underline hover:text-emerald-200 transition-colors font-semibold"
           >
             Read More
-          </a>
+          </Link>
         </p>
       </div>
     </div>

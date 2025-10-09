@@ -175,7 +175,7 @@ export function Navigation() {
                   </div>
                 )}
               </div>
-              <a
+              <Link
                 href="/research"
                 className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
               >
@@ -193,7 +193,7 @@ export function Navigation() {
                   />
                 </svg>
                 <span>Research</span>
-              </a>
+              </Link>
             </div>
 
             {/* Download Button */}
@@ -345,7 +345,7 @@ export function Navigation() {
                   </div>
                 )}
               </div>
-              <a
+              <Link
                 href="/research"
                 className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -364,7 +364,7 @@ export function Navigation() {
                   />
                 </svg>
                 <span>Research</span>
-              </a>
+              </Link>
             </div>
           </div>
         )}

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { FAQSection } from "@/components/faq-section";
@@ -57,32 +57,40 @@ const plans = [
 const pricingFaqs = [
   {
     question: "What's included in the free trial?",
-    answer: "The 7-day free trial gives you full access to all Pro features including unlimited words, questions, and commands. No credit card required to start.",
+    answer:
+      "The 7-day free trial gives you full access to all Pro features including unlimited words, questions, and commands. No credit card required to start.",
   },
   {
     question: "Can I switch between monthly and annual billing?",
-    answer: "Yes, you can switch between monthly and annual billing at any time. When switching to annual, you'll save 20% compared to monthly pricing.",
+    answer:
+      "Yes, you can switch between monthly and annual billing at any time. When switching to annual, you'll save 20% compared to monthly pricing.",
   },
   {
     question: "What's your refund policy?",
-    answer: "We offer a 30-day money-back guarantee. If you're not satisfied with Invook, contact us within 30 days of purchase for a full refund.",
+    answer:
+      "We offer a 30-day money-back guarantee. If you're not satisfied with Invook, contact us within 30 days of purchase for a full refund.",
   },
   {
     question: "How do I qualify for the student discount?",
-    answer: "Students get 50% off any paid plan. Click the student discount button above to email us with your .edu email address or valid student ID for verification.",
+    answer:
+      "Students get 50% off any paid plan. Click the student discount button above to email us with your .edu email address or valid student ID for verification.",
   },
   {
     question: "What happens when I reach the limits on the Basic plan?",
-    answer: "When you reach your weekly limits on the Basic plan, you'll be notified. You can upgrade to Pro at any time for unlimited access to all features.",
+    answer:
+      "When you reach your weekly limits on the Basic plan, you'll be notified. You can upgrade to Pro at any time for unlimited access to all features.",
   },
   {
     question: "Do you offer team or enterprise pricing?",
-    answer: "Yes! We offer special pricing for teams and enterprises with centralized billing and administrative controls. Contact us for a custom quote.",
+    answer:
+      "Yes! We offer special pricing for teams and enterprises with centralized billing and administrative controls. Contact us for a custom quote.",
   },
 ];
 
 export default function PricingPage() {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annually'>('annually');
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">(
+    "annually"
+  );
   const [hoursPerDay, setHoursPerDay] = useState(4);
   const [hourlyRate, setHourlyRate] = useState<number | string>(50);
 
@@ -90,9 +98,14 @@ export default function PricingPage() {
   const wordsPerDay = hoursPerDay * 2400; // Assuming 2400 words per hour typing speed
   const hoursPerMonth = hoursPerDay * 22; // 22 working days
   const hoursSavedMonthly = Math.round(hoursPerMonth * 0.5); // Assume 50% time saving with Invook
-  const hourlyRateNum = typeof hourlyRate === 'string' ? (hourlyRate === '' ? 0 : Number(hourlyRate)) : hourlyRate;
+  const hourlyRateNum =
+    typeof hourlyRate === "string"
+      ? hourlyRate === ""
+        ? 0
+        : Number(hourlyRate)
+      : hourlyRate;
   const timeValueSaved = hoursSavedMonthly * hourlyRateNum;
-  const proCost = billingCycle === 'monthly' ? 15 : 12;
+  const proCost = billingCycle === "monthly" ? 15 : 12;
   const netSavings = timeValueSaved - proCost;
 
   return (
@@ -131,21 +144,21 @@ export default function PricingPage() {
                 <div className="flex justify-center mb-12">
                   <div className="inline-flex items-center bg-white/50 border border-emerald-700 border-dashed p-1">
                     <button
-                      onClick={() => setBillingCycle('monthly')}
+                      onClick={() => setBillingCycle("monthly")}
                       className={`px-6 py-2 font-mono text-sm transition-colors ${
-                        billingCycle === 'monthly'
-                          ? 'bg-emerald-700 text-white'
-                          : 'text-gray-700 hover:text-emerald-700'
+                        billingCycle === "monthly"
+                          ? "bg-emerald-700 text-white"
+                          : "text-gray-700 hover:text-emerald-700"
                       }`}
                     >
                       Monthly
                     </button>
                     <button
-                      onClick={() => setBillingCycle('annually')}
+                      onClick={() => setBillingCycle("annually")}
                       className={`px-6 py-2 font-mono text-sm transition-colors flex items-center gap-2 ${
-                        billingCycle === 'annually'
-                          ? 'bg-emerald-700 text-white'
-                          : 'text-gray-700 hover:text-emerald-700'
+                        billingCycle === "annually"
+                          ? "bg-emerald-700 text-white"
+                          : "text-gray-700 hover:text-emerald-700"
                       }`}
                     >
                       Annually
@@ -176,10 +189,16 @@ export default function PricingPage() {
                         </div>
                         <div className="flex items-baseline justify-center mb-2">
                           <span className="text-5xl font-bold text-gray-900">
-                            ${billingCycle === 'monthly' && plan.metadata?.price ? plan.metadata.price : plan.price}
+                            $
+                            {billingCycle === "monthly" && plan.metadata?.price
+                              ? plan.metadata.price
+                              : plan.price}
                           </span>
                           <span className="text-gray-600 ml-2 font-mono">
-                            /{billingCycle === 'monthly' ? 'month' : plan.billed || 'month'}
+                            /
+                            {billingCycle === "monthly"
+                              ? "month"
+                              : plan.billed || "month"}
                           </span>
                         </div>
                       </div>
@@ -222,10 +241,13 @@ export default function PricingPage() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <div
                       className="bg-white/50 border border-black/15 px-4 py-2 cursor-pointer hover:bg-white/80 transition-colors"
-                      onClick={() => window.location.href = 'mailto:support@invook.com?subject=Student%20Discount%20Inquiry'}
+                      onClick={() =>
+                        (window.location.href =
+                          "mailto:support@invook.com?subject=Student%20Discount%20Inquiry")
+                      }
                     >
                       <span className="text-gray-800 font-mono text-sm">
-                        50% off for Student
+                        50% off for Students
                       </span>
                     </div>
                   </div>
@@ -239,25 +261,34 @@ export default function PricingPage() {
                     {/* Left Side - Calculator */}
                     <div className="px-4 sm:px-0">
                       <h2 className="text-4xl sm:text-5xl font-bold mb-8 text-balance">
-                        Calculate<br />your savings
+                        Calculate
+                        <br />
+                        your savings
                       </h2>
 
                       <div className="space-y-8">
                         {/* Hours Slider */}
                         <div>
                           <p className="text-lg mb-4">
-                            I spend <span className="font-bold">{hoursPerDay} hours</span> typing a day ({wordsPerDay.toLocaleString()} words)
+                            I spend{" "}
+                            <span className="font-bold">
+                              {hoursPerDay} hours
+                            </span>{" "}
+                            typing a day ({wordsPerDay.toLocaleString()} words)
                           </p>
                           <input
                             type="range"
                             min="1"
                             max="12"
                             value={hoursPerDay}
-                            onChange={(e) => setHoursPerDay(Number(e.target.value))}
+                            onChange={(e) =>
+                              setHoursPerDay(Number(e.target.value))
+                            }
                             className="w-full h-2 bg-emerald-600 rounded-lg appearance-none cursor-pointer accent-white"
                           />
                           <p className="text-sm text-emerald-200 mt-2">
-                            On average, people type 2 hours a day (that&apos;s 4,800 words!)
+                            On average, people type 2 hours a day (that&apos;s
+                            4,800 words!)
                           </p>
                         </div>
 
@@ -272,7 +303,7 @@ export default function PricingPage() {
                                 value={hourlyRate}
                                 onChange={(e) => {
                                   const val = e.target.value;
-                                  setHourlyRate(val === '' ? '' : Number(val));
+                                  setHourlyRate(val === "" ? "" : Number(val));
                                 }}
                                 className="bg-transparent border-b-2 border-white w-16 text-2xl font-bold outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 min="0"
@@ -288,7 +319,9 @@ export default function PricingPage() {
                     <div className="relative px-4 sm:px-0">
                       <div className="bg-white/10 backdrop-blur-sm border-2 border-white rounded-3xl p-8 sm:p-10">
                         <div className="text-center mb-6">
-                          <p className="text-emerald-200 mb-2">Monthly, you&apos;ll save</p>
+                          <p className="text-emerald-200 mb-2">
+                            Monthly, you&apos;ll save
+                          </p>
                           <p className="text-5xl sm:text-6xl font-bold">
                             ${netSavings.toLocaleString()}/mo
                           </p>
@@ -296,19 +329,31 @@ export default function PricingPage() {
 
                         <div className="space-y-3">
                           <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">Hours spent typing</span>
+                            <span className="text-emerald-100">
+                              Hours spent typing
+                            </span>
                             <span className="font-bold">{hoursPerMonth}</span>
                           </div>
                           <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">Hours saved monthly</span>
-                            <span className="font-bold">{hoursSavedMonthly}</span>
+                            <span className="text-emerald-100">
+                              Hours saved monthly
+                            </span>
+                            <span className="font-bold">
+                              {hoursSavedMonthly}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">Time value saved</span>
-                            <span className="font-bold">${timeValueSaved.toLocaleString()}</span>
+                            <span className="text-emerald-100">
+                              Time value saved
+                            </span>
+                            <span className="font-bold">
+                              ${timeValueSaved.toLocaleString()}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-emerald-100">Invook Pro monthly cost</span>
+                            <span className="text-emerald-100">
+                              Invook Pro monthly cost
+                            </span>
                             <span className="font-bold">${proCost}</span>
                           </div>
                         </div>
