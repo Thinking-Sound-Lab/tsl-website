@@ -2,10 +2,13 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer
-      className="p-6 sm:p-8 lg:p-12 py-8 sm:py-10 lg:py-12 relative border-t"
-      style={{ borderColor: "#b0b0b0" }}
-    >
+    <div className="textured-beige-bg">
+      <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
+        <div className="stitched-border">
+          <footer
+            className="p-6 sm:p-8 lg:p-12 py-8 sm:py-10 lg:py-12 relative border-t"
+            style={{ borderColor: "#b0b0b0" }}
+          >
       <div className="flex flex-col lg:flex-row lg:justify-between gap-12">
         {/* Left Side - Logo */}
         <div className="flex flex-col">
@@ -229,5 +232,8 @@ export function Footer() {
         </p>
       </div>
     </footer>
+        </div>
+      </div>
+    </div>
   );
 }

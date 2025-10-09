@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const faqs = [
+const defaultFaqs = [
   {
     question: "How does Invook pricing work?",
     answer:
@@ -41,7 +41,18 @@ const faqs = [
   },
 ];
 
-export function FAQSection() {
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface FAQSectionProps {
+  faqs?: FAQ[];
+  title?: string;
+  subtitle?: string;
+}
+
+export function FAQSection({ faqs = defaultFaqs, title = "Frequently Asked Questions", subtitle = "Your question not answered here?" }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -57,11 +68,11 @@ export function FAQSection() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 leading-tighter tracking-tight">
-            Frequently Asked Questions
+            {title}
           </h2>
 
           <p className="text-gray-700 font-mono text-base mb-3">
-            Your question not answered here?
+            {subtitle}
           </p>
 
           <div>

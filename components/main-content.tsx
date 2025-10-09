@@ -7,7 +7,6 @@ import { LearnSection } from "@/components/learn-section";
 import { SecuritySection } from "@/components/security-section";
 import { TestimonialsSection } from "@/components/testimonials-section";
 import { FAQSection } from "@/components/faq-section";
-import { Footer } from "@/components/footer";
 
 export function MainContent() {
   return (
@@ -44,7 +43,6 @@ export function MainContent() {
           </div>
           <TestimonialsSection />
           <FAQSection />
-          <Footer />
         </div>
       </div>
     </div>

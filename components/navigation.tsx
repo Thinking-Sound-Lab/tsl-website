@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,9 +19,13 @@ export function Navigation() {
       <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center">
-            <span className="text-lg font-medium text-emerald-700">Invook</span>
-          </div>
+          <Link href={"/"}>
+            <div className="flex items-center">
+              <span className="text-lg font-medium text-emerald-700">
+                Invook
+              </span>
+            </div>
+          </Link>
 
           {/* Desktop Navigation Links and Download Button */}
           <div className="hidden lg:flex items-center space-x-8">
@@ -85,9 +90,7 @@ export function Navigation() {
                   </svg>
                 </button>
                 {isResourcesOpen && (
-                  <div
-                    className="absolute top-full left-0 pt-2 w-48 animate-fadeSlideIn"
-                  >
+                  <div className="absolute top-full left-0 pt-2 w-48 animate-fadeSlideIn">
                     <div
                       className="border border-gray-300 shadow-lg"
                       style={{ backgroundColor: "rgb(241 239 235)" }}
