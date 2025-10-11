@@ -4,9 +4,36 @@ import { useEffect, useState } from "react";
 
 export default function AuthSuccessPage() {
   const [userEmail, setUserEmail] = useState<string>("");
-  const [hasTokens, setHasTokens] = useState<boolean>(false);
 
   useEffect(() => {
+    // Decode JWT token to extract user info
+    const decodeJWT = (token: string) => {
+      try {
+        // JWT structure: header.payload.signature
+        const parts = token.split('.');
+        if (parts.length !== 3) {
+          throw new Error('Invalid JWT token');
+        }
+
+        // Decode the payload (second part)
+        const payload = parts[1];
+        // Replace URL-safe characters
+        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        // Decode base64
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+
+        return JSON.parse(jsonPayload);
+      } catch (error) {
+        console.error('Error decoding JWT:', error);
+        return null;
+      }
+    };
+
     // Extract OAuth tokens from URL hash fragment
     const extractTokensAndRedirect = () => {
       try {
@@ -21,9 +48,12 @@ export default function AuthSuccessPage() {
 
           // If we have an access token, try to get user info
           if (accessToken) {
-            // You could make an API call here to get user info
-            // For now, we'll just indicate tokens are present
-            setHasTokens(true);
+            // Decode JWT to extract user email
+            const decodedToken = decodeJWT(accessToken);
+            if (decodedToken && decodedToken.email) {
+              setUserEmail(decodedToken.email);
+              console.log("User email extracted:", decodedToken.email);
+            }
           }
 
           // Create custom protocol URL for Electron app
@@ -45,8 +75,7 @@ export default function AuthSuccessPage() {
     };
 
     // Try to extract tokens and redirect
-    const tokensFound = extractTokensAndRedirect();
-    setHasTokens(tokensFound);
+    extractTokensAndRedirect();
 
     // Optional: Listen for messages from parent window (if opened as popup)
     const handleMessage = (event: MessageEvent) => {
@@ -83,12 +112,14 @@ export default function AuthSuccessPage() {
         </div>
 
         {/* User Email Section */}
-        <div className="mb-4">
-          <p className="text-gray-600">Logged in as:</p>
-          <p className="font-mono text-lg text-gray-900">
-            {userEmail || "user@example.com"}
-          </p>
-        </div>
+        {userEmail && (
+          <div className="mb-4">
+            <p className="text-gray-600">Logged in as:</p>
+            <p className="font-mono text-lg text-gray-900">
+              {userEmail}
+            </p>
+          </div>
+        )}
 
         {/* Open App Button */}
         <button

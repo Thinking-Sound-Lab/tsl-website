@@ -187,19 +187,23 @@ export default function PricingPage() {
                             [ {plan.kind} ]
                           </span>
                         </div>
-                        <div className="flex items-baseline justify-center mb-2">
-                          <span className="text-5xl font-bold text-gray-900">
-                            $
-                            {billingCycle === "monthly" && plan.metadata?.price
-                              ? plan.metadata.price
-                              : plan.price}
-                          </span>
-                          <span className="text-gray-600 ml-2 font-mono">
-                            /
-                            {billingCycle === "monthly"
-                              ? "month"
-                              : plan.billed || "month"}
-                          </span>
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-baseline justify-center mb-2">
+                            <span className="text-5xl font-bold text-gray-900">
+                              $
+                              {billingCycle === "monthly" && plan.metadata?.price
+                                ? plan.metadata.price
+                                : plan.price}
+                            </span>
+                            <span className="text-gray-600 ml-2 font-mono">
+                              /month
+                            </span>
+                          </div>
+                          {billingCycle === "annually" && plan.billed === "annually" && (
+                            <span className="text-sm text-gray-600 font-mono">
+                              billed annually
+                            </span>
+                          )}
                         </div>
                       </div>
 
