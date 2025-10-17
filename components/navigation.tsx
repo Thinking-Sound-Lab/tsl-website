@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
+  const [downloadText, setDownloadText] = useState("Download");
+
+  useEffect(() => {
+    // Detect platform
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes("mac")) {
+      setDownloadText("Download for Mac");
+    } else if (platform.includes("win")) {
+      setDownloadText("Download for Windows");
+    } else {
+      setDownloadText("Download");
+    }
+  }, []);
 
   return (
     <nav
@@ -175,38 +188,23 @@ export function Navigation() {
                 </svg>
                 <span>Research</span>
               </Link>
-              <Link
-                href="/contact-us"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>Contact</span>
-              </Link>
             </div>
 
             {/* Download Button */}
-            <Button variant="emerald" size="default">
-              Download
-            </Button>
+            <Link href="/downloads">
+              <Button variant="emerald" size="default">
+                {downloadText}
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-4">
-            <Button variant="emerald" size="sm">
-              Download
-            </Button>
+            <Link href="/downloads">
+              <Button variant="emerald" size="sm">
+                {downloadText}
+              </Button>
+            </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-700 hover:text-gray-900 transition-colors"

@@ -89,7 +89,7 @@ export function Footer() {
                         href="#"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
-                        Terms
+                        Terms of use
                       </Link>
                     </li>
                     <li>
@@ -97,7 +97,7 @@ export function Footer() {
                         href="#"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
-                        Privacy
+                        Privacy Policy
                       </Link>
                     </li>
                     <li>
@@ -127,7 +127,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="#"
+                        href="/community"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Community

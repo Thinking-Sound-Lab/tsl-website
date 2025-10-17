@@ -7,8 +7,6 @@ export default function ContactUsPage() {
     firstName: "",
     lastName: "",
     email: "",
-    company: "",
-    teamSize: "",
     message: "",
   });
 
@@ -19,9 +17,7 @@ export default function ContactUsPage() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({
       ...formData,
@@ -54,10 +50,10 @@ export default function ContactUsPage() {
               />
 
               <div className="relative z-10 max-w-3xl">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-emerald-800 mb-4 tracking-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-emerald-700 mb-2 uppercase tracking-tight text-balance">
                   CONTACT US.
                 </h1>
-                <p className="text-base sm:text-lg text-gray-800 font-mono leading-relaxed">
+                <p className="text-base text-gray-900 font-mono max-w-2xl text-balance">
                   Thanks for your interest in Invook. Fill out the form and our
                   team will reach out ASAP.
                 </p>
@@ -73,9 +69,22 @@ export default function ContactUsPage() {
                     <div>
                       <label
                         htmlFor="firstName"
-                        className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
+                        className="flex items-center gap-2 text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
                       >
-                        👤 First Name
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        First Name
                       </label>
                       <input
                         type="text"
@@ -85,16 +94,29 @@ export default function ContactUsPage() {
                         onChange={handleChange}
                         placeholder="John"
                         required
-                        className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
+                        className="w-full px-4 py-2.5 border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
                       />
                     </div>
 
                     <div>
                       <label
                         htmlFor="lastName"
-                        className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
+                        className="flex items-center gap-2 text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
                       >
-                        👤 Last Name
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        Last Name
                       </label>
                       <input
                         type="text"
@@ -104,90 +126,64 @@ export default function ContactUsPage() {
                         onChange={handleChange}
                         placeholder="Doe"
                         required
-                        className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
+                        className="w-full px-4 py-2.5 border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
                       />
                     </div>
                   </div>
 
-                  {/* Email and Company Row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
-                      >
-                        ✉️ Work Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="john@company.com"
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="company"
-                        className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
-                      >
-                        🏢 Company Name
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleChange}
-                        placeholder="Acme Inc."
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Team Size */}
+                  {/* Email Field */}
                   <div>
                     <label
-                      htmlFor="teamSize"
-                      className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
+                      htmlFor="email"
+                      className="flex items-center gap-2 text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
                     >
-                      👥 How Many Team Members?
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Email
                     </label>
-                    <select
-                      id="teamSize"
-                      name="teamSize"
-                      value={formData.teamSize}
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
+                      placeholder="john@company.com"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent appearance-none cursor-pointer"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
-                        backgroundPosition: "right 0.5rem center",
-                        backgroundRepeat: "no-repeat",
-                        backgroundSize: "1.5em 1.5em",
-                      }}
-                    >
-                      <option value="">Select team size</option>
-                      <option value="1-10">1-10 members</option>
-                      <option value="11-50">11-50 members</option>
-                      <option value="51-200">51-200 members</option>
-                      <option value="201-1000">201-1000 members</option>
-                      <option value="1000+">1000+ members</option>
-                    </select>
+                      className="w-full px-4 py-2.5 border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
+                    />
                   </div>
 
                   {/* Message */}
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
+                      className="flex items-center gap-2 text-xs font-mono text-gray-600 mb-2 uppercase tracking-wide"
                     >
-                      💬 What would be helpful for us to know?
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                        />
+                      </svg>
+                      Message
                     </label>
                     <textarea
                       id="message"
@@ -196,7 +192,7 @@ export default function ContactUsPage() {
                       onChange={handleChange}
                       placeholder="Tell us about your team, your use case, and what you're looking to achieve..."
                       rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent resize-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent resize-none"
                     />
                   </div>
 
@@ -208,19 +204,6 @@ export default function ContactUsPage() {
                     Contact Us
                   </button>
                 </form>
-
-                {/* Additional Info */}
-                <div className="mt-12 pt-8 border-t border-gray-300">
-                  <p className="text-sm text-gray-600 font-mono text-center">
-                    Need immediate assistance? Email us at{" "}
-                    <a
-                      href="mailto:contact@invook.com"
-                      className="text-emerald-700 hover:text-emerald-800 underline"
-                    >
-                      contact@invook.com
-                    </a>
-                  </p>
-                </div>
               </div>
             </section>
           </div>
