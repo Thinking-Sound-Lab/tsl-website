@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const defaultFaqs = [
@@ -76,9 +77,11 @@ export function FAQSection({ faqs = defaultFaqs, title = "Frequently Asked Quest
           </p>
 
           <div>
-            <Button variant="emerald" size="lg">
-              Contact Us
-            </Button>
+            <Link href="/contact-us">
+              <Button variant="emerald" size="lg">
+                Contact Us
+              </Button>
+            </Link>
           </div>
         </div>
 

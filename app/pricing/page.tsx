@@ -115,28 +115,34 @@ export default function PricingPage() {
           <div className="stitched-border">
             <section className="min-h-screen ">
               {/* Header Section with Emerald Background and Grid */}
-              <div
-                className=" bg-emerald-500/25 relative overflow-hidden mt-28"
+              <section
+                className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-8 lg:px-12 mt-28 overflow-hidden"
                 style={{
-                  backgroundImage: `
-            linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)
-          `,
-                  backgroundSize: "20px 20px",
+                  backgroundColor: "#b8d4c8",
                 }}
               >
-                <div className="max-w-full sm:max-w-2xl lg:max-w-3xl relative z-10 py-16 px-4">
-                  <div className="text-left mb-0">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-emerald-700 mb-2 uppercase tracking-wide text-balance">
-                      INVOOK PRICING
-                    </h1>
-                    <p className="text-base text-gray-900 font-mono max-w-2xl text-balance">
-                      Simple, transparent pricing to get started for free. No
-                      credit card required.
-                    </p>
-                  </div>
+                {/* Grid Pattern */}
+                <div
+                  className="absolute inset-0 opacity-30"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, #a0c4b5 1px, transparent 1px),
+                      linear-gradient(to bottom, #a0c4b5 1px, transparent 1px)
+                    `,
+                    backgroundSize: "20px 20px",
+                  }}
+                />
+
+                <div className="relative z-10 max-w-3xl">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-emerald-700 mb-2 uppercase tracking-tight text-balance">
+                    INVOOK PRICING
+                  </h1>
+                  <p className="text-base text-gray-900 font-mono max-w-2xl text-balance">
+                    Simple, transparent pricing to get started for free. No
+                    credit card required.
+                  </p>
                 </div>
-              </div>
+              </section>
 
               {/* Pricing Cards Section */}
               <div className="mx-auto px-4 py-16">
@@ -191,7 +197,8 @@ export default function PricingPage() {
                           <div className="flex items-baseline justify-center mb-2">
                             <span className="text-5xl font-bold text-gray-900">
                               $
-                              {billingCycle === "monthly" && plan.metadata?.price
+                              {billingCycle === "monthly" &&
+                              plan.metadata?.price
                                 ? plan.metadata.price
                                 : plan.price}
                             </span>
@@ -199,11 +206,12 @@ export default function PricingPage() {
                               /month
                             </span>
                           </div>
-                          {billingCycle === "annually" && plan.billed === "annually" && (
-                            <span className="text-sm text-gray-600 font-mono">
-                              billed annually
-                            </span>
-                          )}
+                          {billingCycle === "annually" &&
+                            plan.billed === "annually" && (
+                              <span className="text-sm text-gray-600 font-mono">
+                                billed annually
+                              </span>
+                            )}
                         </div>
                       </div>
 
