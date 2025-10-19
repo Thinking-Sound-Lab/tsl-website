@@ -300,17 +300,7 @@ export function Navigation() {
                 </button>
                 {isResourcesOpen && (
                   <div className="ml-8 mt-2 space-y-2 animate-fadeSlideIn">
-                    <a
-                      href="/about"
-                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      About
-                    </a>
-                    <a
+                    <Link
                       href="/career"
                       className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => {
@@ -319,9 +309,9 @@ export function Navigation() {
                       }}
                     >
                       Career
-                    </a>
-                    <a
-                      href="/getting-started"
+                    </Link>
+                    <Link
+                      href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
                       className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => {
                         setIsResourcesOpen(false);
@@ -329,7 +319,7 @@ export function Navigation() {
                       }}
                     >
                       Getting Started
-                    </a>
+                    </Link>
                     <Link
                       href="/use-cases"
                       className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"

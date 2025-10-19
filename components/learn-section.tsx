@@ -2,12 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { KeyboardKey } from "@/components/keyboard-key";
+import { LottieAnimation } from "@/components/benefits";
+import translationAnimation from "@/public/assets/translation.json";
+import commandAnimation from "@/public/assets/command.json";
+import askaiAnimation from "@/public/assets/askai.json";
 
 const features = [
   {
     id: "dictation",
     title: "Dictation",
-    gif: "/dictation.gif",
+    animation: translationAnimation,
     bgColor: "bg-blue-400/30",
     borderColor: "border-blue-400/60",
     textColor: "text-blue-700",
@@ -19,7 +23,7 @@ const features = [
   {
     id: "command",
     title: "Command",
-    gif: "/command.gif",
+    animation: commandAnimation,
     bgColor: "bg-purple-400/30",
     borderColor: "border-purple-400/60",
     textColor: "text-purple-700",
@@ -31,7 +35,7 @@ const features = [
   {
     id: "ask",
     title: "Ask",
-    gif: "/ask.gif",
+    animation: askaiAnimation,
     bgColor: "bg-emerald-400/30",
     borderColor: "border-emerald-400/60",
     textColor: "text-emerald-700",
@@ -180,19 +184,16 @@ export function LearnSection() {
             </div>
           </div>
 
-          {/* Right Side - GIF/Visual */}
+          {/* Right Side - Animation */}
           <div className="flex items-stretch justify-center">
             <div
               className={`w-full border-2 border-dashed p-6 transition-colors duration-300 ${features[activeFeatureIndex].bgColor} ${features[activeFeatureIndex].borderColor}`}
             >
               <div className="w-full h-full bg-white rounded border border-gray-200 flex items-center justify-center overflow-hidden">
-                {/* Placeholder for GIF - Replace with actual gif when available */}
-                <div className="text-center p-8">
-                  <div className="text-4xl mb-4">🎬</div>
-                  <p className="text-gray-500 font-mono text-sm">
-                    {features[activeFeatureIndex].title} demo
-                  </p>
-                </div>
+                <LottieAnimation
+                  animationData={features[activeFeatureIndex].animation}
+                  className="!mt-0"
+                />
               </div>
             </div>
           </div>
@@ -284,18 +285,16 @@ export function LearnSection() {
                 </div>
               </div>
 
-              {/* GIF below */}
+              {/* Animation below */}
               <div className="w-full">
                 <div
                   className={`w-full border-2 border-dashed p-4 ${feature.bgColor} ${feature.borderColor}`}
                 >
                   <div className="w-full aspect-video bg-white rounded border border-gray-200 flex items-center justify-center overflow-hidden">
-                    <div className="text-center p-6">
-                      <div className="text-3xl mb-3">🎬</div>
-                      <p className="text-gray-500 font-mono text-xs">
-                        {feature.title} demo
-                      </p>
-                    </div>
+                    <LottieAnimation
+                      animationData={feature.animation}
+                      className="!mt-0"
+                    />
                   </div>
                 </div>
               </div>

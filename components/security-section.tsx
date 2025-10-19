@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useState } from "react";
 
 const securityMessages = [
@@ -98,7 +99,9 @@ export function SecuritySection() {
 
           <div>
             <Button variant="emerald" size="lg">
-              View Privacy Policy
+              <Link href="https://invook.notion.site/Privacy-Policy-2917f199308b806bae6bd0588ac8c2c2?source=copy_link">
+                View Privacy Policy
+              </Link>
             </Button>
           </div>
         </div>

@@ -1,7 +1,10 @@
+import { LottieAnimation } from "./benefits";
+import askaiAnimation from "@/public/assets/askai.json";
+
 export function ContextSearch() {
   return (
-    <section className="bg-emerald-500/35 p-6 sm:p-8 lg:p-12 py-12 sm:py-12 lg:py-16 relative">
-      <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center min-h-[200px]">
+    <section className="bg-emerald-500/35 p-6 sm:p-8 lg:px-12 py-8 relative">
+      <div className="grid lg:grid-cols-4 gap-8 lg:gap-12 items-stretch min-h-[200px] lg:min-h-[400px]">
         {/* Left Side - Content (2 columns) - Vertically centered */}
         <div className="lg:col-span-2 flex flex-col justify-center">
           <div className="text-base font-mono text-emerald-700 font-medium mb-2 tracking-wide">
@@ -20,23 +23,11 @@ export function ContextSearch() {
         </div>
 
         {/* Right Side - Example Box */}
-        <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 p-4 text-xs font-mono rounded">
-            <div className="text-gray-500 mb-2">
-              Screen: Greptile.com - Full Codebase Context
-            </div>
-            <div className="space-y-2">
-              <div className="text-gray-800">
-                🎤 &ldquo;How many languages does this tool support?&rdquo;
-              </div>
-              <div className="text-emerald-600 mt-1">
-                ➤ Based on screen content: 30+ languages supported
-              </div>
-              <div className="text-gray-600 mt-2">
-                Analyzed screen • No copy-paste needed
-              </div>
-            </div>
-          </div>
+        <div className="lg:col-span-2 flex items-stretch">
+          <LottieAnimation
+            animationData={askaiAnimation}
+            className="!mt-0 flex items-center justify-center !h-full"
+          />
         </div>
       </div>
     </section>
