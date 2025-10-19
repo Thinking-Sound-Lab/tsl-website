@@ -70,7 +70,7 @@ export function Footer() {
                   <ul className="space-y-3">
                     <li>
                       <Link
-                        href="/about"
+                        href="https://invook.notion.site/About-2917f199308b8035a4efc8204a1293f9?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         About
@@ -78,7 +78,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="/career"
+                        href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Careers
@@ -86,7 +86,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="#"
+                        href="https://invook.notion.site/Terms-of-Use-2917f199308b8085ae78ce56ba9fd0b3?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Terms of use
@@ -94,7 +94,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="#"
+                        href="https://invook.notion.site/Privacy-Policy-2917f199308b806bae6bd0588ac8c2c2?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Privacy Policy
@@ -119,7 +119,7 @@ export function Footer() {
                   <ul className="space-y-3">
                     <li>
                       <Link
-                        href="/getting-started"
+                        href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Getting Started
@@ -143,7 +143,7 @@ export function Footer() {
                     </li>
                     <li>
                       <Link
-                        href="/help-center"
+                        href="https://invook.notion.site/Public-Invook-2917f199308b80da8923e91ff857e08d?source=copy_link"
                         className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
                       >
                         Help Center

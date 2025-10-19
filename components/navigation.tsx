@@ -109,7 +109,7 @@ export function Navigation() {
                       style={{ backgroundColor: "rgb(241 239 235)" }}
                     >
                       <a
-                        href="/getting-started"
+                        href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
                       >
                         <svg
@@ -147,7 +147,7 @@ export function Navigation() {
                         <span>Use Case</span>
                       </a>
                       <a
-                        href="/career"
+                        href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
                       >
                         <svg

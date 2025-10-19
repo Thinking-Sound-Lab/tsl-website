@@ -1,3 +1,52 @@
+"use client";
+
+import { useRef } from "react";
+import Lottie from "lottie-react";
+// Import your Lottie JSON files here
+import translationAnimation from "@/public/assets/translation.json";
+import autoEditAnimation from "@/public/assets/auto_edit.json";
+// Add more imports as needed:
+import commandModeAnimation from "@/public/assets/command.json";
+import vocabularyAnimation from "@/public/assets/vocabulory.json";
+
+/**
+ * Reusable Lottie Animation Component
+ * Usage:
+ * 1. Add your .json file to /public/assets/
+ * 2. Import it at the top: import myAnimation from "@/public/assets/my_animation.json";
+ * 3. Use in mockup: mockup: <LottieAnimation animationData={myAnimation} />
+ *
+ * Features:
+ * - Plays animation once
+ * - Waits 10 seconds after completion
+ * - Replays automatically
+ * - Loops indefinitely with 10s delay between plays
+ */
+function LottieAnimation({ animationData }: { animationData: any }) {
+  const lottieRef = useRef<any>(null);
+
+  const handleComplete = () => {
+    setTimeout(() => {
+      if (lottieRef.current) {
+        lottieRef.current.goToAndPlay(0);
+      }
+    }, 5000);
+  };
+
+  return (
+    <div className="mt-6 w-full">
+      <Lottie
+        lottieRef={lottieRef}
+        animationData={animationData}
+        loop={false}
+        onComplete={handleComplete}
+        className="w-full h-auto"
+        style={{ maxHeight: "300px" }}
+      />
+    </div>
+  );
+}
+
 export function Benefits() {
   const benefits = [
     {
@@ -22,23 +71,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">voice_input.wav</div>
-          <div className="text-gray-800">
-            &ldquo;Hello, can you translate this to Spanish?&rdquo;
-          </div>
-          <div className="mt-2 text-emerald-600">
-            → &ldquo;Hola, ¿puedes traducir esto al español?&rdquo;
-          </div>
-        </div>
-      ),
+      mockup: <LottieAnimation animationData={translationAnimation} />,
     },
     {
       tag: "SMART EDITING",
       title: "Auto Edits",
       description:
-        "Intelligent editing suggestions that align with your writing style and automatically improve your content.",
+        "Speak naturally and Invook transcribes and edits your voice, instantly. Rambled thoughts become clear, perfectly formatted text, without the filler words or typos.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -56,26 +95,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">document.txt</div>
-          <div className="text-red-500 line-through">
-            This code could allow attackers to link malicious accounts.
-          </div>
-          <div className="text-emerald-600 mt-1">
-            ✓ This code might allow attackers to link malicious accounts.
-          </div>
-          <div className="text-gray-600 mt-2">
-            Auto-corrected grammar and tone
-          </div>
-        </div>
-      ),
+      mockup: <LottieAnimation animationData={autoEditAnimation} />,
     },
     {
       tag: "COMMAND MODE",
       title: "Command Mode",
       description:
-        "Dictation that answers instead of transcribing. Ask questions and get instant responses through voice commands.",
+        "Dictation that answers or transforms instead of transcribing. Ask questions and get instant responses through voice commands.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -93,26 +119,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">
-            Voice: &ldquo;What&rsquo;s the weather like?&rdquo;
-          </div>
-          <div className="space-y-2">
-            <div className="text-emerald-600">
-              ➤ Currently 72°F and sunny in San Francisco
-            </div>
-            <div className="text-emerald-600">➤ High: 75°F, Low: 65°F</div>
-            <div className="text-gray-600 mt-2">Answered in 0.8 seconds</div>
-          </div>
-        </div>
-      ),
+      mockup: <LottieAnimation animationData={commandModeAnimation} />,
     },
     {
       tag: "PERSONALIZATION",
-      title: "Custom Vocabulary",
+      title: "Vocabulary & Dictionary",
       description:
-        "Train the AI to understand your specific terminology, jargon, and personal speaking patterns.",
+        "Train the AI to understand your specific terminology, jargon, and personal speaking patterns. Create custom key-value mappings that expand shortcuts into full content like URLs, addresses, or templates.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -130,100 +143,7 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">Custom Terms</div>
-          <div className="space-y-1">
-            <div className="text-gray-800">
-              • &ldquo;griptile&rdquo; → &ldquo;Greptile&rdquo;
-            </div>
-            <div className="text-gray-800">
-              • &ldquo;API keys&rdquo; → &ldquo;authentication tokens&rdquo;
-            </div>
-            <div className="text-gray-800">
-              • &ldquo;dev ops&rdquo; → &ldquo;DevOps&rdquo;
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      tag: "AUTO PASTE",
-      title: "Auto Paste",
-      description:
-        "Automatically paste transcribed content to the focused text field in any application - Notion, Slack, email, or any app.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">Active: Slack - #general</div>
-          <div className="space-y-2">
-            <div className="text-gray-800">
-              🎤 &ldquo;Let&rsquo;s schedule the meeting for tomorrow&rdquo;
-            </div>
-            <div className="text-emerald-600 mt-1">
-              ✓ Auto-pasted to Slack message box
-            </div>
-            <div className="text-gray-600 mt-2">
-              Also works: Notion, Gmail, Discord, VS Code...
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      tag: "DICTIONARY",
-      title: "Dictionary",
-      description:
-        "Custom key-value word mappings that expand shortcuts into full content like URLs, addresses, or templates.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      ),
-      mockup: (
-        <div className="mt-6 p-4 bg-gray-100/80 border border-gray-200 text-xs font-mono">
-          <div className="text-gray-500 mb-2">Dictionary Mappings</div>
-          <div className="space-y-1">
-            <div className="text-gray-800">
-              • &ldquo;calendar&rdquo; → https://calendly.com/mt45st
-            </div>
-            <div className="text-gray-800">
-              • &ldquo;address&rdquo; → 123 Main St, San Francisco, CA
-            </div>
-            <div className="text-gray-800">
-              • &ldquo;email sig&rdquo; → Best regards, John Doe
-            </div>
-          </div>
-        </div>
-      ),
+      mockup: <LottieAnimation animationData={vocabularyAnimation} />,
     },
   ];
 
@@ -233,16 +153,17 @@ export function Benefits() {
         {/* Heading Section */}
         <div className="text-left mb-12 lg:mb-16 mt-8 lg:mt-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
-            Your second partner
+            Your Intelligent Partner
           </h2>
           <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
-            AI-powered features that understand your workflow and help you work
-            faster and smarter
+            By understanding your voice and what you're trying to achieve,
+            Invook become your intelligent partner helping you work faster,
+            think clearer, and accomplish what matters most.
           </p>
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <div
               key={index}
