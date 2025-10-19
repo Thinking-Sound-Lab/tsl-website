@@ -15,7 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Thinking Sound Lab",
-  description: "Innovative audio solutions and sound design services",
+  description:
+    "Boost productivity with Invook — AI dictation, smart editing, translation, and instant screen analysis. Work smarter across any app.",
 };
 
 export default function RootLayout({
