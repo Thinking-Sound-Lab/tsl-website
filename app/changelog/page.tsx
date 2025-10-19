@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { changelogData, ChangelogItem } from "./data";
+import { changelogData } from "./data";
 
 const ITEMS_PER_PAGE = 5;
 
