@@ -22,7 +22,13 @@ import vocabularyAnimation from "@/public/assets/vocabulory.json";
  * - Replays automatically
  * - Loops indefinitely with 10s delay between plays
  */
-function LottieAnimation({ animationData }: { animationData: object }) {
+export function LottieAnimation({
+  animationData,
+  className,
+}: {
+  animationData: object;
+  className?: string;
+}) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lottieRef = useRef<any>(null);
 
@@ -31,18 +37,24 @@ function LottieAnimation({ animationData }: { animationData: object }) {
       if (lottieRef.current) {
         lottieRef.current.goToAndPlay(0);
       }
-    }, 5000);
+    }, 3000);
   };
 
   return (
-    <div className="mt-6 w-full">
+    <div className={`mt-6 w-full ${className || ""}`}>
       <Lottie
         lottieRef={lottieRef}
         animationData={animationData}
         loop={false}
         onComplete={handleComplete}
-        className="w-full h-auto"
-        style={{ maxHeight: "300px" }}
+        className={
+          className?.includes("!h-full") ? "w-full h-full" : "w-full h-auto"
+        }
+        style={
+          className?.includes("!h-full")
+            ? { minHeight: "400px" }
+            : { maxHeight: "300px" }
+        }
       />
     </div>
   );
