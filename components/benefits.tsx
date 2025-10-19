@@ -22,7 +22,8 @@ import vocabularyAnimation from "@/public/assets/vocabulory.json";
  * - Replays automatically
  * - Loops indefinitely with 10s delay between plays
  */
-function LottieAnimation({ animationData }: { animationData: any }) {
+function LottieAnimation({ animationData }: { animationData: object }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lottieRef = useRef<any>(null);
 
   const handleComplete = () => {
@@ -156,7 +157,7 @@ export function Benefits() {
             Your Intelligent Partner
           </h2>
           <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
-            By understanding your voice and what you're trying to achieve,
+            By understanding your voice and what you&apos;re trying to achieve,
             Invook become your intelligent partner helping you work faster,
             think clearer, and accomplish what matters most.
           </p>

@@ -127,7 +127,7 @@ export function Navigation() {
                         </svg>
                         <span>Getting Started</span>
                       </a>
-                      <a
+                      <Link
                         href="/use-cases"
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
                       >
@@ -145,7 +145,7 @@ export function Navigation() {
                           />
                         </svg>
                         <span>Use Case</span>
-                      </a>
+                      </Link>
                       <a
                         href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
@@ -330,7 +330,7 @@ export function Navigation() {
                     >
                       Getting Started
                     </a>
-                    <a
+                    <Link
                       href="/use-cases"
                       className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => {
@@ -339,7 +339,7 @@ export function Navigation() {
                       }}
                     >
                       Use Case
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
