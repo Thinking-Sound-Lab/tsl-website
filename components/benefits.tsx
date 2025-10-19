@@ -41,20 +41,14 @@ export function LottieAnimation({
   };
 
   return (
-    <div className={`mt-6 w-full ${className || ""}`}>
+    <div className={`mt-6 ${className || ""}`}>
       <Lottie
         lottieRef={lottieRef}
         animationData={animationData}
         loop={false}
         onComplete={handleComplete}
-        className={
-          className?.includes("!h-full") ? "w-full h-full" : "w-full h-auto"
-        }
-        style={
-          className?.includes("!h-full")
-            ? { minHeight: "400px" }
-            : { maxHeight: "300px" }
-        }
+        className="w-full h-auto"
+        style={{ maxWidth: "100%", height: "auto" }}
       />
     </div>
   );
@@ -176,7 +170,7 @@ export function Benefits() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <div
               key={index}

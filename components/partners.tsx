@@ -22,7 +22,7 @@ export function Partners() {
         </div>
 
         {/* Partner Grid with stitched sides and solid top border only */}
-        <div className="border-t" style={{ borderTopColor: "#b0b0b0" }}>
+        <div className="border-t border-gray-300">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {partners.map((partner, index) => (

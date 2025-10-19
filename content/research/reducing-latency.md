@@ -1,7 +1,7 @@
 ---
 title: "Reducing Latency in Real-Time Voice Commands"
 description: "Optimizing inference pipelines to achieve sub-100ms response times for voice commands."
-author: "Maria Rodriguez"
+author: "Abhishek Kumar"
 date: "2025-08-22"
 category: "Performance"
 ---

@@ -56,7 +56,7 @@ const plans = [
 
 const pricingFaqs = [
   {
-    question: "What's included in the free trial?",
+    question: "What's included in the 7-day free trial?",
     answer:
       "The 7-day free trial gives you full access to all Pro features including unlimited words, questions, and commands. No credit card required to start.",
   },
@@ -68,7 +68,7 @@ const pricingFaqs = [
   {
     question: "What's your refund policy?",
     answer:
-      "We offer a 30-day money-back guarantee. If you're not satisfied with Invook, contact us within 30 days of purchase for a full refund.",
+      "We offer a 24 hours money-back guarantee. If you're not satisfied with Invook, contact us within 24 hours of purchase for a full refund.",
   },
   {
     question: "How do I qualify for the student discount?",
@@ -76,14 +76,14 @@ const pricingFaqs = [
       "Students get 50% off any paid plan. Click the student discount button above to email us with your .edu email address or valid student ID for verification.",
   },
   {
-    question: "What happens when I reach the limits on the Basic plan?",
+    question: "What happens when I reach the limits on the Free plan?",
     answer:
-      "When you reach your weekly limits on the Basic plan, you'll be notified. You can upgrade to Pro at any time for unlimited access to all features.",
+      "When you reach your weekly limits on the Free plan, you'll be notified. You can upgrade to Pro at any time for unlimited access to all features.",
   },
   {
-    question: "Do you offer team or enterprise pricing?",
+    question: "What AI model do you offer for AI Screen Analysis?",
     answer:
-      "Yes! We offer special pricing for teams and enterprises with centralized billing and administrative controls. Contact us for a custom quote.",
+      "We offer OpenAI and Anthropic models ie. GPT-5, Claude Sonnet 4.5 etc for AI Screen Analysis.",
   },
 ];
 

@@ -4,7 +4,6 @@ description: "Exploring neural network architectures to improve real-time transc
 author: "Abhishek Kumar"
 date: "2025-10-08"
 category: "Machine Learning"
-featured: true
 ---
 
 ## Introduction
@@ -22,6 +21,7 @@ Our research methodology encompasses several key components:
 We collected a diverse dataset comprising over 10,000 hours of speech data across 100+ languages. The dataset includes various accents, dialects, and speaking styles to ensure robust model performance in real-world scenarios.
 
 The preprocessing pipeline includes:
+
 - Audio normalization and noise reduction
 - Speaker diarization for multi-speaker scenarios
 - Phoneme-level annotation for improved accuracy
