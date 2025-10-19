@@ -1,7 +1,7 @@
 ---
 title: "Privacy-First Voice Processing: A Technical Deep Dive"
 description: "How local processing maintains user privacy without compromising on accuracy or speed."
-author: "James Wilson"
+author: "Abhishek Kumar"
 date: "2025-09-15"
 category: "Privacy & Security"
 ---

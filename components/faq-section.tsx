@@ -8,7 +8,7 @@ const defaultFaqs = [
   {
     question: "How does Invook pricing work?",
     answer:
-      "Invook offers flexible pricing plans based on your usage needs. Contact us for detailed pricing information.",
+      "Invook offers free and pro pricing plans. Pro is $15 per month. Student get 50% discount. Contact us for more information.",
   },
   {
     question: "Is Invook available on all platforms?",
@@ -18,27 +18,25 @@ const defaultFaqs = [
   {
     question: "Are there free trials or discounts available for Invook?",
     answer:
-      "We offer a free trial period for new users. Educational and nonprofit discounts are also available.",
+      "We offer a free trial period for new users. Student discounts are also available.",
   },
   {
     question: "What languages does Invook support?",
-    answer:
-      "Invook supports multiple languages including English, Spanish, French, German, and more.",
+    answer: "Invook supports 100+ languages.",
   },
   {
     question: "Does Invook work offline?",
-    answer:
-      "Yes, all core features work completely offline with local processing for maximum privacy.",
+    answer: "No, Invook requires an internet connection to function.",
   },
   {
     question: "Can I use Invook for technical documentation?",
     answer:
-      "Absolutely! Invook understands technical terminology and can handle complex documentation needs.",
+      "Absolutely! Invook can generate text from audio. It also works with text editor, docs, notes, and more.",
   },
   {
     question: "How secure is my data with Invook?",
     answer:
-      "Your data is completely secure with end-to-end encryption and local processing. We never store your voice data.",
+      "Your data is completely secure with end-to-end encryption and at rest or in transit.",
   },
 ];
 
@@ -53,7 +51,11 @@ interface FAQSectionProps {
   subtitle?: string;
 }
 
-export function FAQSection({ faqs = defaultFaqs, title = "Frequently Asked Questions", subtitle = "Your question not answered here?" }: FAQSectionProps) {
+export function FAQSection({
+  faqs = defaultFaqs,
+  title = "Frequently Asked Questions",
+  subtitle = "Your question not answered here?",
+}: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -72,9 +74,7 @@ export function FAQSection({ faqs = defaultFaqs, title = "Frequently Asked Quest
             {title}
           </h2>
 
-          <p className="text-gray-700 font-mono text-base mb-3">
-            {subtitle}
-          </p>
+          <p className="text-gray-700 font-mono text-base mb-3">{subtitle}</p>
 
           <div>
             <Link href="/contact-us">

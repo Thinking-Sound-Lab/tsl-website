@@ -16,22 +16,13 @@ export function MainContent() {
         <div className="stitched-border">
           <Hero />
           {/* Navigation-style divider */}
-          <div
-            className="w-full border-t"
-            style={{ borderColor: "#b0b0b0" }}
-          ></div>
+          <div className="w-full border-t border-gray-300"></div>
           <Partners />
           {/* Navigation-style divider */}
-          <div
-            className="w-full border-t"
-            style={{ borderColor: "#b0b0b0" }}
-          ></div>
+          <div className="w-full border-t border-gray-300"></div>
           <Benefits />
           {/* Navigation-style divider */}
-          <div
-            className="w-full border-t mt-4"
-            style={{ borderColor: "#b0b0b0" }}
-          ></div>
+          <div className="w-full border-t border-gray-300"></div>
           <div className="">
             <AnimatedBoxes />
           </div>

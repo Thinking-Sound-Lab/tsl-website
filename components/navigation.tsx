@@ -200,11 +200,6 @@ export function Navigation() {
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-4">
-            <Link href="/downloads">
-              <Button variant="emerald" size="sm">
-                {downloadText}
-              </Button>
-            </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-700 hover:text-gray-900 transition-colors"
