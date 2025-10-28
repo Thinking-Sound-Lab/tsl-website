@@ -4,52 +4,52 @@ const testimonials = [
       "Using Invook has completely transformed how I work. The voice-to-text accuracy is incredible, and it saves me hours every day.",
     name: "Sarah Chen",
     title: "Product Manager",
-    company: "TechCorp",
+    company: "Amazon",
     companyLogo: "🏢",
     gender: "female",
   },
   {
     quote:
       "The AI-powered dictation is so accurate that I rarely need to make corrections. It understands context and technical terms perfectly.",
-    name: "Michael Roberts",
+    name: "Nishant Raj",
     title: "Software Engineer",
-    company: "DevTools Inc",
+    company: "Amazon",
     companyLogo: "💻",
     gender: "male",
   },
+  //   {
+  //     quote:
+  //       "Invook helps our team work faster. The screen analysis feature is a game-changer for our workflow.",
+  //     name: "Emily Watson",
+  //     title: "Engineering Lead",
+  //     company: "InnovateLabs",
+  //     companyLogo: "⚡",
+  //     gender: "female",
+  //   },
   {
     quote:
-      "Invook helps our team work faster. The screen analysis feature is a game-changer for our workflow.",
-    name: "Emily Watson",
-    title: "Engineering Lead",
-    company: "InnovateLabs",
-    companyLogo: "⚡",
-    gender: "female",
-  },
-  {
-    quote:
-      "I'm impressed by how well it handles multiple languages and technical jargon. It's become an essential tool for our global team.",
-    name: "David Park",
-    title: "CTO",
-    company: "GlobalTech",
+      "I'm impressed by how well it handles multiple languages and technical jargon. It's become an essential tool for my global work.",
+    name: "Shashank Raj",
+    title: "Tech Lead",
+    company: "Notion",
     companyLogo: "🌍",
     gender: "male",
   },
+  //   {
+  //     quote:
+  //       "The privacy-first approach gives us peace of mind. All processing happens locally, which is crucial for our compliance requirements.",
+  //     name: "Jennifer Lee",
+  //     title: "Security Officer",
+  //     company: "SecureData",
+  //     companyLogo: "🔒",
+  //     gender: "female",
+  //   },
   {
     quote:
-      "The privacy-first approach gives us peace of mind. All processing happens locally, which is crucial for our compliance requirements.",
-    name: "Jennifer Lee",
-    title: "Security Officer",
-    company: "SecureData",
-    companyLogo: "🔒",
-    gender: "female",
-  },
-  {
-    quote:
-      "Invook has been the most reliable voice tool I've used. It consistently delivers accurate results and the UI is intuitive.",
-    name: "Robert Kim",
+      "Invook has been the most reliable search tool I've used. It consistently delivers accurate results and the UI is intuitive.",
+    name: "Abhishek Sharma",
     title: "Design Lead",
-    company: "CreativeStudio",
+    company: "Figma",
     companyLogo: "🎨",
     gender: "male",
   },
@@ -59,7 +59,13 @@ const FaceAvatar = ({ gender }: { gender: string }) => {
   if (gender === "male") {
     return (
       <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="19" stroke="currentColor" strokeWidth="1.5" />
+        <circle
+          cx="20"
+          cy="20"
+          r="19"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
         <circle cx="20" cy="16" r="6" stroke="currentColor" strokeWidth="1.5" />
         <path
           d="M8 32C8 26 12 24 20 24C28 24 32 26 32 32"
@@ -72,7 +78,13 @@ const FaceAvatar = ({ gender }: { gender: string }) => {
   } else {
     return (
       <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="19" stroke="currentColor" strokeWidth="1.5" />
+        <circle
+          cx="20"
+          cy="20"
+          r="19"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
         <circle cx="20" cy="16" r="6" stroke="currentColor" strokeWidth="1.5" />
         <path
           d="M8 32C8 26 12 24 20 24C28 24 32 26 32 32"
