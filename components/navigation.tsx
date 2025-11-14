@@ -34,9 +34,11 @@ export function Navigation() {
           {/* Logo */}
           <Link href={"/"}>
             <div className="flex items-center">
-              <span className="text-lg font-medium text-emerald-700">
-                Invook
-              </span>
+              <img
+                src="/svgs/web_logo.svg"
+                alt="Invook"
+                className="h-5 w-auto"
+              />
             </div>
           </Link>
 
@@ -146,6 +148,25 @@ export function Navigation() {
                         </svg>
                         <span>Use Case</span>
                       </Link>
+                      <Link
+                        href="/community"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        <span>Community</span>
+                      </Link>
                       <a
                         href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
@@ -190,10 +211,14 @@ export function Navigation() {
               </Link>
             </div>
 
-            {/* Download Button */}
-            <Link href="/downloads">
+            {/* Join Beta Button */}
+            <Link
+              href="https://forms.gle/BQnJLJMcjwRz1cwk7"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button variant="emerald" size="default">
-                {downloadText}
+                Join Beta
               </Button>
             </Link>
           </div>
@@ -296,34 +321,96 @@ export function Navigation() {
                 {isResourcesOpen && (
                   <div className="ml-8 mt-2 space-y-2 animate-fadeSlideIn">
                     <Link
-                      href="/career"
-                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Career
-                    </Link>
-                    <Link
                       href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
-                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => {
                         setIsResourcesOpen(false);
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      Getting Started
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                      <span>Getting Started</span>
                     </Link>
                     <Link
                       href="/use-cases"
-                      className="block px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
                       onClick={() => {
                         setIsResourcesOpen(false);
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      Use Case
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <span>Use Case</span>
+                    </Link>
+                    <Link
+                      href="/community"
+                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      <span>Community</span>
+                    </Link>
+                    <Link
+                      href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
+                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setIsResourcesOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>Career</span>
                     </Link>
                   </div>
                 )}

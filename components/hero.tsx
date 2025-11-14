@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export function Hero() {
@@ -24,13 +25,34 @@ export function Hero() {
 
           {/* Subtitle - Shows below heading on mobile */}
           <p className="lg:hidden text-base sm:text-lg font-mono text-emerald-700 mt-6 leading-relaxed">
-            Transform your voice into powerful, searchable content with advanced
-            AI technology
+            Transform your voice into clear text in real time, for everything
+            from AI prompts to essays.
           </p>
+
+          {/* Mobile: Join Beta Button */}
+          <div className="lg:hidden mt-6">
+            <Link href="https://forms.gle/BQnJLJMcjwRz1cwk7" target="_blank" rel="noopener noreferrer">
+              <Button variant="emerald" size="default">
+                Join Beta
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Broken Keyboard - Below button on mobile, Right on desktop */}
+        <div className="lg:absolute lg:inset-0 flex justify-center lg:items-center lg:justify-end lg:pr-4 xl:pr-8 z-0 mb-8 lg:mb-0 mt-8 lg:mt-0">
+          <Image
+            src="/bk.png"
+            alt="Broken keyboard"
+            width={800}
+            height={600}
+            className="w-full max-w-[500px] h-auto sm:max-w-[600px] md:max-w-[700px] lg:w-[36rem] lg:h-[27rem] xl:w-[42rem] xl:h-[32rem] opacity-80 object-contain"
+            priority={false}
+          />
         </div>
 
         {/* Mobile: Email input form - Centered and above keyboard */}
-        <div className="lg:hidden flex justify-center items-center relative z-10 mb-10 mt-12">
+        {/* <div className="lg:hidden flex justify-center items-center relative z-10 mb-10 mt-12">
           <div className="w-full max-w-md">
             <p className="text-base sm:text-lg font-mono text-emerald-700 mb-4 text-center text-balance">
               On a mobile device? Send Invook to your work station.
@@ -53,30 +75,24 @@ export function Hero() {
               </Button>
             </div>
           </div>
-        </div>
-
-        {/* Broken Keyboard - Below email on mobile, Right on desktop */}
-        <div className="lg:absolute lg:inset-0 flex justify-center lg:items-center lg:justify-end lg:pr-4 xl:pr-8 z-0 mb-8 lg:mb-0">
-          <Image
-            src="/bk.png"
-            alt="Broken keyboard"
-            width={800}
-            height={600}
-            className="w-80 h-60 sm:w-[26rem] sm:h-72 md:w-[30rem] md:h-[22rem] lg:w-[36rem] lg:h-[27rem] xl:w-[42rem] xl:h-[32rem] opacity-80 object-contain"
-            priority={false}
-          />
-        </div>
+        </div> */}
 
         {/* Desktop: Subtitle and Download button */}
         <div className="hidden lg:block max-w-full sm:max-w-lg lg:max-w-xl mt-8 sm:mt-12 lg:mt-0 relative z-10">
           <p className="text-base sm:text-lg lg:text-lg font-mono text-emerald-700 mb-6 sm:mb-8 leading-relaxed">
-            Transform your voice into powerful, searchable content with advanced
-            AI technology
+            Transform your voice into clear text in real time, for everything
+            from AI prompts to essays.
           </p>
 
-          <Button variant="emerald" size="lg">
-            Download
-          </Button>
+          <Link
+            href="https://forms.gle/BQnJLJMcjwRz1cwk7"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="emerald" size="lg">
+              Try for Free
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

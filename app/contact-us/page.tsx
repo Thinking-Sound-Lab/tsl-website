@@ -32,7 +32,7 @@ export default function ContactUsPage() {
           <div className="stitched-border">
             {/* Hero Section with Grid Background */}
             <section
-              className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-8 lg:px-12 mt-28 overflow-hidden"
+              className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-8 lg:px-12 mt-28"
               style={{
                 backgroundColor: "#b8d4c8",
               }}
@@ -61,7 +61,7 @@ export default function ContactUsPage() {
             </section>
 
             {/* Form Section */}
-            <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12">
+            <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12 pb-32 sm:pb-40 lg:pb-48">
               <div className="max-w-2xl mx-auto">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name Fields Row */}
