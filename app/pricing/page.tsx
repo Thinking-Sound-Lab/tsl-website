@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { FAQSection } from "@/components/faq-section";
 import { useState } from "react";
+import Link from "next/link";
 
 const plans = [
   {
@@ -238,9 +239,15 @@ export default function PricingPage() {
                         ))}
                       </div>
 
-                      <Button variant="emerald" className="w-full font-mono">
-                        Start 7 day free trial
-                      </Button>
+                      <Link
+                        href="https://forms.gle/BQnJLJMcjwRz1cwk7"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="emerald" className="w-full font-mono">
+                          Start 7 day free trial
+                        </Button>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -255,7 +262,7 @@ export default function PricingPage() {
                       className="bg-white/50 border border-black/15 px-4 py-2 cursor-pointer hover:bg-white/80 transition-colors"
                       onClick={() =>
                         (window.location.href =
-                          "mailto:support@invook.com?subject=Student%20Discount%20Inquiry")
+                          "mailto:support@thinkingsoundlab.com?subject=Student%20Discount%20Inquiry")
                       }
                     >
                       <span className="text-gray-800 font-mono text-sm">

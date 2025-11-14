@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const defaultFaqs = [
@@ -77,11 +76,11 @@ export function FAQSection({
           <p className="text-gray-700 font-mono text-base mb-3">{subtitle}</p>
 
           <div>
-            <Link href="/contact-us">
+            <a href="mailto:support@thinkingsoundlab.com">
               <Button variant="emerald" size="lg">
                 Contact Us
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
 
