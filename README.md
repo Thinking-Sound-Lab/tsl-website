@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Thinking Sound Lab Website
+
+This is the official website for Thinking Sound Lab, built with Next.js 15 and TypeScript.
+
+## Tech Stack
+
+- **Framework**: Next.js 15.5.4 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui
+- **Fonts**: Inter font family
+- **Analytics**: Vercel Analytics
+- **Linting**: ESLint with Next.js configuration
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout with fonts and Analytics
+│   ├── page.tsx           # Homepage
+│   ├── pricing/           # Pricing page
+│   ├── community/         # Community page
+│   ├── contact-us/        # Contact page
+│   └── ...
+├── components/            # Reusable React components
+├── public/               # Static assets
+└── CLAUDE.md             # Development guidelines
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Responsive design with mobile-first approach
+- SEO optimized with metadata
+- Vercel Analytics integration for web analytics
+- Custom stitched border design system
+- Animated components and transitions
+- FAQ sections with accordion functionality
+- Community integration (Discord, LinkedIn, YouTube, Instagram)
+
+## Analytics
+
+This project uses [Vercel Analytics](https://vercel.com/docs/analytics) to track page views and user interactions. The Analytics component is integrated in the root layout (`app/layout.tsx`).
+
+## Environment
+
+The site is designed to work on:
+- macOS
+- Windows
+- Modern web browsers (Chrome, Firefox, Safari, Edge)
+
+## Contact
+
+For support or inquiries, email: support@thinkingsoundlab.com
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com)

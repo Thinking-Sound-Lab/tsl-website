@@ -140,6 +140,15 @@ export function Footer() {
                         Help Center
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        href="/llm.txt"
+                        className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
+                        target="_blank"
+                      >
+                        llm.txt
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </div>
