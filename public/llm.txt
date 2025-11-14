@@ -1,0 +1,45 @@
+# Thinking Sound Lab - LLM Context
+
+## Company
+Thinking Sound Lab
+Website: https://thinkingsoundlab.com
+Contact: support@thinkingsoundlab.com
+
+## Product
+Invook - AI-powered dictation and search tool
+- 5x faster than typing
+- 2x more accurate than keyboard
+- Real-time voice-to-text transcription
+- AI-powered search functionality
+- Works with all applications
+- Supports 100+ languages
+
+## Platform Support
+- macOS
+- Windows
+
+## Pricing
+- Free tier available
+- Pro plan: $15/month
+- 50% student discount available
+- 24-hour money-back guarantee
+
+## Features
+- On-demand AI dictation
+- AI search functionality
+- Context-aware transcription
+- Cross-platform support
+- End-to-end encryption
+- Real-time transcription
+- Screen context analysis
+
+## Community
+- Discord: https://discord.gg/Aqhgty97
+- LinkedIn: https://linkedin.com/company/thinking-sound-lab-25
+- YouTube: https://www.youtube.com/channel/UCeuCsCIquUCHfRHTmmL-n4g
+- Instagram: https://www.instagram.com/invook.ai
+
+## Resources
+- Getting Started: https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087
+- Documentation: Available on website
+- Support: support@thinkingsoundlab.com
