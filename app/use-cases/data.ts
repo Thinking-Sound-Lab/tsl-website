@@ -10,7 +10,7 @@ export interface VideoUseCase {
 export const videoUseCases: VideoUseCase[] = [
   {
     id: "1",
-    title: "How to use Invook in Email?",
+    title: "Clear email faster with Invook",
     author: "Abhishek Kumar",
     videoUrl: "https://www.youtube.com/embed/LRodofb2Gdk?si=pbg_hafAFnEOQrX9",
     appIcons: ["/svgs/gmail.svg"],
