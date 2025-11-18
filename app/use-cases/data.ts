@@ -8,14 +8,14 @@ export interface VideoUseCase {
 }
 
 export const videoUseCases: VideoUseCase[] = [
-  //   {
-  //     id: "1",
-  //     title: "Whispering in an open office on macbook",
-  //     author: "Sahaj G.",
-  //     videoUrl: "https://www.youtube.com/embed/P6W2iyp6YA4?si=mv6jphQ9-waMPdha",
-  //     appIcons: ["📝"],
-  //     appNames: ["Notion"],
-  //   },
+  {
+    id: "1",
+    title: "How to use Invook in Email?",
+    author: "Abhishek Kumar",
+    videoUrl: "https://www.youtube.com/embed/LRodofb2Gdk?si=pbg_hafAFnEOQrX9",
+    appIcons: ["/svgs/gmail.svg"],
+    appNames: ["Gmail"],
+  },
   //   {
   //     id: "2",
   //     title: "Push PRs with Wispr and get your steps in",

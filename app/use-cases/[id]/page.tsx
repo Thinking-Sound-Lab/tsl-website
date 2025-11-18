@@ -39,9 +39,15 @@ export default function VideoDetailPage() {
                   {video.appIcons.map((icon, index) => (
                     <div
                       key={index}
-                      className="w-12 h-12 bg-emerald-700/10 flex items-center justify-center text-2xl"
+                      className="w-12 h-12 bg-emerald-700/10 flex items-center justify-center p-2"
                     >
-                      {icon}
+                      <Image
+                        src={icon}
+                        alt={video.appNames[index]}
+                        width={32}
+                        height={32}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                   ))}
                 </div>
@@ -139,9 +145,15 @@ export default function VideoDetailPage() {
                             {relatedVideo.appIcons.map((icon, index) => (
                               <div
                                 key={index}
-                                className="w-8 h-8 bg-gray-200 flex items-center justify-center text-lg"
+                                className="w-8 h-8 bg-gray-200 flex items-center justify-center p-1"
                               >
-                                {icon}
+                                <Image
+                                  src={icon}
+                                  alt={relatedVideo.appNames[index]}
+                                  width={24}
+                                  height={24}
+                                  className="w-full h-full object-contain"
+                                />
                               </div>
                             ))}
                           </div>

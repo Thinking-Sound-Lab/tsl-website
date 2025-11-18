@@ -77,9 +77,15 @@ export default function UseCasesPage() {
                         {video.appIcons.map((icon, index) => (
                           <div
                             key={index}
-                            className="w-8 h-8 bg-gray-200 flex items-center justify-center text-lg"
+                            className="w-8 h-8 bg-gray-200 flex items-center justify-center p-1"
                           >
-                            {icon}
+                            <Image
+                              src={icon}
+                              alt={video.appNames[index]}
+                              width={24}
+                              height={24}
+                              className="w-full h-full object-contain"
+                            />
                           </div>
                         ))}
                       </div>
