@@ -161,7 +161,7 @@ export function Footer() {
               </h3>
               <div className="flex gap-4 mb-8 items-center">
                 <Link
-                  href="https://discord.gg/Aqhgty97"
+                  href="https://discord.gg/UqabBguBzk"
                   className="text-gray-700 hover:text-emerald-700 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
