@@ -67,11 +67,6 @@ const pricingFaqs = [
       "Yes, you can switch between monthly and annual billing at any time. When switching to annual, you'll save 20% compared to monthly pricing.",
   },
   {
-    question: "What's your refund policy?",
-    answer:
-      "We offer a 24 hours money-back guarantee. If you're not satisfied with Invook, contact us within 24 hours of purchase for a full refund.",
-  },
-  {
     question: "How do I qualify for the student discount?",
     answer:
       "Students get 50% off any paid plan. Click the student discount button above to email us with your .edu email address or valid student ID for verification.",
