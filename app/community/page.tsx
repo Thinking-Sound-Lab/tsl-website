@@ -41,7 +41,7 @@ export default function CommunityPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Discord */}
                 <a
-                  href="https://discord.gg/Aqhgty97"
+                  href="https://discord.gg/UqabBguBzk"
                   className="bg-gray-100/50 border border-gray-300 p-8 relative hover:shadow-lg transition-all duration-200 group"
                   target="_blank"
                   rel="noopener noreferrer"
