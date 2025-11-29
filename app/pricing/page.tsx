@@ -11,30 +11,34 @@ const plans = [
     kind: "basic",
     price: 0,
     features: [
-      "2000 words per week",
-      "50 question per week",
-      "10 command edit per week",
-      "Unlimited words to dictionary",
-      "Support for 100+ languages",
+      "2000 words per month",
+      "5 Dictionary",
+      "5 Vocabulary",
+      "10 Command Edit",
+      "10 Screen Analysis",
       "Privacy mode",
+      "Support for 100+ languages",
+      "Active Application Formatting",
     ],
   },
   {
     id: 2,
     kind: "pro",
-    price: 12,
+    price: 10,
     billed: "annually",
     metadata: {
       billed: "monthly",
-      price: 15,
+      price: 12,
     },
     features: [
       "Everything in Basic",
-      "Unlimited words per week",
-      "Unlimited question per week",
-      "Unlimited command per week",
+      "Unlimited words per month",
+      "Unlimited Dictionary",
+      "Unlimited Vocabulary",
+      "Unlimited Command Edit",
+      "Unlimited Screen Analysis",
       "Language Translation",
-      "Active Application Formatting",
+      "File Analysis (PDF, xlxs, docs etc) (Coming Soon)",
     ],
   },
   // {
@@ -64,7 +68,7 @@ const pricingFaqs = [
   {
     question: "Can I switch between monthly and annual billing?",
     answer:
-      "Yes, you can switch between monthly and annual billing at any time. When switching to annual, you'll save 20% compared to monthly pricing.",
+      "Yes, you can switch between monthly and annual billing at any time. When switching to annual, you'll save 17% compared to monthly pricing.",
   },
   {
     question: "How do I qualify for the student discount?",
@@ -101,7 +105,7 @@ export default function PricingPage() {
         : Number(hourlyRate)
       : hourlyRate;
   const timeValueSaved = hoursSavedMonthly * hourlyRateNum;
-  const proCost = billingCycle === "monthly" ? 15 : 12;
+  const proCost = billingCycle === "monthly" ? 12 : 10;
   const netSavings = timeValueSaved - proCost;
 
   return (
@@ -165,7 +169,7 @@ export default function PricingPage() {
                     >
                       Annually
                       <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded">
-                        20% OFF
+                        17% OFF
                       </span>
                     </button>
                   </div>
