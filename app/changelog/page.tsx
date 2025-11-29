@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { changelogData } from "./data";
+import { changelogData, ChangelogItem } from "./data";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -21,6 +21,142 @@ const ChangeTypeBadge = ({ type }: { type: string }) => {
     >
       {type}
     </span>
+  );
+};
+
+const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
+  <svg
+    className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
+const ChangelogCard = ({ changelog }: { changelog: ChangelogItem }) => {
+  // Group changes by type
+  const groupedChanges = changelog.changes.reduce((acc, change) => {
+    if (!acc[change.type]) {
+      acc[change.type] = [];
+    }
+    acc[change.type].push(change);
+    return acc;
+  }, {} as Record<string, typeof changelog.changes>);
+
+  // State for collapsible sections
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
+    Object.keys(groupedChanges).reduce((acc, type) => ({ ...acc, [type]: true }), {})
+  );
+
+  const toggleSection = (type: string) => {
+    setExpandedSections(prev => ({ ...prev, [type]: !prev[type] }));
+  };
+
+  const typeLabels = {
+    feature: "Features",
+    improvement: "Improvements",
+    bugfix: "Bug Fixes",
+    note: "Notes",
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6 lg:gap-12">
+      {/* Left Side - Version & Date */}
+      <div className="lg:sticky lg:top-32 lg:self-start">
+        <div className="bg-gray-100/50 border border-gray-300 p-6 relative">
+          {/* Corner squares */}
+          <div className="absolute top-0 left-0 w-2 h-2 bg-gray-400"></div>
+          <div className="absolute top-0 right-0 w-2 h-2 bg-gray-400"></div>
+          <div className="absolute bottom-0 left-0 w-2 h-2 bg-gray-400"></div>
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-gray-400"></div>
+
+          <div className="text-3xl font-bold text-emerald-700 mb-2">
+            v{changelog.version}
+          </div>
+          <div className="text-sm font-mono text-gray-600">
+            {changelog.date}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Unified Changes Card */}
+      <div className="bg-gray-100/50 border border-gray-300 relative">
+        {/* Corner squares */}
+        <div className="absolute top-0 left-0 w-2 h-2 bg-gray-400"></div>
+        <div className="absolute top-0 right-0 w-2 h-2 bg-gray-400"></div>
+        <div className="absolute bottom-0 left-0 w-2 h-2 bg-gray-400"></div>
+        <div className="absolute bottom-0 right-0 w-2 h-2 bg-gray-400"></div>
+
+        <div className="divide-y divide-gray-300">
+          {Object.entries(groupedChanges).map(([type, changes]) => (
+            <div key={type} className="p-6 sm:p-8">
+              {/* Section Header */}
+              <button
+                onClick={() => toggleSection(type)}
+                className="w-full flex items-center justify-between text-left group"
+              >
+                <div className="flex items-center gap-3">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {typeLabels[type as keyof typeof typeLabels]} ({changes.length})
+                  </h3>
+                </div>
+                <ChevronIcon isOpen={expandedSections[type]} />
+              </button>
+
+              {/* Section Content */}
+              {expandedSections[type] && (
+                <div className="mt-6 space-y-6">
+                  {changes.map((change, changeIndex) => (
+                    <div key={changeIndex} className="space-y-3">
+                      <div className="mb-2">
+                        <ChangeTypeBadge type={change.type} />
+                      </div>
+
+                      <h4 className="text-lg font-bold text-gray-900">
+                        {change.title}
+                      </h4>
+
+                      <p className="text-gray-700 font-mono text-sm leading-relaxed">
+                        {change.description}
+                      </p>
+
+                      {/* Image support */}
+                      {change.image && (
+                        <div className="mt-4">
+                          <img
+                            src={change.image}
+                            alt={change.title}
+                            className="w-full border border-gray-300"
+                          />
+                        </div>
+                      )}
+
+                      {/* GIF support */}
+                      {change.gif && (
+                        <div className="mt-4">
+                          <img
+                            src={change.gif}
+                            alt={change.title}
+                            className="w-full border border-gray-300"
+                          />
+                        </div>
+                      )}
+
+                      {/* Divider between changes (not after last one) */}
+                      {changeIndex < changes.length - 1 && (
+                        <div className="pt-6 border-b border-gray-300/50"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -51,78 +187,10 @@ export default function ChangelogPage() {
             <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12">
               <div className="space-y-12">
                 {currentChangelogs.map((changelog, index) => (
-                  <div
+                  <ChangelogCard
                     key={`${changelog.version}-${index}`}
-                    className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6 lg:gap-12"
-                  >
-                    {/* Left Side - Version & Date */}
-                    <div className="lg:sticky lg:top-32 lg:self-start">
-                      <div className="bg-gray-100/50 border border-gray-300 p-6 relative">
-                        {/* Corner squares */}
-                        <div className="absolute top-0 left-0 w-2 h-2 bg-gray-400"></div>
-                        <div className="absolute top-0 right-0 w-2 h-2 bg-gray-400"></div>
-                        <div className="absolute bottom-0 left-0 w-2 h-2 bg-gray-400"></div>
-                        <div className="absolute bottom-0 right-0 w-2 h-2 bg-gray-400"></div>
-
-                        <div className="text-3xl font-bold text-emerald-700 mb-2">
-                          v{changelog.version}
-                        </div>
-                        <div className="text-sm font-mono text-gray-600">
-                          {changelog.date}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Side - Changes */}
-                    <div className="space-y-6">
-                      {changelog.changes.map((change, changeIndex) => (
-                        <div
-                          key={changeIndex}
-                          className="bg-gray-100/50 border border-gray-300 p-6 sm:p-8 relative"
-                        >
-                          {/* Corner squares */}
-                          <div className="absolute top-0 left-0 w-2 h-2 bg-gray-400"></div>
-                          <div className="absolute top-0 right-0 w-2 h-2 bg-gray-400"></div>
-                          <div className="absolute bottom-0 left-0 w-2 h-2 bg-gray-400"></div>
-                          <div className="absolute bottom-0 right-0 w-2 h-2 bg-gray-400"></div>
-
-                          <div className="mb-4">
-                            <ChangeTypeBadge type={change.type} />
-                          </div>
-
-                          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
-                            {change.title}
-                          </h3>
-
-                          <p className="text-gray-700 font-mono text-sm leading-relaxed">
-                            {change.description}
-                          </p>
-
-                          {/* Image support */}
-                          {change.image && (
-                            <div className="mt-6">
-                              <img
-                                src={change.image}
-                                alt={change.title}
-                                className="w-full border border-gray-300"
-                              />
-                            </div>
-                          )}
-
-                          {/* GIF support */}
-                          {change.gif && (
-                            <div className="mt-6">
-                              <img
-                                src={change.gif}
-                                alt={change.title}
-                                className="w-full border border-gray-300"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    changelog={changelog}
+                  />
                 ))}
               </div>
 
