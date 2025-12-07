@@ -225,7 +225,7 @@ export function SpeedComparison() {
             Forget the keyboard. Write five times faster with your voice and
             save hours every week with flawless accuracy.
           </p>
-          <a href="https://forms.gle/BQnJLJMcjwRz1cwk7" target="_blank" rel="noopener noreferrer">
+          <a href="/downloads">
             <Button
               size="lg"
               className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm sm:text-base"

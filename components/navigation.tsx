@@ -11,10 +11,10 @@ export function Navigation() {
 
   useEffect(() => {
     // Detect platform
-    const platform = navigator.platform.toLowerCase();
-    if (platform.includes("mac")) {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.indexOf("mac") !== -1) {
       setDownloadText("Download for Mac");
-    } else if (platform.includes("win")) {
+    } else if (userAgent.indexOf("win") !== -1) {
       setDownloadText("Download for Windows");
     } else {
       setDownloadText("Download");
@@ -211,14 +211,10 @@ export function Navigation() {
               </Link>
             </div>
 
-            {/* Join Beta Button */}
-            <Link
-              href="https://forms.gle/BQnJLJMcjwRz1cwk7"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            {/* Download Button */}
+            <Link href="/downloads">
               <Button variant="emerald" size="default">
-                Join Beta
+                {downloadText}
               </Button>
             </Link>
           </div>
