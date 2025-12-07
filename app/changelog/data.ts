@@ -14,6 +14,42 @@ export interface ChangelogChange {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: "0.0.22-beta",
+    date: "December 7, 2025",
+    changes: [
+      {
+        type: "feature",
+        title: "Video Permission Guides",
+        description:
+          "Added interactive video tutorials in permissions setup showing users exactly how to grant microphone and accessibility permissions.",
+      },
+      {
+        type: "improvement",
+        title: "Enhanced Onboarding Experience",
+        description:
+          "Improved permission feedback with clear notification messages, step-by-step instructions, and better hotkey testing guidance.",
+      },
+      {
+        type: "improvement",
+        title: "Email Service Migration",
+        description:
+          "Migrated from AWS SES to Resend for improved deliverability with professional email templates and better compliance.",
+      },
+      {
+        type: "feature",
+        title: "Weekly Statistics Emails",
+        description:
+          "Automated weekly emails showing total words dictated, WPM, time saved, and week-over-week comparisons.",
+      },
+      {
+        type: "bugfix",
+        title: "WebSocket Connection Reliability",
+        description:
+          "Fixed critical issues where WebSocket connections could hang indefinitely. Added proper timeout handling and state management.",
+      },
+    ],
+  },
+  {
     version: "0.0.21-beta",
     date: "November 27, 2025",
     changes: [

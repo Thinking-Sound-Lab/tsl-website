@@ -3,14 +3,72 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Hero() {
   const [email, setEmail] = useState("");
+  const [os, setOs] = useState<"mac" | "windows" | "other">("other");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSent, setIsSent] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSendLink = () => {
-    // TODO: Implement email sending functionality
-    console.log("Sending download link to:", email);
+  useEffect(() => {
+    // Detect OS
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.indexOf("mac") !== -1) {
+      setOs("mac");
+    } else if (userAgent.indexOf("win") !== -1) {
+      setOs("windows");
+    }
+  }, []);
+
+  const handleSendLink = async () => {
+    if (!email || isLoading || isSent) return;
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const platform = os === "mac" || os === "windows" ? os : "mac";
+
+      const response = await fetch("/api/send-download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          platform,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSent(true);
+        setEmail("");
+        // Reset after 3 seconds
+        setTimeout(() => {
+          setIsSent(false);
+        }, 3000);
+      } else {
+        setError(data.error || "Failed to send download link");
+      }
+    } catch (_) {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getDownloadButtonText = () => {
+    if (os === "mac") return "Download for Mac";
+    if (os === "windows") return "Download for Windows";
+    return "Download";
+  };
+
+  const getDownloadLink = () => {
+    return "/downloads";
   };
 
   return (
@@ -29,13 +87,92 @@ export function Hero() {
             from AI prompts to essays.
           </p>
 
-          {/* Mobile: Join Beta Button */}
-          <div className="lg:hidden mt-6">
-            <Link href="https://forms.gle/BQnJLJMcjwRz1cwk7" target="_blank" rel="noopener noreferrer">
-              <Button variant="emerald" size="default">
-                Join Beta
+          {/* Mobile: Email input or Download Button */}
+          {/* <div className="lg:hidden mt-6">
+            {isMobile ? (
+              <div className="w-full max-w-md">
+                <p className="text-sm sm:text-base font-mono text-emerald-700 mb-3">
+                  Send download link to your email
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 px-4 py-2 border border-emerald-600 bg-white/50 text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  />
+                  <Button
+                    variant="emerald"
+                    size="default"
+                    onClick={handleSendLink}
+                    className="whitespace-nowrap"
+                  >
+                    Send Link
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/download">
+                <Button variant="emerald" size="default">
+                  {getDownloadButtonText()}
+                </Button>
+              </Link>
+            )}
+          </div> */}
+        </div>
+
+        {/* Mobile: Email input form - Centered and above keyboard */}
+        <div className="lg:hidden flex justify-center items-center relative z-10 mb-10 mt-12">
+          <div className="w-full max-w-md">
+            <p className="text-base sm:text-lg font-mono text-emerald-700 mb-4 text-center text-balance">
+              On a mobile device? Send Invook to your work station.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 bg-white/50 text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                disabled={isLoading || isSent}
+              />
+              <Button
+                variant="emerald"
+                size="default"
+                onClick={handleSendLink}
+                disabled={isLoading || isSent || !email}
+                className="whitespace-nowrap"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                  </div>
+                ) : isSent ? (
+                  "Link Sent"
+                ) : (
+                  "Send Link"
+                )}
               </Button>
-            </Link>
+            </div>
+            {error && (
+              <p className="text-sm text-red-600 mt-2 text-center">{error}</p>
+            )}
           </div>
         </div>
 
@@ -51,32 +188,6 @@ export function Hero() {
           />
         </div>
 
-        {/* Mobile: Email input form - Centered and above keyboard */}
-        {/* <div className="lg:hidden flex justify-center items-center relative z-10 mb-10 mt-12">
-          <div className="w-full max-w-md">
-            <p className="text-base sm:text-lg font-mono text-emerald-700 mb-4 text-center text-balance">
-              On a mobile device? Send Invook to your work station.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 bg-white/50 text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-              />
-              <Button
-                variant="emerald"
-                size="default"
-                onClick={handleSendLink}
-                className="whitespace-nowrap"
-              >
-                Send Link
-              </Button>
-            </div>
-          </div>
-        </div> */}
-
         {/* Desktop: Subtitle and Download button */}
         <div className="hidden lg:block max-w-full sm:max-w-lg lg:max-w-xl mt-8 sm:mt-12 lg:mt-0 relative z-10">
           <p className="text-base sm:text-lg lg:text-lg font-mono text-emerald-700 mb-6 sm:mb-8 leading-relaxed">
@@ -84,13 +195,9 @@ export function Hero() {
             from AI prompts to essays.
           </p>
 
-          <Link
-            href="https://forms.gle/BQnJLJMcjwRz1cwk7"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link href={getDownloadLink()}>
             <Button variant="emerald" size="lg">
-              Try for Free
+              {getDownloadButtonText()}
             </Button>
           </Link>
         </div>

@@ -8,13 +8,14 @@ import { Footer } from "./footer";
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage = pathname?.startsWith("/auth");
+  const isDownloadsPage = pathname === "/downloads";
 
   return (
     <>
-      {!isAuthPage && <NotificationBanner />}
-      {!isAuthPage && <Navigation />}
+      {!isAuthPage && !isDownloadsPage && <NotificationBanner />}
+      {!isAuthPage && !isDownloadsPage && <Navigation />}
       {children}
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isDownloadsPage && <Footer />}
     </>
   );
 }
