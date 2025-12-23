@@ -78,13 +78,14 @@ export function Hero() {
         {/* Top section - Main headline */}
         <div className="max-w-full sm:max-w-2xl lg:max-w-3xl mt-8 sm:mt-12 lg:mt-16 xl:mt-20 relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight text-emerald-700 tracking-tight text-balance">
-            The On-Demand <br /> AI Dictation and <br /> AI Search
+            <span className="block">The All-in-One</span>
+            <span className="block">Drive and Research</span>
+            <span className="block">Canvas</span>
           </h1>
 
           {/* Subtitle - Shows below heading on mobile */}
           <p className="lg:hidden text-base sm:text-lg font-mono text-emerald-700 mt-6 leading-relaxed">
-            Transform your voice into clear text in real time, for everything
-            from AI prompts to essays.
+            Store, connect, and explore your ideas and research in one focused, distraction-free space.
           </p>
 
           {/* Mobile: Email input or Download Button */}
@@ -191,8 +192,7 @@ export function Hero() {
         {/* Desktop: Subtitle and Download button */}
         <div className="hidden lg:block max-w-full sm:max-w-lg lg:max-w-xl mt-8 sm:mt-12 lg:mt-0 relative z-10">
           <p className="text-base sm:text-lg lg:text-lg font-mono text-emerald-700 mb-6 sm:mb-8 leading-relaxed">
-            Transform your voice into clear text in real time, for everything
-            from AI prompts to essays.
+            Store, connect, and explore your ideas and research in one focused, distraction-free space.
           </p>
 
           <Link href={getDownloadLink()}>

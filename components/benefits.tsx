@@ -57,10 +57,10 @@ export function LottieAnimation({
 export function Benefits() {
   const benefits = [
     {
-      tag: "100+ LANGUAGES",
-      title: "Translation",
+      tag: "CONTENT HUB",
+      title: "Unified Drive",
       description:
-        "Convert voice to text in multiple languages with advanced AI technology for seamless communication.",
+        "Save all of your ideas, files, media, and links in one place.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -81,10 +81,10 @@ export function Benefits() {
       mockup: <LottieAnimation animationData={translationAnimation} />,
     },
     {
-      tag: "SMART EDITING",
-      title: "Auto Edits",
+      tag: "FRAME SEARCH",
+      title: "Visual Search",
       description:
-        "Speak naturally and Invook transcribes and edits your voice, instantly. Rambled thoughts become clear, perfectly formatted text, without the filler words or typos.",
+        "Find any video frame, image, or file instantly.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -105,10 +105,10 @@ export function Benefits() {
       mockup: <LottieAnimation animationData={autoEditAnimation} />,
     },
     {
-      tag: "COMMAND MODE",
-      title: "Command Mode",
+      tag: "RESEARCH CANVAS",
+      title: "Spatial AI For Content & Research",
       description:
-        "Dictation that answers or transforms instead of transcribing. Ask questions and get instant responses through voice commands.",
+        "Close all your AI tools, documents, and research tabs.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -129,10 +129,10 @@ export function Benefits() {
       mockup: <LottieAnimation animationData={commandModeAnimation} />,
     },
     {
-      tag: "PERSONALIZATION",
-      title: "Vocabulary & Dictionary",
+      tag: "VOICE TO TEXT",
+      title: "An AI driven dictation",
       description:
-        "Train the AI to understand your specific terminology, jargon, and personal speaking patterns. Create custom key-value mappings that expand shortcuts into full content like URLs, addresses, or templates.",
+        "Transforms spoken language into accurate, structured text using AI",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -158,14 +158,14 @@ export function Benefits() {
     <section>
       <div className="p-4 sm:p-6 md:p-8 lg:p-16">
         {/* Heading Section */}
-        <div className="text-left mb-12 lg:mb-16 mt-8 lg:mt-12">
+        <div className="text-center mb-16 sm:mb-20 px-4 sm:px-0">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
-            Your Intelligent Partner
+            Your Unified Knowledge Space
           </h2>
           <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
-            By understanding your voice and what you&apos;re trying to achieve,
-            Invook become your intelligent partner helping you work faster,
-            think clearer, and accomplish what matters most.
+            By organizing your ideas, files, and research into a single Drive and Canvas,
+            Invook helps you work faster, think clearly, and stay focused on
+            what matters most.
           </p>
         </div>
 

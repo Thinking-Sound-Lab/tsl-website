@@ -1,8 +1,8 @@
 import { Hero } from "@/components/hero";
 import { Partners } from "@/components/partners";
-import { SpeedComparison } from "@/components/speed-comparison";
+// import { SpeedComparison } from "@/components/speed-comparison";
 import { Benefits } from "@/components/benefits";
-import { ContextSearch } from "@/components/context-search";
+// import { ContextSearch } from "@/components/context-search";
 import { AnimatedBoxes } from "@/components/animated-boxes";
 import { SecuritySection } from "@/components/security-section";
 import { TestimonialsSection } from "@/components/testimonials-section";
@@ -20,7 +20,7 @@ export function MainContent() {
           <Partners />
           {/* Navigation-style divider */}
           <div className="w-full border-t border-gray-300"></div>
-          <SpeedComparison />
+          {/* <SpeedComparison /> */}
           {/* Navigation-style divider */}
           <div className="w-full border-t border-gray-300"></div>
           <Benefits />
@@ -29,8 +29,7 @@ export function MainContent() {
           <div className="">
             <AnimatedBoxes />
           </div>
-          <ContextSearch />
-          {/* <LearnSection /> */}
+          {/* <ContextSearch /> */}
           <SecuritySection />
           <div className="">
             <AnimatedBoxes />
