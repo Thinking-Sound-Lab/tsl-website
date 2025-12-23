@@ -108,7 +108,7 @@ export function Benefits() {
       tag: "RESEARCH CANVAS",
       title: "Spatial AI For Content & Research",
       description:
-        "Close all your AI tools, documents, and research tabs.",
+        "A single workspace to organize, review, and work with your content and research.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg

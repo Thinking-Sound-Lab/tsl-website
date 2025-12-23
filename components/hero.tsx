@@ -78,8 +78,8 @@ export function Hero() {
         {/* Top section - Main headline */}
         <div className="max-w-full sm:max-w-2xl lg:max-w-3xl mt-8 sm:mt-12 lg:mt-16 xl:mt-20 relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight text-emerald-700 tracking-tight text-balance">
-            <span className="block">The All-in-One</span>
-            <span className="block">Drive and Research</span>
+            <span className="block">An AI workspace</span>
+            <span className="block">for Drive, Research, and</span>
             <span className="block">Canvas</span>
           </h1>
 
