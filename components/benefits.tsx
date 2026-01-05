@@ -1,13 +1,17 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Lottie from "lottie-react";
 // Import your Lottie JSON files here
 import translationAnimation from "@/public/assets/translation.json";
-import autoEditAnimation from "@/public/assets/auto_edit.json";
 // Add more imports as needed:
 import commandModeAnimation from "@/public/assets/command.json";
 import vocabularyAnimation from "@/public/assets/vocabulory.json";
+
+import driveImage from "@/public/assets/benefit-drive.webp";
+import canvasImage from "@/public/assets/benefit-canvas.webp";
+import voiceImage from "@/public/assets/benefit-voice.webp";
 
 /**
  * Reusable Lottie Animation Component
@@ -78,31 +82,14 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={translationAnimation} />,
-    },
-    {
-      tag: "FRAME SEARCH",
-      title: "Visual Search",
-      description:
-        "Find any video frame, image, or file instantly.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
+      mockup: (
+        <Image
+          src={driveImage}
+          alt="Unified Drive"
+          className="mt-6 w-full h-auto"
+          priority
+        />
       ),
-      mockup: <LottieAnimation animationData={autoEditAnimation} />,
     },
     {
       tag: "RESEARCH CANVAS",
@@ -126,7 +113,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={commandModeAnimation} />,
+      mockup: (
+        <Image
+          src={canvasImage}
+          alt="Research Canvas"
+          className="mt-6 w-full h-auto"
+        />
+      ),
     },
     {
       tag: "VOICE TO TEXT",
@@ -150,7 +143,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={vocabularyAnimation} />,
+      mockup: (
+        <Image
+          src={voiceImage}
+          alt="Voice to Text"
+          className="mt-6 w-full h-auto"
+        />
+      ),
     },
   ];
 

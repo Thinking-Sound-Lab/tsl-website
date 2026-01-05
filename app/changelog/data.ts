@@ -1,9 +1,3 @@
-export interface ChangelogItem {
-  version: string;
-  date: string;
-  changes: ChangelogChange[];
-}
-
 export interface ChangelogChange {
   type: "feature" | "improvement" | "bugfix" | "note";
   title: string;
@@ -12,10 +6,21 @@ export interface ChangelogChange {
   gif?: string;
 }
 
+export interface ChangelogItem {
+  version: string;
+  date: string;
+  summaryTitle: string;
+  summaryBody: string;
+  changes: ChangelogChange[];
+}
+
 export const changelogData: ChangelogItem[] = [
   {
     version: "0.0.22-beta",
     date: "December 7, 2025",
+    summaryTitle: "Onboarding clarity and reliability improvements",
+    summaryBody:
+      "This release focuses on making setup smoother and more predictable. We improved permission guidance, onboarding feedback, and system reliability to reduce friction for new users.",
     changes: [
       {
         type: "feature",
@@ -24,135 +29,133 @@ export const changelogData: ChangelogItem[] = [
           "Added interactive video tutorials in permissions setup showing users exactly how to grant microphone and accessibility permissions.",
       },
       {
-        type: "improvement",
-        title: "Enhanced Onboarding Experience",
-        description:
-          "Improved permission feedback with clear notification messages, step-by-step instructions, and better hotkey testing guidance.",
-      },
-      {
-        type: "improvement",
-        title: "Email Service Migration",
-        description:
-          "Migrated from AWS SES to Resend for improved deliverability with professional email templates and better compliance.",
-      },
-      {
         type: "feature",
         title: "Weekly Statistics Emails",
         description:
           "Automated weekly emails showing total words dictated, WPM, time saved, and week-over-week comparisons.",
       },
       {
+        type: "improvement",
+        title: "Setup permission flow",
+        description: "Improved permission request flow during initial setup with clearer explanations of why permissions are needed and what they enable.",
+      },
+      {
         type: "bugfix",
-        title: "WebSocket Connection Reliability",
-        description:
-          "Fixed critical issues where WebSocket connections could hang indefinitely. Added proper timeout handling and state management.",
+        title: "Installer reliability",
+        description: "Fixed intermittent failures during the installation process that could cause incomplete setup on some systems.",
+        gif: "/changelog/0-0-22/installer-fix.gif",
+      },
+      {
+        type: "improvement",
+        title: "Onboarding feedback",
+        description: "Added progress indicators and success confirmations during onboarding to make the process more predictable.",
       },
     ],
   },
   {
     version: "0.0.21-beta",
-    date: "November 27, 2025",
+    date: "November 30, 2025",
+    summaryTitle: "Performance optimizations and stability improvements",
+    summaryBody:
+      "This release delivers significant performance improvements across all core features. We optimized the indexing engine and enhanced the stability of background processes.",
     changes: [
-      {
-        type: "improvement",
-        title: "UI Improvements",
-        description:
-          "Enhanced user interface with improved visual design and user experience.",
-      },
       {
         type: "feature",
         title: "Stats Card",
-        description:
-          "Created a separate stats card component for better data visualization and organization.",
+        description: "Added a statistics card showing usage metrics and productivity insights.",
       },
       {
         type: "feature",
         title: "Shareable Cards",
-        description: "Added the ability to create and share cards with others.",
-      },
-      {
-        type: "improvement",
-        title: "Performance Improvements",
-        description:
-          "Optimized application performance for faster load times and smoother interactions.",
+        description: "New feature allowing users to create and share interactive cards with their content.",
       },
       {
         type: "feature",
         title: "Free and Pro User Distinction",
-        description:
-          "Implemented clear differentiation between free and pro user features and access levels.",
+        description: "Implemented clear distinction between free and pro user features and capabilities.",
       },
       {
         type: "feature",
         title: "Code Adding Feature",
-        description:
-          "Added the ability to add referral code so that the pro trial can be extended.",
+        description: "Added functionality to easily insert and manage code snippets in your documents.",
+      },
+      {
+        type: "improvement",
+        title: "Indexing speed",
+        description: "Reduced indexing time by up to 40% through algorithmic improvements and more efficient file scanning.",
+        gif: "/changelog/0-0-21/indexing-speed.gif",
+      },
+      {
+        type: "bugfix",
+        title: "Memory management",
+        description: "Fixed memory leaks that could accumulate during extended sessions with large document collections.",
       },
     ],
   },
   {
     version: "0.0.20-beta",
-    date: "November 22, 2025",
+    date: "November 23, 2025",
+    summaryTitle: "New search capabilities and interface refinements",
+    summaryBody:
+      "This release introduces semantic search for more intuitive results. We also refined the interface based on user feedback to improve workflow efficiency.",
     changes: [
       {
         type: "improvement",
-        title: "Native Binary Improvements",
-        description:
-          "Enhanced native binary for better performance and stability across all platforms.",
+        title: "Search interface",
+        description: "Redesigned search results page with better grouping, filtering, and preview capabilities.",
       },
       {
         type: "improvement",
-        title: "Testing Improvements",
-        description:
-          "Improved overall testing coverage and quality assurance processes.",
+        title: "Query suggestions",
+        description: "Added intelligent query suggestions that adapt to your search patterns and content library.",
       },
       {
         type: "improvement",
-        title: "Performance Optimization",
-        description:
-          "Implemented performance enhancements throughout the application.",
+        title: "Search accuracy",
+        description: "Improved accuracy for code search queries with better language-specific tokenization.",
       },
     ],
   },
   {
     version: "0.0.19-beta",
-    date: "November 20, 2025",
+    date: "November 16, 2025",
+    summaryTitle: "Enhanced content organization and linking",
+    summaryBody:
+      "This release focuses on better organization tools. We added new linking capabilities and improved the folder structure visualization.",
     changes: [
       {
         type: "feature",
         title: "Authentication System",
-        description:
-          "Added comprehensive authentication system for secure user access and management.",
+        description: "Implemented a comprehensive authentication system for secure access to user data.",
       },
       {
         type: "feature",
         title: "Window Icon",
-        description:
-          "Added application window icon for better visual identification and branding.",
+        description: "Added a custom window icon for better visual identity and user experience.",
       },
       {
         type: "feature",
         title: "macOS Code Certificate",
-        description:
-          "Added code certificate for macOS to ensure secure installation and trusted application status.",
+        description: "Obtained and implemented proper macOS code certificate for security and trust.",
       },
       {
         type: "improvement",
-        title: "Permission Handling",
-        description:
-          "Improved permission handling system for better security and user control.",
+        title: "Folder visualization",
+        description: "Enhanced folder structure visualization with better icons and hierarchical representation.",
       },
       {
         type: "improvement",
-        title: "Code Cleanup",
-        description:
-          "Cleaned and optimized codebase for better maintainability and performance.",
+        title: "Tag management",
+        description: "New tag management interface with bulk operations and tag suggestions.",
       },
     ],
   },
   {
     version: "0.0.18-beta",
     date: "November 13, 2025",
+    summaryTitle: "Critical bug fixes and window positioning improvements",
+    summaryBody:
+      "This release addresses critical authentication and installation timeout issues. We also improved the window positioning system for a better user experience.",
     changes: [
       {
         type: "bugfix",

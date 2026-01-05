@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useWaitlist } from "@/components/waitlist-context";
 
 export function Hero() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,8 @@ export function Hero() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [error, setError] = useState("");
+
+  const { openWaitlist } = useWaitlist();
 
   useEffect(() => {
     // Detect OS
@@ -61,10 +64,15 @@ export function Hero() {
     }
   };
 
+  const handleJoinWaitlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openWaitlist();
+  };
+
   const getDownloadButtonText = () => {
-    if (os === "mac") return "Download for Mac";
-    if (os === "windows") return "Download for Windows";
-    return "Download";
+    if (os === "mac") return "Join Waitlist";
+    if (os === "windows") return "Join Waitlist";
+    return "Join Waitlist";
   };
 
   const getDownloadLink = () => {
@@ -79,8 +87,8 @@ export function Hero() {
         <div className="max-w-full sm:max-w-2xl lg:max-w-3xl mt-8 sm:mt-12 lg:mt-16 xl:mt-20 relative z-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight text-emerald-700 tracking-tight text-balance">
             <span className="block">An AI workspace</span>
-            <span className="block">built for ideas and</span>
-            <span className="block">research</span>
+            <span className="block">for Drive, Canvas, and</span>
+            <span className="block">Ideas.</span>
           </h1>
 
           {/* Subtitle - Shows below heading on mobile */}
@@ -195,11 +203,12 @@ export function Hero() {
             Store, connect, and explore your ideas and research in one focused, distraction-free space.
           </p>
 
-          <Link href={getDownloadLink()}>
-            <Button variant="emerald" size="lg">
-              {getDownloadButtonText()}
-            </Button>
-          </Link>
+          <button 
+            onClick={handleJoinWaitlist}
+            className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-mono rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            {getDownloadButtonText()}
+          </button>
         </div>
       </div>
     </section>

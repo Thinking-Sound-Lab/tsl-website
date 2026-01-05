@@ -11,52 +11,44 @@ const plans = [
     kind: "basic",
     price: 0,
     features: [
-      "2000 words per month",
-      "5 Dictionary",
-      "5 Vocabulary",
-      "10 Command Edit",
-      "10 Screen Analysis",
-      "Privacy mode",
-      "Support for 100+ languages",
-      "Active Application Formatting",
+      "15 GB Drive storage",
+      "15 requests per month",
+      "1 Canvas",
+      "1 GB per file upload",
     ],
   },
   {
     id: 2,
     kind: "pro",
-    price: 10,
+    price: 17,
     billed: "annually",
     metadata: {
       billed: "monthly",
-      price: 12,
+      price: 14,
     },
     features: [
-      "Everything in Basic",
-      "Unlimited words per month",
-      "Unlimited Dictionary",
-      "Unlimited Vocabulary",
-      "Unlimited Command Edit",
-      "Unlimited Screen Analysis",
-      "Language Translation",
-      "File Analysis (PDF, xlxs, docs etc) (Coming Soon)",
+      "100 GB Drive storage",
+      "200 requests per month",
+      "10 Canvases",
+      "3 GB per file upload",
     ],
   },
-  // {
-  // 	id: 3,
-  // 	kind: "team",
-  // 	price: 10,
-  // 	billed: "annually",
-  // 	metadata: {
-  // 		billed: "monthly",
-  // 		price: 12,
-  // 	},
-  // 	features: [
-  // 		"Everything in Pro",
-  // 		"Centeralized billing",
-  // 		"Administrative controls",
-  // 		"Team dictionary",
-  // 	]
-  // }
+  {
+    id: 3,
+    kind: "creator",
+    price: 35,
+    billed: "annually",
+    metadata: {
+      billed: "monthly",
+      price: 28,
+    },
+    features: [
+      "2 TB Drive storage",
+      "1500 requests per month",
+      "Unlimited Canvas",
+      "20 GB per file upload",
+    ],
+  },
 ];
 
 const pricingFaqs = [
@@ -105,7 +97,7 @@ export default function PricingPage() {
         : Number(hourlyRate)
       : hourlyRate;
   const timeValueSaved = hoursSavedMonthly * hourlyRateNum;
-  const proCost = billingCycle === "monthly" ? 12 : 10;
+  const proCost = billingCycle === "monthly" ? 14 : 17;
   const netSavings = timeValueSaved - proCost;
 
   return (
@@ -169,13 +161,16 @@ export default function PricingPage() {
                     >
                       Annually
                       <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded">
-                        17% OFF
+                        20% OFF
                       </span>
                     </button>
                   </div>
                 </div>
                 {/* Pricing Cards */}
-                <div className="grid md:grid-cols-2 gap-8 mx-auto mb-8 max-w-4xl ">
+                <div className="grid gap-8 mx-auto mb-8 max-w-6xl
+                                grid-cols-1
+                                md:grid-cols-2
+                                lg:grid-cols-3">
                   {/* Corner squares */}
 
                   {plans.map((plan) => (
@@ -215,7 +210,7 @@ export default function PricingPage() {
                         </div>
                       </div>
 
-                      <div className="space-y-4 mb-8">
+                      <div className="space-y-4">
                         {plan.features.map((feature, index) => (
                           <div key={index} className="flex items-start">
                             <svg
@@ -237,16 +232,6 @@ export default function PricingPage() {
                           </div>
                         ))}
                       </div>
-
-                      <Link
-                        href="https://forms.gle/BQnJLJMcjwRz1cwk7"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="emerald" className="w-full font-mono">
-                          Start 7 day free trial
-                        </Button>
-                      </Link>
                     </div>
                   ))}
                 </div>
