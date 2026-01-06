@@ -42,7 +42,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
       } else {
         setError("Failed to join waitlist. Please try again.");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
@@ -174,8 +174,8 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
             type="submit"
             disabled={loading || success}
             className={`w-full px-4 py-3 h-12 text-white text-base font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ${loading || success
-                ? "bg-emerald-400 cursor-not-allowed"
-                : "bg-emerald-600 hover:bg-emerald-700"
+              ? "bg-emerald-400 cursor-not-allowed"
+              : "bg-emerald-600 hover:bg-emerald-700"
               }`}
           >
             {loading ? "Joining..." : "Join Waitlist"}

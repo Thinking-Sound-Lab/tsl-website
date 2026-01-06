@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+
+import Image from "next/image";
 import Link from "next/link";
 import { useWaitlist } from "@/components/waitlist-context";
 
@@ -42,10 +43,14 @@ export function Navigation() {
           {/* Logo */}
           <Link href={"/"}>
             <div className="flex items-center">
-              <img
+              <Image
                 src="/svgs/web_logo.svg"
                 alt="Invook"
-                className="h-5 w-auto"
+                width={0}
+                height={0}
+                style={{ height: '1.5rem', width: 'auto' }}
+                className="h-6 w-auto"
+                priority
               />
             </div>
           </Link>
@@ -97,9 +102,8 @@ export function Navigation() {
                   </svg>
                   <span>Resources</span>
                   <svg
-                    className={`w-3 h-3 transition-transform duration-200 ${
-                      isResourcesOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-3 h-3 transition-transform duration-200 ${isResourcesOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -220,7 +224,7 @@ export function Navigation() {
             </div>
 
             {/* Download Button */}
-            <button 
+            <button
               onClick={handleJoinWaitlist}
               className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-mono rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
@@ -308,9 +312,8 @@ export function Navigation() {
                   </svg>
                   <span>Resources</span>
                   <svg
-                    className={`w-3 h-3 ml-auto transition-transform duration-200 ${
-                      isResourcesOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-3 h-3 ml-auto transition-transform duration-200 ${isResourcesOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

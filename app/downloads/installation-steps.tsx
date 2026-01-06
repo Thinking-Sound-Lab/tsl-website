@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 
 interface InstallationStepsProps {
   platform: "mac" | "windows";
@@ -32,9 +33,12 @@ export function InstallationSteps({
         "Open the downloaded .dmg file from your downloads list. It's in the top right corner of your browser.",
       visual: (
         <div className="mt-4 -ml-6 overflow-visible">
-          <img
+          <Image
             src="/images/dmg_invook.png"
             alt="Invook.dmg download"
+            width={0}
+            height={0}
+            sizes="100vw"
             className="w-auto h-auto max-w-sm rounded-lg"
           />
         </div>
@@ -47,9 +51,12 @@ export function InstallationSteps({
         "Drag and drop Invook to the Applications folder when asked to continue with the install.",
       visual: (
         <div className="mt-4 flex items-center justify-center">
-          <img
+          <Image
             src="/images/install_mac.png"
             alt="Drag Invook to Applications folder"
+            width={0}
+            height={0}
+            sizes="100vw"
             className="w-full h-auto max-w-xs"
           />
         </div>
@@ -61,9 +68,12 @@ export function InstallationSteps({
       description: "Open Invook from the Dock and start using voice dictation.",
       visual: (
         <div className="mt-12 -ml-6 overflow-visible">
-          <img
+          <Image
             src="/images/dock.png"
             alt="macOS Dock with Invook"
+            width={0}
+            height={0}
+            sizes="100vw"
             className="w-full h-auto"
           />
         </div>
@@ -81,9 +91,11 @@ export function InstallationSteps({
         <div className="mt-4 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-md max-w-sm w-full">
             <div className="flex flex-col items-center gap-4">
-              <img
+              <Image
                 src="/svgs/black_monogram.svg"
                 alt="Invook"
+                width={64}
+                height={64}
                 className="w-16 h-16"
               />
               <div className="flex items-center gap-3">
@@ -118,9 +130,11 @@ export function InstallationSteps({
         <div className="mt-4 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-md max-w-sm w-full">
             <div className="flex flex-col items-center gap-4">
-              <img
+              <Image
                 src="/svgs/black_monogram.svg"
                 alt="Invook"
+                width={64}
+                height={64}
                 className="w-16 h-16"
               />
               <div className="text-center">
@@ -152,9 +166,11 @@ export function InstallationSteps({
           <div className="bg-white rounded-lg p-4 shadow-md max-w-xs w-full">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 p-2 hover:bg-gray-50 cursor-pointer">
-                <img
+                <Image
                   src="/svgs/black_monogram.svg"
                   alt="Invook"
+                  width={40}
+                  height={40}
                   className="w-10 h-10"
                 />
                 <span className="text-sm text-gray-700 font-normal">
@@ -189,9 +205,12 @@ export function InstallationSteps({
         <div className="mb-12">
           {/* Logo */}
           <div className="mb-8">
-            <img
+            <Image
               src="/svgs/black_logo.svg"
               alt="Invook"
+              width={0}
+              height={0}
+              style={{ width: 'auto', height: '1.5rem' }}
               className="h-6 w-auto"
             />
           </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -10,9 +11,12 @@ export function Footer() {
               {/* Left Side - Logo */}
               <div className="flex flex-col">
                 <div>
-                  <img
+                  <Image
                     src="/svgs/web_logo.svg"
                     alt="Invook"
+                    width={0}
+                    height={0}
+                    style={{ height: '1.5rem', width: 'auto' }}
                     className="h-6 w-auto"
                   />
                 </div>

@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { FAQSection } from "@/components/faq-section";
 import { useState } from "react";
-import Link from "next/link";
+
 
 const plans = [
   {
@@ -83,22 +82,8 @@ export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">(
     "annually"
   );
-  const [hoursPerDay, setHoursPerDay] = useState(4);
-  const [hourlyRate, setHourlyRate] = useState<number | string>(50);
 
-  // Calculate savings
-  const wordsPerDay = hoursPerDay * 2400; // Assuming 2400 words per hour typing speed
-  const hoursPerMonth = hoursPerDay * 22; // 22 working days
-  const hoursSavedMonthly = Math.round(hoursPerMonth * 0.5); // Assume 50% time saving with Invook
-  const hourlyRateNum =
-    typeof hourlyRate === "string"
-      ? hourlyRate === ""
-        ? 0
-        : Number(hourlyRate)
-      : hourlyRate;
-  const timeValueSaved = hoursSavedMonthly * hourlyRateNum;
-  const proCost = billingCycle === "monthly" ? 14 : 17;
-  const netSavings = timeValueSaved - proCost;
+
 
   return (
     <main>
@@ -143,21 +128,19 @@ export default function PricingPage() {
                   <div className="inline-flex items-center bg-white/50 border border-emerald-700 border-dashed p-1">
                     <button
                       onClick={() => setBillingCycle("monthly")}
-                      className={`px-6 py-2 font-mono text-sm transition-colors ${
-                        billingCycle === "monthly"
-                          ? "bg-emerald-700 text-white"
-                          : "text-gray-700 hover:text-emerald-700"
-                      }`}
+                      className={`px-6 py-2 font-mono text-sm transition-colors ${billingCycle === "monthly"
+                        ? "bg-emerald-700 text-white"
+                        : "text-gray-700 hover:text-emerald-700"
+                        }`}
                     >
                       Monthly
                     </button>
                     <button
                       onClick={() => setBillingCycle("annually")}
-                      className={`px-6 py-2 font-mono text-sm transition-colors flex items-center gap-2 ${
-                        billingCycle === "annually"
-                          ? "bg-emerald-700 text-white"
-                          : "text-gray-700 hover:text-emerald-700"
-                      }`}
+                      className={`px-6 py-2 font-mono text-sm transition-colors flex items-center gap-2 ${billingCycle === "annually"
+                        ? "bg-emerald-700 text-white"
+                        : "text-gray-700 hover:text-emerald-700"
+                        }`}
                     >
                       Annually
                       <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded">
@@ -193,7 +176,7 @@ export default function PricingPage() {
                             <span className="text-5xl font-bold text-gray-900">
                               $
                               {billingCycle === "monthly" &&
-                              plan.metadata?.price
+                                plan.metadata?.price
                                 ? plan.metadata.price
                                 : plan.price}
                             </span>
@@ -245,8 +228,8 @@ export default function PricingPage() {
                     <div
                       className="bg-white/50 border border-black/15 px-4 py-2 cursor-pointer hover:bg-white/80 transition-colors"
                       onClick={() =>
-                        (window.location.href =
-                          "mailto:support@thinkingsoundlab.com?subject=Student%20Discount%20Inquiry")
+                      (window.location.href =
+                        "mailto:support@thinkingsoundlab.com?subject=Student%20Discount%20Inquiry")
                       }
                     >
                       <span className="text-gray-800 font-mono text-sm">
@@ -258,7 +241,7 @@ export default function PricingPage() {
               </div>
 
               {/* Savings Calculator Section REMOVED intentionally */}
-            
+
             </section>
 
             {/* FAQ Section */}

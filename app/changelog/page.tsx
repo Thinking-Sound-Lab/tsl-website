@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { changelogData, ChangelogItem } from "./data";
 
 const ITEMS_PER_PAGE = 5;
@@ -108,10 +109,13 @@ const ChangelogCard = ({ changelog }: { changelog: ChangelogItem }) => {
                         {/* Image support */}
                         {change.image && (
                           <div className="mt-4">
-                            <img
+                            <Image
                               src={change.image}
                               alt={change.title}
-                              className="w-full border border-gray-300"
+                              width={0}
+                              height={0}
+                              sizes="100vw"
+                              className="w-full h-auto border border-gray-300"
                             />
                           </div>
                         )}
@@ -119,10 +123,13 @@ const ChangelogCard = ({ changelog }: { changelog: ChangelogItem }) => {
                         {/* GIF support */}
                         {change.gif && (
                           <div className="mt-4">
-                            <img
+                            <Image
                               src={change.gif}
                               alt={change.title}
-                              className="w-full border border-gray-300"
+                              width={0}
+                              height={0}
+                              sizes="100vw"
+                              className="w-full h-auto border border-gray-300"
                             />
                           </div>
                         )}
@@ -199,11 +206,10 @@ export default function ChangelogPage() {
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
-                          className={`w-10 h-10 border font-mono text-sm transition-colors ${
-                            currentPage === page
-                              ? "bg-emerald-700 text-white border-emerald-700"
-                              : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-                          }`}
+                          className={`w-10 h-10 border font-mono text-sm transition-colors ${currentPage === page
+                            ? "bg-emerald-700 text-white border-emerald-700"
+                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                            }`}
                         >
                           {page}
                         </button>

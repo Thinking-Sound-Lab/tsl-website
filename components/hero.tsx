@@ -1,17 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useWaitlist } from "@/components/waitlist-context";
 
 export function Hero() {
-  const [email, setEmail] = useState("");
   const [os, setOs] = useState<"mac" | "windows" | "other">("other");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const [error, setError] = useState("");
 
   const { openWaitlist } = useWaitlist();
 
@@ -25,44 +19,7 @@ export function Hero() {
     }
   }, []);
 
-  const handleSendLink = async () => {
-    if (!email || isLoading || isSent) return;
 
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const platform = os === "mac" || os === "windows" ? os : "mac";
-
-      const response = await fetch("/api/send-download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          platform,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setIsSent(true);
-        setEmail("");
-        // Reset after 3 seconds
-        setTimeout(() => {
-          setIsSent(false);
-        }, 3000);
-      } else {
-        setError(data.error || "Failed to send download link");
-      }
-    } catch (_) {
-      setError("Network error. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleJoinWaitlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -75,9 +32,7 @@ export function Hero() {
     return "Join Waitlist";
   };
 
-  const getDownloadLink = () => {
-    return "/downloads";
-  };
+
 
   return (
     <section className="min-h-screen">
@@ -131,57 +86,19 @@ export function Hero() {
           </div> */}
         </div>
 
-        {/* Mobile: Email input form - Centered and above keyboard */}
+        {/* Mobile: Waitlist CTA - Centered and above keyboard */}
         <div className="lg:hidden flex justify-center items-center relative z-10 mb-10 mt-12">
-          <div className="w-full max-w-md">
-            <p className="text-base sm:text-lg font-mono text-emerald-700 mb-4 text-center text-balance">
-              On a mobile device? Send Invook to your work station.
+          <div className="w-full max-w-md text-center">
+            <p className="text-base sm:text-lg font-mono text-emerald-700 mb-6 text-balance">
+              Join the waitlist for early access to Invook.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 bg-white/50 text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                disabled={isLoading || isSent}
-              />
-              <Button
-                variant="emerald"
-                size="default"
-                onClick={handleSendLink}
-                disabled={isLoading || isSent || !email}
-                className="whitespace-nowrap"
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                  </div>
-                ) : isSent ? (
-                  "Link Sent"
-                ) : (
-                  "Send Link"
-                )}
-              </Button>
-            </div>
-            {error && (
-              <p className="text-sm text-red-600 mt-2 text-center">{error}</p>
-            )}
+
+            <button
+              onClick={handleJoinWaitlist}
+              className="w-full inline-flex items-center justify-center px-6 py-4 text-base font-mono rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              Join Waitlist
+            </button>
           </div>
         </div>
 
@@ -203,7 +120,7 @@ export function Hero() {
             Store, connect, and explore your ideas and research in one focused, distraction-free space.
           </p>
 
-          <button 
+          <button
             onClick={handleJoinWaitlist}
             className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-mono rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
           >

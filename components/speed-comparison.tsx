@@ -3,10 +3,37 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
-export function SpeedComparison() {
-  const fullText =
-    "Make a new React component called TaskDashboard. Add a useState hook for selectedTaskId initialized to null, and another for isSidebarOpen set to true.";
+const fullText =
+  "Make a new React component called TaskDashboard. Add a useState hook for selectedTaskId initialized to null, and another for isSidebarOpen set to true.";
 
+const typoSequence = [
+  {
+    position: 59,
+    wrongText: "useState",
+    correctText: "useState",
+    shouldError: false,
+  },
+  {
+    position: 70,
+    wrongText: "selectdTaskId",
+    correctText: "selectedTaskId",
+    shouldError: true,
+  },
+  {
+    position: 85,
+    wrongText: "intialized",
+    correctText: "initialized",
+    shouldError: true,
+  },
+  {
+    position: 130,
+    wrongText: "isSidebrOpen",
+    correctText: "isSidebarOpen",
+    shouldError: true,
+  },
+];
+
+export function SpeedComparison() {
   // Left side - fast and accurate
   const [leftText, setLeftText] = useState("");
   const [leftWpm, setLeftWpm] = useState(0);
@@ -18,6 +45,7 @@ export function SpeedComparison() {
   // Track if component is in view
   const [isInView, setIsInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+
 
   // Intersection Observer to detect when component is in view
   useEffect(() => {
@@ -32,13 +60,14 @@ export function SpeedComparison() {
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);
@@ -78,33 +107,7 @@ export function SpeedComparison() {
     const msPerChar = (60 / (wpm * 5)) * 1000; // Average 5 chars per word
     let timeoutId: NodeJS.Timeout;
 
-    // Define typos that need correction
-    const typoSequence = [
-      {
-        position: 59,
-        wrongText: "useState",
-        correctText: "useState",
-        shouldError: false,
-      },
-      {
-        position: 70,
-        wrongText: "selectdTaskId",
-        correctText: "selectedTaskId",
-        shouldError: true,
-      },
-      {
-        position: 85,
-        wrongText: "intialized",
-        correctText: "initialized",
-        shouldError: true,
-      },
-      {
-        position: 130,
-        wrongText: "isSidebrOpen",
-        correctText: "isSidebarOpen",
-        shouldError: true,
-      },
-    ];
+
 
     const typeText = async () => {
       let currentText = "";
