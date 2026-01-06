@@ -9,7 +9,8 @@ export async function POST(req: Request) {
     const { email } = body;
 
     // Validate email
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email || typeof email !== "string" || !emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email address" },
         { status: 400 }

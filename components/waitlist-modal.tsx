@@ -6,6 +6,8 @@ interface WaitlistModalProps {
   onClose: () => void;
 }
 
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,16 +19,14 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
     if (open) setVisible(true);
   }, [open]);
 
+  const isValidEmail = (value: string) => emailRegex.test(value);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
-    if (!email) {
-      setError("Email is required");
-      return;
-    }
+    if (!isValidEmail(email)) return; // Double protection
 
     setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch("/api/waitlist", {
@@ -55,10 +55,21 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
     }
   };
 
+
+
+  const handleBlur = () => {
+    if (email && !isValidEmail(email)) {
+      setError("Please enter a valid email address");
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    if (error) {
-      setError(null); // Clear error when user starts typing
+    const value = e.target.value;
+    setEmail(value);
+
+    // clear error as soon as it becomes valid
+    if (isValidEmail(value) && error) {
+      setError(null);
     }
   };
 
@@ -161,10 +172,18 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
           <div className="mb-4">
             <input
               type="email"
+              inputMode="email"
+              autoComplete="email"
+              required
               value={email}
               onChange={handleInputChange}
+              onBlur={handleBlur}
               placeholder="Enter your email"
-              className="w-full px-4 py-3 h-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-0 focus:border-emerald-500 text-base"
+              className={`w-full px-4 py-3 h-12 rounded-xl text-base focus:outline-none focus:ring-0
+                ${email && !isValidEmail(email)
+                  ? "border border-red-400 focus:border-red-500"
+                  : "border border-gray-300 focus:border-emerald-500"
+                }`}
               disabled={loading}
             />
             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -172,9 +191,9 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
 
           <button
             type="submit"
-            disabled={loading || success}
-            className={`w-full px-4 py-3 h-12 text-white text-base font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ${loading || success
-              ? "bg-emerald-400 cursor-not-allowed"
+            disabled={loading || success || !isValidEmail(email)}
+            className={`w-full px-4 py-3 h-12 text-white text-base font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200 ${loading || success || !isValidEmail(email)
+              ? "bg-slate-300 cursor-not-allowed text-slate-500"
               : "bg-emerald-600 hover:bg-emerald-700"
               }`}
           >
