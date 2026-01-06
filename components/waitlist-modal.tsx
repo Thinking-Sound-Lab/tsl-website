@@ -20,7 +20,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    
+
     if (!email) {
       setError("Email is required");
       return;
@@ -75,7 +75,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
 
   if (success) {
     return (
-      <div 
+      <div
         className={`fixed inset-0 bg-[#f7f7f5]/80 flex items-center justify-center z-50 transition-opacity duration-200 ease-out ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={handleOverlayClick}
       >
@@ -106,7 +106,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
             <h3 className="text-lg font-medium text-gray-900 mt-4">Success!</h3>
             <div className="mt-2">
               <p className="text-sm text-gray-600">
-                You're on the waitlist. We'll be in touch soon.
+                You&apos;re on the waitlist — we&apos;ll notify you soon
               </p>
             </div>
             <div className="mt-6">
@@ -125,7 +125,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
   }
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 bg-[#f7f7f5]/80 flex items-center justify-center z-50 transition-opacity duration-200 ease-out ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={handleOverlayClick}
     >
@@ -138,7 +138,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <Image
@@ -173,11 +173,10 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
           <button
             type="submit"
             disabled={loading || success}
-            className={`w-full px-4 py-3 h-12 text-white text-base font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ${
-              loading || success
-                ? "bg-emerald-400 cursor-not-allowed" 
+            className={`w-full px-4 py-3 h-12 text-white text-base font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ${loading || success
+                ? "bg-emerald-400 cursor-not-allowed"
                 : "bg-emerald-600 hover:bg-emerald-700"
-            }`}
+              }`}
           >
             {loading ? "Joining..." : "Join Waitlist"}
           </button>
