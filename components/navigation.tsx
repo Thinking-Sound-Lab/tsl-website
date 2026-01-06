@@ -3,23 +3,31 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useWaitlist } from "@/components/waitlist-context";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-  const [downloadText, setDownloadText] = useState("Download");
+  const [downloadText, setDownloadText] = useState("Join Waitlist");
+
+  const { openWaitlist } = useWaitlist();
 
   useEffect(() => {
-    // Detect platform
+    // Detect platform for now let it be setDownloadText well replace it with download anyway!
     const userAgent = window.navigator.userAgent.toLowerCase();
     if (userAgent.indexOf("mac") !== -1) {
-      setDownloadText("Download for Mac");
+      setDownloadText("Join Waitlist");
     } else if (userAgent.indexOf("win") !== -1) {
-      setDownloadText("Download for Windows");
+      setDownloadText("Join Waitlist");
     } else {
-      setDownloadText("Download");
+      setDownloadText("Join Waitlist");
     }
   }, []);
+
+  const handleJoinWaitlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openWaitlist();
+  };
 
   return (
     <nav
@@ -212,11 +220,12 @@ export function Navigation() {
             </div>
 
             {/* Download Button */}
-            <Link href="/downloads">
-              <Button variant="emerald" size="default">
-                {downloadText}
-              </Button>
-            </Link>
+            <button 
+              onClick={handleJoinWaitlist}
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-mono rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              {downloadText}
+            </button>
           </div>
 
           {/* Mobile menu button */}

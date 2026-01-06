@@ -1,13 +1,17 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Lottie from "lottie-react";
 // Import your Lottie JSON files here
 import translationAnimation from "@/public/assets/translation.json";
-import autoEditAnimation from "@/public/assets/auto_edit.json";
 // Add more imports as needed:
 import commandModeAnimation from "@/public/assets/command.json";
 import vocabularyAnimation from "@/public/assets/vocabulory.json";
+
+import driveImage from "@/public/assets/benefit-drive.webp";
+import canvasImage from "@/public/assets/benefit-canvas.webp";
+import voiceImage from "@/public/assets/benefit-voice.webp";
 
 /**
  * Reusable Lottie Animation Component
@@ -57,10 +61,10 @@ export function LottieAnimation({
 export function Benefits() {
   const benefits = [
     {
-      tag: "100+ LANGUAGES",
-      title: "Translation",
+      tag: "CONTENT HUB",
+      title: "Unified Drive",
       description:
-        "Convert voice to text in multiple languages with advanced AI technology for seamless communication.",
+        "Save all of your ideas, files, media, and links in one place.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -78,13 +82,20 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={translationAnimation} />,
+      mockup: (
+        <Image
+          src={driveImage}
+          alt="Unified Drive"
+          className="mt-6 w-full h-auto"
+          priority
+        />
+      ),
     },
     {
-      tag: "SMART EDITING",
-      title: "Auto Edits",
+      tag: "RESEARCH CANVAS",
+      title: "Spatial AI For Content & Research",
       description:
-        "Speak naturally and Invook transcribes and edits your voice, instantly. Rambled thoughts become clear, perfectly formatted text, without the filler words or typos.",
+        "A single workspace to organize, review, and work with your content and research.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -102,13 +113,19 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={autoEditAnimation} />,
+      mockup: (
+        <Image
+          src={canvasImage}
+          alt="Research Canvas"
+          className="mt-6 w-full h-auto"
+        />
+      ),
     },
     {
-      tag: "COMMAND MODE",
-      title: "Command Mode",
+      tag: "VOICE TO TEXT",
+      title: "An AI driven dictation",
       description:
-        "Dictation that answers or transforms instead of transcribing. Ask questions and get instant responses through voice commands.",
+        "Transforms spoken language into accurate, structured text using AI",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -126,31 +143,13 @@ export function Benefits() {
           </svg>
         </div>
       ),
-      mockup: <LottieAnimation animationData={commandModeAnimation} />,
-    },
-    {
-      tag: "PERSONALIZATION",
-      title: "Vocabulary & Dictionary",
-      description:
-        "Train the AI to understand your specific terminology, jargon, and personal speaking patterns. Create custom key-value mappings that expand shortcuts into full content like URLs, addresses, or templates.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
+      mockup: (
+        <Image
+          src={voiceImage}
+          alt="Voice to Text"
+          className="mt-6 w-full h-auto"
+        />
       ),
-      mockup: <LottieAnimation animationData={vocabularyAnimation} />,
     },
   ];
 
@@ -158,14 +157,14 @@ export function Benefits() {
     <section>
       <div className="p-4 sm:p-6 md:p-8 lg:p-16">
         {/* Heading Section */}
-        <div className="text-left mb-12 lg:mb-16 mt-8 lg:mt-12">
+        <div className="text-center mb-16 sm:mb-20 px-4 sm:px-0">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
-            Your Intelligent Partner
+            Your Unified Knowledge Space
           </h2>
           <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
-            By understanding your voice and what you&apos;re trying to achieve,
-            Invook become your intelligent partner helping you work faster,
-            think clearer, and accomplish what matters most.
+            By organizing your ideas, files, and research into a single Drive and Canvas,
+            Invook helps you work faster, think clearly, and stay focused on
+            what matters most.
           </p>
         </div>
 

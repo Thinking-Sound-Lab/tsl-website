@@ -11,52 +11,44 @@ const plans = [
     kind: "basic",
     price: 0,
     features: [
-      "2000 words per month",
-      "5 Dictionary",
-      "5 Vocabulary",
-      "10 Command Edit",
-      "10 Screen Analysis",
-      "Privacy mode",
-      "Support for 100+ languages",
-      "Active Application Formatting",
+      "15 GB Drive storage",
+      "15 requests per month",
+      "1 Canvas",
+      "1 GB per file upload",
     ],
   },
   {
     id: 2,
     kind: "pro",
-    price: 10,
+    price: 17,
     billed: "annually",
     metadata: {
       billed: "monthly",
-      price: 12,
+      price: 14,
     },
     features: [
-      "Everything in Basic",
-      "Unlimited words per month",
-      "Unlimited Dictionary",
-      "Unlimited Vocabulary",
-      "Unlimited Command Edit",
-      "Unlimited Screen Analysis",
-      "Language Translation",
-      "File Analysis (PDF, xlxs, docs etc) (Coming Soon)",
+      "100 GB Drive storage",
+      "200 requests per month",
+      "10 Canvases",
+      "3 GB per file upload",
     ],
   },
-  // {
-  // 	id: 3,
-  // 	kind: "team",
-  // 	price: 10,
-  // 	billed: "annually",
-  // 	metadata: {
-  // 		billed: "monthly",
-  // 		price: 12,
-  // 	},
-  // 	features: [
-  // 		"Everything in Pro",
-  // 		"Centeralized billing",
-  // 		"Administrative controls",
-  // 		"Team dictionary",
-  // 	]
-  // }
+  {
+    id: 3,
+    kind: "creator",
+    price: 35,
+    billed: "annually",
+    metadata: {
+      billed: "monthly",
+      price: 28,
+    },
+    features: [
+      "2 TB Drive storage",
+      "1500 requests per month",
+      "Unlimited Canvas",
+      "20 GB per file upload",
+    ],
+  },
 ];
 
 const pricingFaqs = [
@@ -105,7 +97,7 @@ export default function PricingPage() {
         : Number(hourlyRate)
       : hourlyRate;
   const timeValueSaved = hoursSavedMonthly * hourlyRateNum;
-  const proCost = billingCycle === "monthly" ? 12 : 10;
+  const proCost = billingCycle === "monthly" ? 14 : 17;
   const netSavings = timeValueSaved - proCost;
 
   return (
@@ -169,13 +161,16 @@ export default function PricingPage() {
                     >
                       Annually
                       <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded">
-                        17% OFF
+                        20% OFF
                       </span>
                     </button>
                   </div>
                 </div>
                 {/* Pricing Cards */}
-                <div className="grid md:grid-cols-2 gap-8 mx-auto mb-8 max-w-4xl ">
+                <div className="grid gap-8 mx-auto mb-8 max-w-6xl
+                                grid-cols-1
+                                md:grid-cols-2
+                                lg:grid-cols-3">
                   {/* Corner squares */}
 
                   {plans.map((plan) => (
@@ -215,7 +210,7 @@ export default function PricingPage() {
                         </div>
                       </div>
 
-                      <div className="space-y-4 mb-8">
+                      <div className="space-y-4">
                         {plan.features.map((feature, index) => (
                           <div key={index} className="flex items-start">
                             <svg
@@ -237,16 +232,6 @@ export default function PricingPage() {
                           </div>
                         ))}
                       </div>
-
-                      <Link
-                        href="https://forms.gle/BQnJLJMcjwRz1cwk7"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="emerald" className="w-full font-mono">
-                          Start 7 day free trial
-                        </Button>
-                      </Link>
                     </div>
                   ))}
                 </div>
@@ -272,114 +257,8 @@ export default function PricingPage() {
                 </div>
               </div>
 
-              {/* Savings Calculator Section */}
-              <div className="bg-emerald-800 text-white px-6 sm:px-8 lg:px-16 py-16 sm:py-20">
-                <div className="max-w-6xl mx-auto">
-                  <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    {/* Left Side - Calculator */}
-                    <div className="px-4 sm:px-0">
-                      <h2 className="text-4xl sm:text-5xl font-bold mb-8 text-balance">
-                        Calculate
-                        <br />
-                        your savings
-                      </h2>
-
-                      <div className="space-y-8">
-                        {/* Hours Slider */}
-                        <div>
-                          <p className="text-lg mb-4">
-                            I spend{" "}
-                            <span className="font-bold">
-                              {hoursPerDay} hours
-                            </span>{" "}
-                            typing a day ({wordsPerDay.toLocaleString()} words)
-                          </p>
-                          <input
-                            type="range"
-                            min="1"
-                            max="12"
-                            value={hoursPerDay}
-                            onChange={(e) =>
-                              setHoursPerDay(Number(e.target.value))
-                            }
-                            className="w-full h-2 bg-emerald-600 rounded-lg appearance-none cursor-pointer accent-white"
-                          />
-                          <p className="text-sm text-emerald-200 mt-2">
-                            On average, people type 2 hours a day (that&apos;s
-                            4,800 words!)
-                          </p>
-                        </div>
-
-                        {/* Hourly Rate Input */}
-                        <div>
-                          <label className="text-lg flex items-baseline gap-2 flex-wrap">
-                            and, my time is worth
-                            <span className="relative inline-flex items-baseline gap-1">
-                              <span className="text-2xl font-bold">$</span>
-                              <input
-                                type="number"
-                                value={hourlyRate}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setHourlyRate(val === "" ? "" : Number(val));
-                                }}
-                                className="bg-transparent border-b-2 border-white w-16 text-2xl font-bold outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                min="0"
-                              />
-                              <span className="text-2xl font-bold">/hour</span>
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Side - Savings Card */}
-                    <div className="relative px-4 sm:px-0">
-                      <div className="bg-white/10 backdrop-blur-sm border-2 border-white rounded-3xl p-8 sm:p-10">
-                        <div className="text-center mb-6">
-                          <p className="text-emerald-200 mb-2">
-                            Monthly, you&apos;ll save
-                          </p>
-                          <p className="text-5xl sm:text-6xl font-bold">
-                            ${netSavings.toLocaleString()}/mo
-                          </p>
-                        </div>
-
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">
-                              Hours spent typing
-                            </span>
-                            <span className="font-bold">{hoursPerMonth}</span>
-                          </div>
-                          <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">
-                              Hours saved monthly
-                            </span>
-                            <span className="font-bold">
-                              {hoursSavedMonthly}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                            <span className="text-emerald-100">
-                              Time value saved
-                            </span>
-                            <span className="font-bold">
-                              ${timeValueSaved.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-emerald-100">
-                              Invook Pro monthly cost
-                            </span>
-                            <span className="font-bold">${proCost}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Savings Calculator Section REMOVED intentionally */}
+            
             </section>
 
             {/* FAQ Section */}

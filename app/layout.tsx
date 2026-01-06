@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/conditional-layout";
 import { Analytics } from "@vercel/analytics/react";
+import { WaitlistRoot } from "@/components/waitlist-root";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,15 +23,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <ConditionalLayout>{children}</ConditionalLayout>
+        <WaitlistRoot>
+          <ConditionalLayout>{children}</ConditionalLayout>
+        </WaitlistRoot>
         <Analytics />
       </body>
     </html>
