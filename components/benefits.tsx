@@ -3,11 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Lottie from "lottie-react";
-// Import your Lottie JSON files here
-import translationAnimation from "@/public/assets/translation.json";
-// Add more imports as needed:
-import commandModeAnimation from "@/public/assets/command.json";
-import vocabularyAnimation from "@/public/assets/vocabulory.json";
+
 
 import driveImage from "@/public/assets/benefit-drive.webp";
 import canvasImage from "@/public/assets/benefit-canvas.webp";
@@ -83,12 +79,14 @@ export function Benefits() {
         </div>
       ),
       mockup: (
-        <Image
-          src={driveImage}
-          alt="Unified Drive"
-          className="mt-6 w-full h-auto"
-          priority
-        />
+        <div className="mt-6 overflow-hidden rounded-xl">
+          <Image
+            src={driveImage}
+            alt="Unified Drive"
+            className="w-full h-auto"
+            priority
+          />
+        </div>
       ),
     },
     {
@@ -114,11 +112,13 @@ export function Benefits() {
         </div>
       ),
       mockup: (
-        <Image
-          src={canvasImage}
-          alt="Research Canvas"
-          className="mt-6 w-full h-auto"
-        />
+        <div className="mt-6 overflow-hidden rounded-xl">
+          <Image
+            src={canvasImage}
+            alt="Research Canvas"
+            className="w-full h-auto"
+          />
+        </div>
       ),
     },
     {
@@ -144,11 +144,13 @@ export function Benefits() {
         </div>
       ),
       mockup: (
-        <Image
-          src={voiceImage}
-          alt="Voice to Text"
-          className="mt-6 w-full h-auto"
-        />
+        <div className="mt-6 overflow-hidden rounded-xl">
+          <Image
+            src={voiceImage}
+            alt="Voice to Text"
+            className="w-full h-auto"
+          />
+        </div>
       ),
     },
   ];
@@ -161,7 +163,7 @@ export function Benefits() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
             Your Unified Knowledge Space
           </h2>
-          <p className="text-base font-mono text-gray-700/80 max-w-2xl leading-relaxed">
+          <p className="text-base font-mono text-gray-700/80 max-w-2xl mx-auto text-center leading-relaxed">
             By organizing your ideas, files, and research into a single Drive and Canvas,
             Invook helps you work faster, think clearly, and stay focused on
             what matters most.

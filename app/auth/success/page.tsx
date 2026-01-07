@@ -38,8 +38,7 @@ export default function AuthSuccessPage() {
     const extractTokensAndRedirect = () => {
       try {
         const hash = window.location.hash;
-        console.log("OAuth success page - full URL:", window.location.href);
-        console.log("OAuth success page - hash fragment:", hash);
+
 
         if (hash && hash.length > 1) {
           // Parse the hash to extract user email if available
@@ -52,13 +51,13 @@ export default function AuthSuccessPage() {
             const decodedToken = decodeJWT(accessToken);
             if (decodedToken && decodedToken.email) {
               setUserEmail(decodedToken.email);
-              console.log("User email extracted:", decodedToken.email);
+
             }
           }
 
           // Create custom protocol URL for Electron app
           const electronCallbackUrl = `invook://oauth/callback${hash}`;
-          console.log("Redirecting to Electron app:", electronCallbackUrl);
+
 
           // Redirect to Electron app with tokens
           window.location.href = electronCallbackUrl;
@@ -85,9 +84,7 @@ export default function AuthSuccessPage() {
     };
 
     window.addEventListener("message", handleMessage);
-    console.log(
-      "OAuth success page loaded - authentication completed successfully"
-    );
+
 
     return () => {
       window.removeEventListener("message", handleMessage);
