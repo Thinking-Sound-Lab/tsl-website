@@ -4,11 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 const defaultFaqs = [
-  {
-    question: "How does Invook pricing work?",
-    answer:
-      "Invook offers free and pro pricing plans. Pro is $15 per month. Student get 50% discount. Contact us for more information.",
-  },
+
   {
     question: "Is Invook available on all platforms?",
     answer:
@@ -96,9 +92,8 @@ export function FAQSection({
                   {faq.question}
                 </h3>
                 <svg
-                  className={`w-5 h-5 text-gray-600 transition-transform flex-shrink-0 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 text-gray-600 transition-transform flex-shrink-0 ${openIndex === index ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

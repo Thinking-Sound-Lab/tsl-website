@@ -30,14 +30,7 @@ export function Footer() {
                     Product
                   </h3>
                   <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/pricing"
-                        className="text-sm font-mono text-gray-700 hover:text-emerald-700 transition-colors"
-                      >
-                        Pricing
-                      </Link>
-                    </li>
+
                     <li>
                       <Link
                         href="/use-cases"

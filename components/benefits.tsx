@@ -90,10 +90,10 @@ export function Benefits() {
       ),
     },
     {
-      tag: "RESEARCH CANVAS",
-      title: "Spatial AI For Content & Research",
+      tag: "CONTENT CANVAS",
+      title: "Spatial AI For Content",
       description:
-        "A single workspace to organize, review, and work with your content and research.",
+        "A single workspace to organize, review, and work with your content.",
       arrow: (
         <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
           <svg
@@ -115,7 +115,7 @@ export function Benefits() {
         <div className="mt-6 overflow-hidden rounded-xl">
           <Image
             src={canvasImage}
-            alt="Research Canvas"
+            alt="Content Canvas"
             className="w-full h-auto"
           />
         </div>
@@ -164,7 +164,7 @@ export function Benefits() {
             Your Unified Knowledge Space
           </h2>
           <p className="text-base font-mono text-gray-700/80 max-w-2xl mx-auto text-center leading-relaxed">
-            By organizing your ideas, files, and research into a single Drive and Canvas,
+            By organizing your ideas, files, and content into a single Drive and Canvas,
             Invook helps you work faster, think clearly, and stay focused on
             what matters most.
           </p>

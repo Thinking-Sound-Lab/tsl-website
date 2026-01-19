@@ -48,7 +48,7 @@ export function Hero() {
 
           {/* Subtitle - Shows below heading on mobile */}
           <p className="lg:hidden text-base sm:text-lg font-mono text-emerald-700 mt-6 leading-relaxed">
-            Store, connect, and explore your ideas and research in one focused, distraction-free space.
+            Store, connect, and explore your ideas and content in one focused, distraction-free space.
           </p>
 
           {/* Mobile: Email input or Download Button */}
@@ -117,7 +117,7 @@ export function Hero() {
         {/* Desktop: Subtitle and Download button */}
         <div className="hidden lg:block max-w-full sm:max-w-lg lg:max-w-xl mt-8 sm:mt-12 lg:mt-0 relative z-10">
           <p className="text-base sm:text-lg lg:text-lg font-mono text-emerald-700 mb-6 sm:mb-8 leading-relaxed">
-            Store, connect, and explore your ideas and research in one focused, distraction-free space.
+            Store, connect, and explore your ideas and content in one focused, distraction-free space.
           </p>
 
           <button
