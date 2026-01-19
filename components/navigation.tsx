@@ -6,7 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useWaitlist } from "@/components/waitlist-context";
 
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
+
 export function Navigation() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [downloadText, setDownloadText] = useState("Join Waitlist");
@@ -32,7 +37,10 @@ export function Navigation() {
 
   return (
     <nav
-      className="fixed top-12 left-0 w-full border-b-[0.5px] z-50"
+      className={clsx(
+        "fixed left-0 w-full border-b-[0.5px] z-50",
+        isHomePage ? "top-0" : "top-12"
+      )}
       style={{
         backgroundColor: "rgb(241 239 235)",
         borderBottomColor: "#b0b0b0",
@@ -59,25 +67,7 @@ export function Navigation() {
           <div className="hidden lg:flex items-center space-x-8">
             {/* Navigation Links */}
             <div className="flex items-center space-x-8">
-              <a
-                href="/pricing"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>Pricing</span>
-              </a>
+
               <div
                 className="relative"
                 onMouseEnter={() => setIsResourcesOpen(true)}
@@ -202,25 +192,7 @@ export function Navigation() {
                   </div>
                 )}
               </div>
-              <Link
-                href="/research"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                <span>Research</span>
-              </Link>
+
             </div>
 
             {/* Download Button */}
@@ -272,26 +244,7 @@ export function Navigation() {
             style={{ borderColor: "#b0b0b0" }}
           >
             <div className="flex flex-col space-y-4">
-              <a
-                href="/pricing"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>Pricing</span>
-              </a>
+
               <div>
                 <button
                   className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1 w-full"
@@ -423,26 +376,7 @@ export function Navigation() {
                   </div>
                 )}
               </div>
-              <Link
-                href="/research"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                <span>Research</span>
-              </Link>
+
             </div>
           </div>
         )}

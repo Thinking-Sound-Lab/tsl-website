@@ -85,18 +85,18 @@ export function NotificationBanner() {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-center">
         <p className="text-xs sm:text-sm font-mono text-center">
           <span className="hidden sm:inline">
-            Learn more about the technical and research problems we&apos;re solving at
+            Learn more about the technical problems we&apos;re solving at
             Thinking Sound Lab{" "}
           </span>
           <span className="sm:hidden">
-            Research problems we&apos;re solving{" "}
+            Technical problems we&apos;re solving{" "}
           </span>
-          <Link
-            href="/research"
+          {/* <Link
+            href="/use-cases"
             className="underline hover:text-emerald-200 transition-colors font-semibold"
           >
             Read More
-          </Link>
+          </Link> */}
         </p>
       </div>
     </div>
