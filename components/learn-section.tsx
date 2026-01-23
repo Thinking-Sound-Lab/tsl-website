@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { KeyboardKey } from "@/components/keyboard-key";
-import { LottieAnimation } from "@/components/benefits";
+// import { LottieAnimation } from "@/components/benefits";
+const LottieAnimation = ({ className }: { animationData?: unknown; className?: string }) => {
+  return <div className={className}>Animation Placeholder</div>;
+};
 import translationAnimation from "@/public/assets/translation.json";
 import commandAnimation from "@/public/assets/command.json";
 import askaiAnimation from "@/public/assets/askai.json";

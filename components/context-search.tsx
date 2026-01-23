@@ -1,4 +1,4 @@
-import { LottieAnimation } from "./benefits";
+// import { LottieAnimation } from "./benefits";
 import askaiAnimation from "@/public/assets/askai.json";
 
 export function ContextSearch() {
@@ -24,10 +24,10 @@ export function ContextSearch() {
 
         {/* Right Side - Example Box */}
         <div className="lg:col-span-2 flex items-stretch">
-          <LottieAnimation
+          {/* <LottieAnimation
             animationData={askaiAnimation}
             className="!mt-0 flex items-center justify-center !h-full"
-          />
+          /> */}
         </div>
       </div>
     </section>

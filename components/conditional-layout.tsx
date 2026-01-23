@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { NotificationBanner } from "./notification-banner";
 import { Navigation } from "./navigation";
 import { Footer } from "./footer";
 
@@ -16,7 +15,6 @@ export function ConditionalLayout({
 
   return (
     <>
-      {!isAuthPage && !isDownloadsPage && <NotificationBanner />}
       {!isAuthPage && !isDownloadsPage && <Navigation />}
       {children}
       {!isAuthPage && !isDownloadsPage && <Footer />}

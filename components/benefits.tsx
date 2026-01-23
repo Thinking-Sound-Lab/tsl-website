@@ -1,206 +1,125 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
-import Lottie from "lottie-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
+interface BenefitCardProps {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  linkText: string;
+  linkUrl: string;
+  layout: "left" | "right";
+}
 
-import driveImage from "@/public/assets/benefit-drive.webp";
-import canvasImage from "@/public/assets/benefit-canvas.webp";
-import voiceImage from "@/public/assets/benefit-voice.webp";
-
-/**
- * Reusable Lottie Animation Component
- * Usage:
- * 1. Add your .json file to /public/assets/
- * 2. Import it at the top: import myAnimation from "@/public/assets/my_animation.json";
- * 3. Use in mockup: mockup: <LottieAnimation animationData={myAnimation} />
- *
- * Features:
- * - Plays animation once
- * - Waits 10 seconds after completion
- * - Replays automatically
- * - Loops indefinitely with 10s delay between plays
- */
-export function LottieAnimation({
-  animationData,
-  className,
-}: {
-  animationData: object;
-  className?: string;
-}) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const lottieRef = useRef<any>(null);
-
-  const handleComplete = () => {
-    setTimeout(() => {
-      if (lottieRef.current) {
-        lottieRef.current.goToAndPlay(0);
-      }
-    }, 3000);
-  };
-
+function BenefitCard({
+  title,
+  description,
+  image,
+  imageAlt,
+  linkText,
+  linkUrl,
+  layout,
+}: BenefitCardProps) {
   return (
-    <div className={`mt-6 ${className || ""}`}>
-      <Lottie
-        lottieRef={lottieRef}
-        animationData={animationData}
-        loop={false}
-        onComplete={handleComplete}
-        className="w-full h-auto"
-        style={{ maxWidth: "100%", height: "auto" }}
-      />
+    <div className="bg-secondary w-full py-4 md:py-8 rounded-sm border border-border/50">
+      <div
+        className={cn(
+          "container mx-auto max-w-[1400px] flex flex-col gap-8 lg:gap-12 items-start lg:items-center px-4 md:px-8",
+          layout === "left" ? "lg:flex-row-reverse" : "lg:flex-row"
+        )}
+      >
+        {/* Content Side */}
+        <div className="flex-1 flex flex-col items-start gap-2 lg:gap-4 max-w-xl">
+          <div className="space-y-2 lg:space-y-2">
+            <h3 className="text-[15px] md:text-[18px] lg:text-[20px] text-foreground tracking-tight leading-[1.1]">
+              {title}
+            </h3>
+            <p className="text-[15px] md:text-[18px] lg:text-[20px] font-normal text-muted-foreground tracking-tight leading-[1.4]">
+              {description}
+            </p>
+          </div>
+          <Link
+            href={linkUrl}
+            className="inline-flex items-center text-[15px] md:text-[16px] text-[#FF4500] hover:text-[#FF4500]/90 transition-colors group"
+          >
+            {linkText}
+            <svg
+              className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </Link>
+        </div>
+
+        {/* Image Side */}
+        <div className="flex-1 w-full">
+           <div className="relative rounded-sm overflow-hidden bg-secondary aspect-square w-full border border-border/50">
+            <Image
+              src={image}
+              alt={imageAlt}
+              width={800}
+              height={600}
+              className="w-full h-full object-fit"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 export function Benefits() {
-  const benefits = [
+  const benefits: BenefitCardProps[] = [
     {
-      tag: "CONTENT HUB",
-      title: "Unified Drive",
+      title: "All your work in one place",
       description:
-        "Save all of your ideas, files, media, and links in one place.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      ),
-      mockup: (
-        <div className="mt-6 overflow-hidden rounded-xl">
-          <Image
-            src={driveImage}
-            alt="Unified Drive"
-            className="w-full h-auto"
-            priority
-          />
-        </div>
-      ),
+        "Save all of your ideas, files, media, and links. Powerful search makes finding anything instant.",
+      image: "/images/hero.png",
+      imageAlt: "Unified Drive Interface",
+      linkText: "Learn about Drive",
+      linkUrl: "/drive",
+      layout: "right",
     },
     {
-      tag: "RESEARCH CANVAS",
-      title: "Spatial AI For Content & Research",
+      title: "Find any video, images or files",
       description:
-        "A single workspace to organize, review, and work with your content and research.",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      ),
-      mockup: (
-        <div className="mt-6 overflow-hidden rounded-xl">
-          <Image
-            src={canvasImage}
-            alt="Research Canvas"
-            className="w-full h-auto"
-          />
-        </div>
-      ),
+        "Instantly just by describing and not keyword.",
+      image: "/images/hero.png",
+      imageAlt: "Universal Search Interface",
+      linkText: "Learn about Search",
+      linkUrl: "/search",
+      layout: "left",
     },
     {
-      tag: "VOICE TO TEXT",
-      title: "An AI driven dictation",
+      title: "Spatial AI for deep work",
       description:
-        "Transforms spoken language into accurate, structured text using AI",
-      arrow: (
-        <div className="absolute top-4 right-4 w-8 h-8 bg-emerald-600 flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      ),
-      mockup: (
-        <div className="mt-6 overflow-hidden rounded-xl">
-          <Image
-            src={voiceImage}
-            alt="Voice to Text"
-            className="w-full h-auto"
-          />
-        </div>
-      ),
+        "A single workspace to organize, review, and work with your content. Visually map out your research.",
+      image: "/images/hero.png",
+      imageAlt: "Research Canvas Interface",
+      linkText: "Learn about Canvas",
+      linkUrl: "/canvas",
+      layout: "right",
     },
   ];
 
   return (
     <section>
-      <div className="p-4 sm:p-6 md:p-8 lg:p-16">
-        {/* Heading Section */}
-        <div className="text-center mb-16 sm:mb-20 px-4 sm:px-0">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-700 tracking-tight mb-4">
-            Your Unified Knowledge Space
-          </h2>
-          <p className="text-base font-mono text-gray-700/80 max-w-2xl mx-auto text-center leading-relaxed">
-            By organizing your ideas, files, and research into a single Drive and Canvas,
-            Invook helps you work faster, think clearly, and stay focused on
-            what matters most.
-          </p>
-        </div>
-
-        {/* Benefits Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:gap-8">
-          {benefits.map((benefit, index) => (
-            <div
-              key={index}
-              className="relative border bg-white/50 transition-colors duration-200 p-6 sm:p-8"
-              style={{ borderColor: "#b0b0b0" }}
-            >
-              {/* Tag */}
-              <div className="text-xs font-mono text-emerald-600 font-medium mb-2 tracking-wide">
-                [{benefit.tag}]
-              </div>
-
-              {/* Arrow */}
-              {benefit.arrow}
-
-              {/* Title */}
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">
-                {benefit.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-gray-600 text-sm leading-relaxed mb-4 font-mono">
-                {benefit.description}
-              </p>
-
-              {/* Mockup */}
-              {benefit.mockup}
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-col gap-12 md:gap-20">
+        {benefits.map((benefit, index) => (
+          <BenefitCard key={index} {...benefit} />
+        ))}
       </div>
     </section>
   );

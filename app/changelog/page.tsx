@@ -6,148 +6,112 @@ import { changelogData, ChangelogItem } from "./data";
 
 const ITEMS_PER_PAGE = 5;
 
-const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
-  <svg
-    className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-  </svg>
+const ChangeMedia = ({
+  src,
+  alt,
+  isGif,
+}: {
+  src: string;
+  alt: string;
+  isGif?: boolean;
+}) => (
+  <div className="my-8 rounded-lg border border-border/40 overflow-hidden bg-muted/20">
+    <Image
+      src={src}
+      alt={alt}
+      width={1200}
+      height={675}
+      className="w-full h-auto block"
+      unoptimized={isGif}
+    />
+  </div>
 );
 
-const ChangelogCard = ({ changelog }: { changelog: ChangelogItem }) => {
-  // Group changes by type
-  const groupedChanges = changelog.changes.reduce((acc, change) => {
-    if (!acc[change.type]) {
-      acc[change.type] = [];
-    }
-    acc[change.type].push(change);
-    return acc;
-  }, {} as Record<string, typeof changelog.changes>);
-
-  // Enforce section order
-  const SECTION_ORDER = ["feature", "improvement", "bugfix", "note"];
-
-  // State for collapsible sections
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
-    Object.keys(groupedChanges).reduce(
-      (acc, type) => ({ ...acc, [type]: false }),
-      {}
-    )
+const ChangelogEntry = ({ item }: { item: ChangelogItem }) => {
+  // Treat features and any item with media as a "Prominent" section
+  const prominentChanges = item.changes.filter(
+    (c) => c.type === "feature" || c.image || c.gif
+  );
+  // Everything else goes into the list
+  const listChanges = item.changes.filter(
+    (c) => c.type !== "feature" && !c.image && !c.gif
   );
 
-  const toggleSection = (type: string) => {
-    setExpandedSections(prev => ({ ...prev, [type]: !prev[type] }));
-  };
-
-  const typeLabels = {
-    feature: "Features",
-    improvement: "Improvements",
-    bugfix: "Bug Fixes",
-    note: "Notes",
-  };
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6 lg:gap-12">
-      {/* Left Side - Version & Date */}
-      <div className="lg:sticky lg:top-32 lg:self-start">
-        <div className="p-6 bg-white rounded-xl">
-          <div className="text-3xl font-bold text-emerald-700 mb-2">
-            v{changelog.version}
-          </div>
-          <div className="text-sm font-mono text-gray-600">
-            {changelog.date}
+    <article className="py-16 md:py-24 border-b border-border/40 last:border-0 first:pt-0 tracking-tight text-balance">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr] gap-8 md:gap-12">
+        {/* Left Column: Version & Date */}
+        <div className="md:sticky md:top-32 h-fit">
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <span className="px-3 py-1 rounded-full border border-border/60 text-sm font-mono text-foreground/80 bg-background">
+              {item.version}
+            </span>
+            <time className="text-sm font-mono">{item.date}</time>
           </div>
         </div>
-      </div>
 
-      {/* Right Side - Unified Changes Card */}
-      <div className="bg-white rounded-xl">
-        {/* Release summary */}
-        <div className="p-6 sm:p-8 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {changelog.summaryTitle}
-          </h2>
+        {/* Right Column: Content */}
+        <div>
+           {/* Header Area */}
+          <div className="mb-12">
+            <span className="text-muted-foreground/60 text-base mb-2 block">Changelog</span>
+            <h2 className="text-3xl sm:text-4xl font-normal tracking-tight text-foreground mb-6 leading-[1.1]">
+              {item.summaryTitle}
+            </h2>
+            <p className="text-[15px] md:text-base text-muted-foreground leading-relaxed max-w-3xl">
+              {item.summaryBody}
+            </p>
+          </div>
 
-          <p className="mt-3 text-gray-700 font-mono text-sm leading-relaxed max-w-2xl">
-            {changelog.summaryBody}
-          </p>
-        </div>
-        <div className="divide-y divide-gray-200">
-          {SECTION_ORDER.filter(type => groupedChanges[type]).map((type) => {
-            const changes = groupedChanges[type];
-            return (
-              <div key={type} className="p-6 sm:p-8">
-                {/* Section Header */}
-                <button
-                  onClick={() => toggleSection(type)}
-                  className="w-full flex items-center justify-between text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {typeLabels[type as keyof typeof typeLabels]} ({changes.length})
-                    </h3>
-                  </div>
-                  <ChevronIcon isOpen={expandedSections[type]} />
-                </button>
-
-                {/* Section Content */}
-                {expandedSections[type] && (
-                  <div className="mt-6 space-y-6">
-                    {changes.map((change, changeIndex) => (
-                      <div key={changeIndex} className="space-y-3">
-                        <h4 className="text-lg font-bold text-gray-900">
-                          {change.title}
-                        </h4>
-
-                        <p className="text-gray-700 font-mono text-sm leading-relaxed">
-                          {change.description}
-                        </p>
-
-                        {/* Image support */}
-                        {change.image && (
-                          <div className="mt-4">
-                            <Image
-                              src={change.image}
-                              alt={change.title}
-                              width={0}
-                              height={0}
-                              sizes="100vw"
-                              className="w-full h-auto border border-gray-300"
-                            />
-                          </div>
-                        )}
-
-                        {/* GIF support */}
-                        {change.gif && (
-                          <div className="mt-4">
-                            <Image
-                              src={change.gif}
-                              alt={change.title}
-                              width={0}
-                              height={0}
-                              sizes="100vw"
-                              className="w-full h-auto border border-gray-300"
-                            />
-                          </div>
-                        )}
-
-                        {/* Divider between changes (not after last one) */}
-                        {changeIndex < changes.length - 1 && (
-                          <div className="pt-6 border-b border-gray-300/50"></div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+          {/* Prominent Features */}
+          <div className="space-y-10">
+            {prominentChanges.map((change, idx) => (
+              <div key={`prominent-${idx}`} className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="text-base md:text-lg font-medium text-foreground tracking-tight">
+                    {change.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-[15px] md:text-base">
+                    {change.description}
+                  </p>
+                </div>
+                {change.image && (
+                  <ChangeMedia src={change.image} alt={change.title} />
+                )}
+                {change.gif && (
+                  <ChangeMedia src={change.gif} alt={change.title} isGif />
                 )}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Other Updates List */}
+          {listChanges.length > 0 && (
+            <div className="mt-16">
+              <h3 className="text-base md:text-lg font-medium text-foreground mb-6">
+                Other Improvements
+              </h3>
+              <ul className="space-y-4">
+                {listChanges.map((change, idx) => (
+                  <li
+                    key={`list-${idx}`}
+                    className="flex gap-3 text-muted-foreground text-[16px]"
+                  >
+                    <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+                    <span className="leading-relaxed">
+                      <span className="font-normal text-foreground/90 mr-2">
+                        {change.title}:
+                      </span>
+                      {change.description}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
@@ -160,78 +124,48 @@ export default function ChangelogPage() {
   const currentChangelogs = changelogData.slice(startIndex, endIndex);
 
   return (
-    <main>
-      <div className="min-h-screen bg-[#f7f7f5]">
-        <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
-          {/* Hero Section */}
-          <section className="py-28 px-4 sm:px-8 lg:px-12 text-center mt-28">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-emerald-700 tracking-tight text-pretty">
-              CHANGELOG
-            </h1>
-            <p className="text-base sm:text-lg text-gray-700 font-mono leading-relaxed mt-4 max-w-2xl mx-auto">
-              Track all updates, improvements, and new features in Invook
-            </p>
-          </section>
-
-          {/* Changelog Items */}
-          <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12">
-            <div className="space-y-12">
-              {currentChangelogs.map((changelog, index) => (
-                <ChangelogCard
-                  key={`${changelog.version}-${index}`}
-                  changelog={changelog}
-                />
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <div className="flex items-center justify-center gap-2">
-                  {/* Previous Button */}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 border border-gray-200 bg-gray-100 text-gray-700 font-mono text-sm hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    ← Previous
-                  </button>
-
-                  {/* Page Numbers */}
-                  <div className="flex gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                      (page) => (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`w-10 h-10 border font-mono text-sm transition-colors ${currentPage === page
-                            ? "bg-emerald-700 text-white border-emerald-700"
-                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-                            }`}
-                        >
-                          {page}
-                        </button>
-                      )
-                    )}
-                  </div>
-
-                  {/* Next Button */}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 border border-gray-200 bg-gray-100 text-gray-700 font-mono text-sm hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next →
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
+    <main className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 max-w-[1400px] py-12 md:py-24">
+        {/* Feed */}
+        <div className="mt-8">
+          {currentChangelogs.map((changelog, index) => (
+            <ChangelogEntry
+              key={`${changelog.version}-${index}`}
+              item={changelog}
+            />
+          ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pt-12 max-w-2xl mx-auto w-full">
+            <div className={`grid gap-4 ${currentPage > 1 && currentPage < totalPages ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+                {/* Newer Posts */}
+                {currentPage > 1 && (
+                     <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        className="group flex flex-col items-start justify-center text-left bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
+                      >
+                        <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">&larr; Previous</span>
+                        <span className="text-base text-foreground tracking-tight">Newer posts</span>
+                     </button>
+                )}
+
+                {/* Older Posts */}
+                {currentPage < totalPages && (
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      className="group flex flex-col items-end justify-center text-right bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
+                    >
+                      <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">Next &rarr;</span>
+                      <span className="text-base text-foreground tracking-tight">Older posts</span>
+                    </button>
+                )}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

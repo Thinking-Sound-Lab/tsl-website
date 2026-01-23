@@ -15,6 +15,43 @@ export interface ChangelogItem {
 }
 
 export const changelogData: ChangelogItem[] = [
+	 {
+    version: "0.0.23-beta",
+    date: "December 20, 2025",
+    summaryTitle: "Onboarding clarity and reliability improvements",
+    summaryBody:
+      "This release focuses on making setup smoother and more predictable. We improved permission guidance, onboarding feedback, and system reliability to reduce friction for new users.",
+    changes: [
+      {
+        type: "feature",
+        title: "Video Permission Guides",
+        description:
+          "Added interactive video tutorials in permissions setup showing users exactly how to grant microphone and accessibility permissions.",
+      },
+      {
+        type: "feature",
+        title: "Weekly Statistics Emails",
+        description:
+          "Automated weekly emails showing total words dictated, WPM, time saved, and week-over-week comparisons.",
+      },
+      {
+        type: "improvement",
+        title: "Setup permission flow",
+        description: "Improved permission request flow during initial setup with clearer explanations of why permissions are needed and what they enable.",
+      },
+      {
+        type: "bugfix",
+        title: "Installer reliability",
+        description: "Fixed intermittent failures during the installation process that could cause incomplete setup on some systems.",
+        gif: "/changelog/0-0-22/installer-fix.gif",
+      },
+      {
+        type: "improvement",
+        title: "Onboarding feedback",
+        description: "Added progress indicators and success confirmations during onboarding to make the process more predictable.",
+      },
+    ],
+  },
   {
     version: "0.0.22-beta",
     date: "December 7, 2025",

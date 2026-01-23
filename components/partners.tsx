@@ -21,25 +21,23 @@ export function Partners() {
           </h2>
         </div>
 
-        {/* Partner Grid with stitched sides and solid top border only */}
-        <div className="border-t border-gray-300">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-              {partners.map((partner, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-center p-2 border border-gray-300 grayscale"
-                >
-                  <Image
-                    src={partner.logoPath}
-                    alt={partner.name}
-                    width={80}
-                    height={24}
-                    className="object-contain w-full h-auto max-h-[24px] opacity-50"
-                  />
-                </div>
-              ))}
-            </div>
+        {/* Partner Grid */}
+        <div className="max-w-6xl mx-auto mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {partners.map((partner, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center h-24 p-4 rounded-lg bg-secondary text-card-foreground shadow-sm"
+              >
+                <Image
+                  src={partner.logoPath}
+                  alt={partner.name}
+                  width={100}
+                  height={30}
+                  className="object-contain w-full h-full max-h-[30px] opacity-70 dark:invert"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
