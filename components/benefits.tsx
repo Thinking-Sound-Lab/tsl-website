@@ -70,7 +70,7 @@ function BenefitCard({
               alt={imageAlt}
               width={800}
               height={600}
-              className="w-full h-full object-fit"
+              className="w-full h-full object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
@@ -83,33 +83,33 @@ function BenefitCard({
 export function Benefits() {
   const benefits: BenefitCardProps[] = [
     {
-      title: "All your work in one place",
+      title: "A better drive for your creative mind",
       description:
-        "Save all of your ideas, files, media, and links. Powerful search makes finding anything instant.",
-      image: "/images/hero.png",
-      imageAlt: "Unified Drive Interface",
+        "Upload PDFs, YouTube links, or social posts. Everything is automatically transcribed, auto-tagged, and organized by AI. No more folder shuffling.",
+      image: "/images/benefits.png",
+      imageAlt: "Intelligent Drive Interface",
       linkText: "Learn about Drive",
-      linkUrl: "/drive",
+      linkUrl: "/waitlist",
       layout: "right",
     },
     {
-      title: "Find any video, images or files",
+      title: "Find anything, exactly as you remember it",
       description:
-        "Instantly just by describing and not keyword.",
-      image: "/images/hero.png",
+        "Search for \"pink sweater\" or \"cake cutting\" to find the exact video frame, audio clip, or document snippet. Invook never forgets.",
+      image: "/images/benefits.png",
       imageAlt: "Universal Search Interface",
       linkText: "Learn about Search",
-      linkUrl: "/search",
+      linkUrl: "/waitlist",
       layout: "left",
     },
     {
-      title: "Spatial AI for deep work",
+      title: "One intelligent canvas for deep work",
       description:
-        "A single workspace to organize, review, and work with your content. Visually map out your research.",
-      image: "/images/hero.png",
-      imageAlt: "Research Canvas Interface",
+        "Break free from tabs. Visually map out topics, connect assets from your drive, and run multiple AI chats in a single view for true creative flow.",
+      image: "/images/benefits.png",
+      imageAlt: "Spatial Canvas Interface",
       linkText: "Learn about Canvas",
-      linkUrl: "/canvas",
+      linkUrl: "/waitlist",
       layout: "right",
     },
   ];

@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/conditional-layout";
 import { Analytics } from "@vercel/analytics/react";
-import { WaitlistRoot } from "@/components/waitlist-root";
+
 import { ThemeProvider } from "./theme-provider";
 
 const inter = Inter({
@@ -12,9 +12,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Invook",
+  title: {
+    template: "%s . Invook",
+    default: "Invook",
+  },
   description:
-    "Boost productivity with Invook — AI dictation, smart editing, translation, and instant screen analysis. Work smarter across any app.",
+    "Invook is an AI Drive and Canvas for Creative people and teams.",
 };
 
 export default function RootLayout({
@@ -33,9 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WaitlistRoot>
-            <ConditionalLayout>{children}</ConditionalLayout>
-          </WaitlistRoot>
+          <ConditionalLayout>{children}</ConditionalLayout>
           <Analytics />
         </ThemeProvider>
       </body>

@@ -1,8 +1,11 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { videoUseCases, getYouTubeThumbnail } from "./data";
+
+export const metadata: Metadata = {
+  title: "Use Cases",
+};
 
 export default function UseCasesPage() {
   return (

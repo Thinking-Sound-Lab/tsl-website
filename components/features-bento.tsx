@@ -1,20 +1,24 @@
 "use client";
 
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 interface FeatureCardProps {
   title: string;
   description: string;
   className?: string;
+  graphic?: React.ReactNode;
 }
 
-function FeatureCard({ title, description, className }: FeatureCardProps) {
+function FeatureCard({ title, description, className, graphic }: FeatureCardProps) {
   return (
-    <div className={cn("bg-secondary rounded-sm p-4 flex flex-col justify-between h-full min-h-[200px] border border-border/50", className)}>
-      <div className="mb-4">
+    <div className={cn("bg-secondary rounded-sm p-4 flex flex-col justify-between h-full min-h-[200px] border border-border/50 overflow-hidden relative", className)}>
+      <div className="mb-4 relative z-10 w-full max-w-[80%]">
         <h3 className="text-[15px] lg:text-[16px] text-foreground mb-1">{title}</h3>
         <p className="text-[15px] lg:text-[16px] text-muted-foreground tracking-tight text-balance">{description}</p>
       </div>
+      {graphic}
     </div>
   );
 }

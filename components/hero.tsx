@@ -1,16 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useWaitlist } from "@/components/waitlist-context";
+import Link from "next/link";
 
 export function Hero() {
-  const { openWaitlist } = useWaitlist();
-
-  const handleJoinWaitlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    openWaitlist();
-  };
-
   const getDownloadButtonText = () => {
     return "Join Waitlist";
   };
@@ -23,19 +16,19 @@ export function Hero() {
             Store, connect, and explore your ideas and research in one focused, distraction-free space.
           </h1>
 
-          <button
-            onClick={handleJoinWaitlist}
+          <Link
+            href="/waitlist"
             className="inline-flex items-center justify-center h-10 px-6 text-sm font-medium rounded-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors shadow-sm"
           >
             {getDownloadButtonText()}
-          </button>
+          </Link>
         </div>
         
         <div className="mt-12 md:mt-16 w-full rounded-lg overflow-hidden border bg-muted shadow-xl">
           <Image
             src="/images/hero.png"
             alt="App Screenshot"
-            width={1216}
+            width={1024}
             height={600}
             className="w-full h-auto object-cover"
             priority
