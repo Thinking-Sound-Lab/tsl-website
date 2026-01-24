@@ -1,8 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-
 const testimonials = [
   {
     quote:
@@ -62,7 +59,7 @@ interface TestimonialCardProps {
   image?: string;
 }
 
-function TestimonialCard({ quote, name, title, company, image }: TestimonialCardProps) {
+function TestimonialCard({ quote, name, title, company }: TestimonialCardProps) {
   return (
     <div className="bg-secondary rounded-xl p-8 flex flex-col justify-between h-full min-h-[280px]">
         <p className="text-secondary-foreground/90 text-[14px] md:text-[16px] leading-relaxed font-normal">

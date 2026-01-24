@@ -27,7 +27,7 @@ export function Navigation() {
                 width={0}
                 height={0}
                 style={{ height: '1.5rem', width: 'auto' }}
-                className="h-6 w-auto dark:invert" 
+                className="h-6 w-auto brightness-0 dark:invert" 
                 priority
               />
             </div>

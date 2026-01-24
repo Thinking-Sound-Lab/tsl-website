@@ -3,7 +3,7 @@ import { Hero } from "@/components/hero";
 // import { SpeedComparison } from "@/components/speed-comparison";
 import { Benefits } from "@/components/benefits";
 // import { ContextSearch } from "@/components/context-search";
-import { SecuritySection } from "@/components/security-section";
+// import { SecuritySection } from "@/components/security-section";
 import { FeaturesBento } from "@/components/features-bento";
 import { WhoIsInvookFor } from "@/components/who-is-invook-for";
 

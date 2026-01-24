@@ -1,5 +1,5 @@
 // import { LottieAnimation } from "./benefits";
-import askaiAnimation from "@/public/assets/askai.json";
+// import askaiAnimation from "@/public/assets/askai.json";
 
 export function ContextSearch() {
   return (

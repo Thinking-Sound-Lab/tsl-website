@@ -1,22 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import { useWaitlist } from "@/components/waitlist-context";
 
 export function Hero() {
-  const [os, setOs] = useState<"mac" | "windows" | "other">("other");
   const { openWaitlist } = useWaitlist();
-
-  useEffect(() => {
-    // Detect OS
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    if (userAgent.indexOf("mac") !== -1) {
-      setOs("mac");
-    } else if (userAgent.indexOf("win") !== -1) {
-      setOs("windows");
-    }
-  }, []);
 
   const handleJoinWaitlist = (e: React.MouseEvent) => {
     e.preventDefault();
