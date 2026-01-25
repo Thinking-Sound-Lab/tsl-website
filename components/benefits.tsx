@@ -9,6 +9,7 @@ interface BenefitCardProps {
   description: string;
   image: string;
   imageAlt: string;
+  video?: string;
   linkText: string;
   linkUrl: string;
   layout: "left" | "right";
@@ -19,6 +20,7 @@ function BenefitCard({
   description,
   image,
   imageAlt,
+  video: videoSrc,
   linkText,
   linkUrl,
   layout,
@@ -62,17 +64,50 @@ function BenefitCard({
           </Link>
         </div>
 
-        {/* Image Side */}
+        {/* Image/Video Side */}
         <div className="flex-1 w-full">
            <div className="relative rounded-sm overflow-hidden bg-secondary aspect-square w-full border border-border/50">
-            <Image
-              src={image}
-              alt={imageAlt}
-              width={800}
-              height={600}
-              className="w-full h-full object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
+            {videoSrc ? (
+              <div className="relative w-full h-full flex items-center justify-center p-4 md:p-6">
+                 <Image
+                  src="https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/benefits-bg.png"
+                  alt="Background"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="relative z-10 w-full aspect-video rounded-lg overflow-hidden">
+                  {videoSrc.endsWith(".mp4") || videoSrc.endsWith(".mov") ? (
+                    <video
+                      src={videoSrc}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={videoSrc}
+                      alt={imageAlt}
+                      fill
+                      className="w-full h-full object-contain"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-black/10 pointer-events-none z-20" />
+              </div>
+            ) : (
+              <Image
+                src={image}
+                alt={imageAlt}
+                width={800}
+                height={600}
+                className="w-full h-full object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            )}
           </div>
         </div>
       </div>
@@ -86,7 +121,8 @@ export function Benefits() {
       title: "A better drive for your creative mind",
       description:
         "Upload PDFs, YouTube links, or social posts. Everything is automatically transcribed, auto-tagged, and organized by AI. No more folder shuffling.",
-      image: "/images/benefits.png",
+      image: "/images/Drive.png",
+      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/drive2.png",
       imageAlt: "Intelligent Drive Interface",
       linkText: "Learn about Drive",
       linkUrl: "/waitlist",
@@ -96,7 +132,8 @@ export function Benefits() {
       title: "Find anything, exactly as you remember it",
       description:
         "Search for \"pink sweater\" or \"cake cutting\" to find the exact video frame, audio clip, or document snippet. Invook never forgets.",
-      image: "/images/benefits.png",
+      image: "/images/Search.png",
+      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/Search2.mp4",
       imageAlt: "Universal Search Interface",
       linkText: "Learn about Search",
       linkUrl: "/waitlist",
@@ -106,7 +143,8 @@ export function Benefits() {
       title: "One intelligent canvas for deep work",
       description:
         "Break free from tabs. Visually map out topics, connect assets from your drive, and run multiple AI chats in a single view for true creative flow.",
-      image: "/images/benefits.png",
+      image: "/images/Canvas.png",
+      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/canvas2.png",
       imageAlt: "Spatial Canvas Interface",
       linkText: "Learn about Canvas",
       linkUrl: "/waitlist",

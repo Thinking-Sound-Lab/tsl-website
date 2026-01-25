@@ -6,6 +6,7 @@ import { Benefits } from "@/components/benefits";
 // import { SecuritySection } from "@/components/security-section";
 import { FeaturesBento } from "@/components/features-bento";
 import { WhoIsInvookFor } from "@/components/who-is-invook-for";
+import { CTASection } from "@/components/cta-section";
 
 export function MainContent() {
   return (
@@ -20,6 +21,7 @@ export function MainContent() {
           {/* <SecuritySection /> */}
           <FeaturesBento />
           <WhoIsInvookFor />
+          <CTASection />
         </div>
       </div>
   );

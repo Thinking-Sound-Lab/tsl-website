@@ -39,7 +39,7 @@ const ChangelogEntry = ({ item }: { item: ChangelogItem }) => {
 
   return (
     <article className="py-16 md:py-24 border-b border-border/40 last:border-0 first:pt-0 tracking-tight text-balance">
-      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr] gap-8 md:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr] gap-4">
         {/* Left Column: Version & Date */}
         <div className="md:sticky md:top-32 h-fit">
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -51,7 +51,7 @@ const ChangelogEntry = ({ item }: { item: ChangelogItem }) => {
         </div>
 
         {/* Right Column: Content */}
-        <div>
+        <div className="w-full max-w-[700px] mx-auto xl:ml-[120px]">
            {/* Header Area */}
           <div className="mb-12">
             <span className="text-muted-foreground/60 text-base mb-2 block">Changelog</span>
@@ -138,31 +138,49 @@ export default function ChangelogFeed() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="pt-12 max-w-2xl mx-auto w-full">
-            <div className={`grid gap-4 ${currentPage > 1 && currentPage < totalPages ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr] gap-4 pt-12">
+            <div className="md:col-start-2 w-full max-w-[700px] mx-auto xl:ml-[120px]">
+              <div
+                className={`grid gap-4 ${
+                  currentPage > 1 && currentPage < totalPages
+                    ? "grid-cols-1 sm:grid-cols-2"
+                    : "grid-cols-1"
+                }`}
+              >
                 {/* Newer Posts */}
                 {currentPage > 1 && (
-                     <button
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                        className="group flex flex-col items-start justify-center text-left bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
-                      >
-                        <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">&larr; Previous</span>
-                        <span className="text-base text-foreground tracking-tight">Newer posts</span>
-                     </button>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    className="group flex flex-col items-start justify-center text-left bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
+                  >
+                    <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">
+                      &larr; Previous
+                    </span>
+                    <span className="text-base text-foreground tracking-tight">
+                      Newer posts
+                    </span>
+                  </button>
                 )}
 
                 {/* Older Posts */}
                 {currentPage < totalPages && (
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      className="group flex flex-col items-end justify-center text-right bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
-                    >
-                      <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">Next &rarr;</span>
-                      <span className="text-base text-foreground tracking-tight">Older posts</span>
-                    </button>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    className="group flex flex-col items-end justify-center text-right bg-secondary hover:bg-secondary/80 border border-border/50 rounded-sm px-4 py-4 transition-all w-full"
+                  >
+                    <span className="text-xs text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors">
+                      Next &rarr;
+                    </span>
+                    <span className="text-base text-foreground tracking-tight">
+                      Older posts
+                    </span>
+                  </button>
                 )}
+              </div>
             </div>
           </div>
         )}

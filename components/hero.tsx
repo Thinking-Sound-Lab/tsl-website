@@ -24,16 +24,27 @@ export function Hero() {
           </Link>
         </div>
         
-        <div className="mt-12 md:mt-16 w-full rounded-lg overflow-hidden border bg-muted shadow-xl">
-          <Image
-            src="/images/hero.png"
-            alt="App Screenshot"
-            width={1024}
-            height={600}
-            className="w-full h-auto object-cover"
-            priority
-            quality={100}
-          />
+        <div className="mt-12 md:mt-16 w-full rounded-lg overflow-hidden border bg-muted shadow-xl relative aspect-[16/10] md:aspect-video">
+           <div className="relative w-full h-full flex items-center justify-center p-4 md:p-8">
+            <Image
+              src="https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/benefits-bg.png"
+              alt="Background"
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="relative z-10 w-[85%] aspect-video rounded-lg overflow-hidden">
+              <video
+                src="https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/hero23.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute inset-0 bg-black/10 pointer-events-none z-20" />
+          </div>
         </div>
       </div>
     </section>

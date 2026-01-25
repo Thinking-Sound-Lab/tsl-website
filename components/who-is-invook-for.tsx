@@ -15,9 +15,7 @@ function PersonaCard({ title, description }: PersonaCardProps) {
           {description}
         </p>
       </div>
-	  <div className="w-full aspect-video bg-muted/50 rounded-sm flex items-center justify-center border border-border/20">
-         <span className="text-muted-foreground text-sm">Image Placeholder</span>
-      </div>
+
     </div>
   );
 }
