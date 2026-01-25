@@ -1,4 +1,4 @@
-export function getWaitlistEmailHtml(email: string) {
+export function getWaitlistEmailHtml() {
   return `
 <!DOCTYPE html>
 <html lang="en">

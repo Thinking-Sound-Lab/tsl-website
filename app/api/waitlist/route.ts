@@ -43,7 +43,7 @@ export async function POST(req: Request) {
           from: `Invook Team <${process.env.RESEND_FROM_EMAIL}>`,
           to: email,
           subject: "The operating system for your mind",
-          html: getWaitlistEmailHtml(email),
+          html: getWaitlistEmailHtml(),
         });
 
         if (error) {

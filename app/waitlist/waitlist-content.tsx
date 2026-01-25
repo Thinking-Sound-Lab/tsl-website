@@ -37,8 +37,12 @@ export default function WaitlistContent() {
       }
 
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Failed to join. Please try again later.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to join. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
@@ -52,7 +56,7 @@ export default function WaitlistContent() {
             Thank you for Joining
           </h1>
           <p className="text-[15px] md:text-base text-muted-foreground tracking-tight text-balance">
-            We've reserved your spot. Watch your inbox for exclusive early access to the future of creative work.
+            We&apos;ve reserved your spot. Watch your inbox for exclusive early access to the future of creative work.
           </p>
         </div>
       </div>
