@@ -4,34 +4,51 @@ This design system is inspired by Greptile's clean, modern aesthetic with a focu
 
 ## Color Palette
 
-### Primary Colors
+### Light Theme Colors
 ```css
---primary: 142 53% 52%;           /* Greptile Green #4FB862 */
---primary-foreground: 0 0% 98%;   /* White text on primary */
+  --background: #f7f7f4;
+  --foreground: #26251e;
+  --card: #f7f7f4;
+  --card-foreground: #26251e;
+  --popover: #f7f7f4;
+  --popover-foreground: #26251e;
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: #f7f7f4;
+  --secondary: #f2f1ed;
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #f7f7f4;
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: #26251e;
+  --radius: 0.625rem;
 ```
 
-### Background Colors
+### Dark Theme Colors
 ```css
---background: 0 0% 100%;          /* Light theme background */
---foreground: 222 84% 5%;         /* Dark text */
---muted: 210 40% 96%;             /* Light gray background */
---muted-foreground: 215 16% 47%;  /* Muted text */
-```
-
-### Dark Theme
-```css
---background: 222 84% 5%;         /* Dark background */
---foreground: 210 40% 98%;        /* Light text */
---muted: 217 33% 17%;             /* Dark gray background */
---muted-foreground: 215 20% 65%;  /* Muted light text */
-```
-
-### Accent Colors
-```css
---accent: 210 40% 96%;            /* Subtle accent */
---accent-foreground: 222 84% 5%; /* Text on accent */
---border: 214 32% 91%;            /* Border color */
---ring: 142 53% 52%;              /* Focus ring */
+  --background: #14120b;
+  --foreground: #edeced;
+  --card: oklch(0.14 0 0);
+  --card-foreground: #edeced;
+  --popover: oklch(0.14 0 0);
+  --popover-foreground: #edeced;
+  --primary: #edeced;
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: #1b1913;
+  --secondary-foreground: #edeced;
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: #edeced;
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: #edeced;
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
 ```
 
 ## Typography

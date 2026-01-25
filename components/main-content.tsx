@@ -1,43 +1,28 @@
 import { Hero } from "@/components/hero";
-import { Partners } from "@/components/partners";
+
 // import { SpeedComparison } from "@/components/speed-comparison";
 import { Benefits } from "@/components/benefits";
 // import { ContextSearch } from "@/components/context-search";
-import { AnimatedBoxes } from "@/components/animated-boxes";
-import { SecuritySection } from "@/components/security-section";
-import { TestimonialsSection } from "@/components/testimonials-section";
-import { FAQSection } from "@/components/faq-section";
+// import { SecuritySection } from "@/components/security-section";
+import { FeaturesBento } from "@/components/features-bento";
+import { WhoIsInvookFor } from "@/components/who-is-invook-for";
+import { CTASection } from "@/components/cta-section";
 
 export function MainContent() {
   return (
-    <div className="textured-beige-bg">
-      <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
-        {/* Single stitched border container for all content */}
-        <div className="stitched-border">
+      <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+        {/* Content without stitched border */}
+        <div className="flex flex-col gap-6 md:gap-12 lg:gap-20">
           <Hero />
-          {/* Navigation-style divider */}
-          <div className="w-full border-t border-gray-300"></div>
-          <Partners />
-          {/* Navigation-style divider */}
-          <div className="w-full border-t border-gray-300"></div>
+
           {/* <SpeedComparison /> */}
-          {/* Navigation-style divider */}
-          <div className="w-full border-t border-gray-300"></div>
           <Benefits />
-          {/* Navigation-style divider */}
-          <div className="w-full border-t border-gray-300"></div>
-          <div className="">
-            <AnimatedBoxes />
-          </div>
           {/* <ContextSearch /> */}
-          <SecuritySection />
-          <div className="">
-            <AnimatedBoxes />
-          </div>
-          <TestimonialsSection />
-          <FAQSection />
+          {/* <SecuritySection /> */}
+          <FeaturesBento />
+          <WhoIsInvookFor />
+          <CTASection />
         </div>
       </div>
-    </div>
   );
 }

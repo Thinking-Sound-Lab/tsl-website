@@ -1,17 +1,29 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { videoUseCases, getYouTubeThumbnail } from "../data";
 
-export default function VideoDetailPage() {
-  const params = useParams();
-  const videoId = params.id as string;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const video = videoUseCases.find((v) => v.id === id);
+  return {
+    title: video ? video.title : "Use Case",
+  };
+}
 
-  const video = videoUseCases.find((v) => v.id === videoId);
+export default async function VideoDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const video = videoUseCases.find((v) => v.id === id);
   const relatedVideos = videoUseCases
-    .filter((v) => v.id !== videoId)
+    .filter((v) => v.id !== id)
     .slice(0, 3);
 
   if (!video) {

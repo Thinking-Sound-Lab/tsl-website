@@ -16,6 +16,123 @@ export interface ChangelogItem {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: "0.0.27-beta",
+    date: "January 18, 2026",
+    summaryTitle: "Reliability improvements",
+    summaryBody:
+      "This release addresses stability issues with the sign-out process, ensuring smoother session management.",
+    changes: [
+      {
+        type: "bugfix",
+        title: "Sign out process",
+        description:
+          "Fixed issues where the sign-out process would not clear the session correctly.",
+      },
+    ],
+  },
+  {
+    version: "0.0.26-beta",
+    date: "January 11, 2026",
+    summaryTitle: "UI/UX enhancements and Canvas fixes",
+    summaryBody:
+      "We've refreshed the UI with Hugeicons, improved the upload experience, and resolved critical issues in the Canvas view.",
+    changes: [
+      {
+        type: "improvement",
+        title: "Hugeicons Migration",
+        description:
+          "Migrated the entire icon set to Hugeicons for a cleaner, more consistent visual experience.",
+      },
+      {
+        type: "bugfix",
+        title: "Link Extraction",
+        description:
+          "Resolved issues where links were not being correctly extracted from certain documents.",
+      },
+      {
+        type: "improvement",
+        title: "Upload UI",
+        description:
+          "Improved the upload interface to provide better feedback and a smoother file handling experience.",
+      },
+      {
+        type: "bugfix",
+        title: "Canvas Edges",
+        description:
+          "Fixed an issue where connecting edges between nodes on the Canvas were not visible.",
+      },
+      {
+        type: "bugfix",
+        title: "Canvas Node Connections",
+        description:
+          "Resolved problems that prevented nodes from properly connecting in the Canvas view.",
+      },
+    ],
+  },
+  {
+    version: "0.0.25-beta",
+    date: "January 4, 2026",
+    summaryTitle: "Enhanced Document Processing",
+    summaryBody:
+      "This update focuses on our data ingestion pipeline, improving document extraction reliability and adding support for more file types.",
+    changes: [
+      {
+        type: "bugfix",
+        title: "Document Extraction",
+        description:
+          "Fixed bugs related to text extraction from complex document formats.",
+      },
+      {
+        type: "feature",
+        title: "Expanded Document Support",
+        description:
+          "Added support for processing a wider range of document formats.",
+      },
+    ],
+  },
+  {
+    version: "0.0.24-beta",
+    date: "December 27, 2025",
+    summaryTitle: "Security Enhancements",
+    summaryBody:
+      "We've strengthened our security posture on Windows with improved code signing compliance.",
+    changes: [
+      {
+        type: "feature",
+        title: "Windows Code Signing",
+        description:
+          "Implemented Azure Key Vault code signing to ensure full compliance with Windows SmartScreen.",
+      },
+    ],
+  },
+  {
+    version: "0.0.23-beta",
+    date: "December 20, 2025",
+    summaryTitle: "Conversation History & Stability",
+    summaryBody:
+      "This release adds access to conversation history and improves the reliability of authentication and onboarding.",
+    changes: [
+      {
+        type: "feature",
+        title: "Ask Conversation History",
+        description:
+          "You can now view and search through your past 'Ask' conversation history.",
+      },
+      {
+        type: "bugfix",
+        title: "Token Refresh",
+        description:
+          "Fixed an issue where authentication tokens would sometimes fail to refresh, causing session disconnects.",
+      },
+      {
+        type: "improvement",
+        title: "Onboarding Guidelines",
+        description:
+          "Refined the onboarding flow with comprehensive guidelines to help new users get started.",
+      },
+    ],
+  },
+  {
     version: "0.0.22-beta",
     date: "December 7, 2025",
     summaryTitle: "Onboarding clarity and reliability improvements",
@@ -43,7 +160,6 @@ export const changelogData: ChangelogItem[] = [
         type: "bugfix",
         title: "Installer reliability",
         description: "Fixed intermittent failures during the installation process that could cause incomplete setup on some systems.",
-        gif: "/changelog/0-0-22/installer-fix.gif",
       },
       {
         type: "improvement",
@@ -83,7 +199,6 @@ export const changelogData: ChangelogItem[] = [
         type: "improvement",
         title: "Indexing speed",
         description: "Reduced indexing time by up to 40% through algorithmic improvements and more efficient file scanning.",
-        gif: "/changelog/0-0-21/indexing-speed.gif",
       },
       {
         type: "bugfix",

@@ -1,45 +1,94 @@
 # Thinking Sound Lab - LLM Context
 
-## Company
-Thinking Sound Lab
-Website: https://thinkingsoundlab.com
-Contact: support@thinkingsoundlab.com
+## Project Overview
+**Thinking Sound Lab Website** is a modern, high-performance marketing website for **Invook**, an AI Drive and Canvas for Creative people and teams. 
+- **Website**: https://thinkingsoundlab.com
+- **Product**: Invook (AI Drive and Canvas)
+- **Primary Goal**: Convert visitors to waitlist/users for Invook.
 
-## Product
-Invook - AI-powered dictation and search tool
-- 5x faster than typing
-- 2x more accurate than keyboard
-- Real-time voice-to-text transcription
-- AI-powered search functionality
-- Works with all applications
-- Supports 100+ languages
+## Tech Stack
+### Core Framework
+- **Next.js 15.5.7**: App Router directory structure for routing and layouts.
+- **React 19**: Using latest React features (Server Components, Actions).
+- **TypeScript**: Fully typed codebase.
 
-## Platform Support
-- macOS
-- Windows
+### Styling & UI
+- **Tailwind CSS v4**: Utility-first CSS framework (configured via `@theme` in `global.css`).
+- **Radix UI**: Accessible UI primitives (Slot, etc.).
+- **Lucide React**: Iconography.
+- **Framer Motion**: Complex animations (`framer-motion` + `tw-animate-css`).
+- **Lottie React**: JSON-based vector animations.
+- **Dark Mode**: `next-themes` for theme switching (system/light/dark).
+- **Fonts**: 
+    - `Inter` (Sans-serif) via `next/font/google`.
+    - `JetBrains Mono` (Monospace).
 
-## Pricing
-- Free tier available
-- Pro plan: $15/month
-- 50% student discount available
-- 24-hour money-back guarantee
+### Content & Data
+- **Markdown/MDX**: Processing via `remark`, `rehype`, `gray-matter`.
+- **Email**: `resend` for transactional emails.
 
-## Features
-- On-demand AI dictation
-- AI search functionality
-- Context-aware transcription
-- Cross-platform support
-- End-to-end encryption
-- Real-time transcription
-- Screen context analysis
+### Deployment & Tools
+- **Vercel**: Hosting and Analytics (`@vercel/analytics`).
+- **Linting**: ESLint (v9).
 
-## Community
-- Discord: https://discord.gg/Aqhgty97
-- LinkedIn: https://linkedin.com/company/thinking-sound-lab-25
-- YouTube: https://www.youtube.com/channel/UCeuCsCIquUCHfRHTmmL-n4g
-- Instagram: https://www.instagram.com/invook.ai
+## Project Structure
 
-## Resources
-- Getting Started: https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087
-- Documentation: Available on website
-- Support: support@thinkingsoundlab.com
+### `app/` (App Router)
+- **`layout.tsx`**: Root layout. Implements `ThemeProvider`, `WaitlistRoot`, `ConditionalLayout`, and Vercel `Analytics`.
+- **`page.tsx`**: Home page, renders `MainContent`.
+- **`globals.css`**: Global styles, Tailwind v4 configuration, custom CSS variables for `oklch` colors.
+- **Routes**:
+    - `auth/`: Authentication related pages.
+    - `changelog/`: Product updates/history.
+    - `community/`: Community engagement pages.
+    - `contact-us/`: Contact forms.
+    - `downloads/`: Application download links.
+    - `pricing/`: Pricing tiers and features.
+    - `research/`: Research articles or blog.
+    - `use-cases/`: Specific use case landing pages.
+    - `waitlist/`: Waitlist signup flow.
+
+### `components/`
+- **`ui/`**: Reusable low-level UI components (likely shadcn/ui inspired).
+- **Core Components**:
+    - `hero.tsx`: Main landing hero section.
+    - `navigation.tsx`: Top navigation bar.
+    - `footer.tsx`: Site footer.
+    - `waitlist-modal.tsx`: Modal for user signup.
+    - `theme-switcher.tsx`: Toggle for Dark/Light mode.
+- **Feature Sections**:
+    - `benefits.tsx`, `features-bento.tsx`: Product feature highlights.
+    - `animated-boxes.tsx`, `context-search.tsx`: Interactive visual elements.
+    - `who-is-invook-for.tsx`: Target audience section.
+
+### `public/`
+- Static assets (images, icons, `llm.txt`).
+
+## Design System Highlights (from `design-system.md`)
+- **Colors**: Uses OKLCH color space for modern, vibrant, and accessible colors.
+    - `primary`: `#edeced` (Dark Mode), `oklch(0.205 0 0)` (Light Mode).
+    - `background`: `#14120b` (Dark Mode), `#f7f7f4` (Light Mode).
+    - `accent`: Used for highlights and interactive elements.
+- **Typography**:
+    - Headings: `Inter`.
+    - Body: `Inter` (Scales from `text-xs` to `text-6xl`).
+- **Spacing**: Base unit 4px (`0.25rem`). Mobile-first responsive padding.
+
+## Key Workflows & Features
+1.  **Waitlist System**: users can sign up via `waitlist/page.tsx` or modal.
+2.  **Changelog**: Data-driven changelog using TypeScript/MDX.
+3.  **Authentication**: Stubbed or active in `auth/`.
+4.  **Downloads**: Direct download links for macOS/Windows.
+
+## Development Scripts
+- `npm run dev`: Start development server (Next.js).
+- `npm run build`: Build production bundle.
+- `npm run lint`: Run ESLint.
+
+## Context for LLMs
+When generating code:
+- Use **Tailwind CSS** for all styling. Avoid custom CSS unless for animations keyframes in `globals.css`.
+- Use **Lucide React** for icons.
+- Prefer **React Server Components** (RSC) by default; add `"use client"` only when interactivity is needed (hooks, event listeners).
+- Follow the **directory structure**: keep pages in `app/` and UI logic in `components/`.
+- Respect **design tokens** in `globals.css` (e.g., `bg-background`, `text-foreground`, `border-border`).

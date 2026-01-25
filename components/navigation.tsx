@@ -1,242 +1,70 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useWaitlist } from "@/components/waitlist-context";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-  const [downloadText, setDownloadText] = useState("Join Waitlist");
-
-  const { openWaitlist } = useWaitlist();
-
-  useEffect(() => {
-    // Detect platform for now let it be setDownloadText well replace it with download anyway!
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    if (userAgent.indexOf("mac") !== -1) {
-      setDownloadText("Join Waitlist");
-    } else if (userAgent.indexOf("win") !== -1) {
-      setDownloadText("Join Waitlist");
-    } else {
-      setDownloadText("Join Waitlist");
-    }
-  }, []);
-
-  const handleJoinWaitlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    openWaitlist();
-  };
 
   return (
-    <nav
-      className="fixed top-12 left-0 w-full border-b-[0.5px] z-50"
-      style={{
-        backgroundColor: "rgb(241 239 235)",
-        borderBottomColor: "#b0b0b0",
-      }}
-    >
-      <div className="container mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href={"/"}>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-background transition-colors duration-300">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
+        <div className="flex h-[52px] items-center justify-between">
+          {/* Left: Logo */}
+          <Link href="/" className="flex-shrink-0">
             <div className="flex items-center">
               <Image
-                src="/svgs/web_logo.svg"
+                src="/svgs/web_logo.svg" 
                 alt="Invook"
                 width={0}
                 height={0}
                 style={{ height: '1.5rem', width: 'auto' }}
-                className="h-6 w-auto"
+                className="h-6 w-auto brightness-0 dark:invert" 
                 priority
               />
             </div>
           </Link>
 
-          {/* Desktop Navigation Links and Download Button */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-8">
-              <a
-                href="/pricing"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>Pricing</span>
-              </a>
-              <div
-                className="relative"
-                onMouseEnter={() => setIsResourcesOpen(true)}
-                onMouseLeave={() => setIsResourcesOpen(false)}
-              >
-                <button
-                  className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                  onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  <span>Resources</span>
-                  <svg
-                    className={`w-3 h-3 transition-transform duration-200 ${isResourcesOpen ? "rotate-180" : ""
-                      }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isResourcesOpen && (
-                  <div className="absolute top-full left-0 pt-2 w-48 animate-fadeSlideIn">
-                    <div
-                      className="border border-gray-300 shadow-lg"
-                      style={{ backgroundColor: "rgb(241 239 235)" }}
-                    >
-                      <a
-                        href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                        <span>Getting Started</span>
-                      </a>
-                      <Link
-                        href="/use-cases"
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        <span>Use Case</span>
-                      </Link>
-                      <Link
-                        href="/community"
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                          />
-                        </svg>
-                        <span>Community</span>
-                      </Link>
-                      <a
-                        href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-mono text-gray-700 hover:bg-gray-200 transition-colors"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span>Career</span>
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <Link
-                href="/research"
-                className="flex items-center space-x-2 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                <span>Research</span>
-              </Link>
-            </div>
-
-            {/* Download Button */}
-            <button
-              onClick={handleJoinWaitlist}
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-mono rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          {/* Center: Navigation Links */}
+          <div className="hidden lg:flex items-center justify-center space-x-10 absolute left-1/2 transform -translate-x-1/2">
+            <a
+              href="https://invook.notion.site/Support-28f7f199308b80658fc8f2e93ec90087" 
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {downloadText}
-            </button>
+              Support
+            </a>
+            <Link
+              href="/changelog"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+            >
+              Changelog
+            </Link>
+            <a
+              href="https://invook.notion.site/About-2917f199308b8035a4efc8204a1293f9?source=copy_link"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              About
+            </a>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center space-x-4">
+          {/* Right: Join Waitlist & Mobile Menu Button */}
+          <div className="flex items-center space-x-4">
+            <Link
+              href="/waitlist"
+              className="hidden lg:inline-flex items-center justify-center px-3 py-1 border border-primary text-sm font-normal rounded-full shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors cursor-pointer"
+            >
+              Join Waitlist
+            </Link>
+
+            {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-700 hover:text-gray-900 transition-colors"
+              className="lg:hidden text-foreground hover:text-muted-foreground transition-colors"
               aria-label="Toggle mobile menu"
             >
               <svg
@@ -267,181 +95,39 @@ export function Navigation() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div
-            className="lg:hidden border-t py-4"
-            style={{ borderColor: "#b0b0b0" }}
-          >
-            <div className="flex flex-col space-y-4">
+          <div className="lg:hidden py-4 border-t border-border bg-background">
+            <div className="flex flex-col space-y-4 px-2">
               <a
-                href="/pricing"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
+                href="https://invook.notion.site/Support-28f7f199308b80658fc8f2e93ec90087"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>Pricing</span>
+                Support
               </a>
-              <div>
-                <button
-                  className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1 w-full"
-                  onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  <span>Resources</span>
-                  <svg
-                    className={`w-3 h-3 ml-auto transition-transform duration-200 ${isResourcesOpen ? "rotate-180" : ""
-                      }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isResourcesOpen && (
-                  <div className="ml-8 mt-2 space-y-2 animate-fadeSlideIn">
-                    <Link
-                      href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
-                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                      <span>Getting Started</span>
-                    </Link>
-                    <Link
-                      href="/use-cases"
-                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span>Use Case</span>
-                    </Link>
-                    <Link
-                      href="/community"
-                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      </svg>
-                      <span>Community</span>
-                    </Link>
-                    <Link
-                      href="https://invook.notion.site/Careers-2917f199308b80aead5dfb1c2d6142dd?source=copy_link"
-                      className="flex items-center space-x-2 px-2 py-1 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
-                      onClick={() => {
-                        setIsResourcesOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span>Career</span>
-                    </Link>
-                  </div>
-                )}
-              </div>
               <Link
-                href="/research"
-                className="flex items-center space-x-3 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors px-2 py-1"
+                href="/changelog"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                <span>Research</span>
+                Changelog
+              </Link>
+              <a
+                href="https://invook.notion.site/About-2917f199308b80aead5dfb1c2d6142dd"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <Link
+                href="/waitlist"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full inline-flex items-center justify-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+              >
+                Join Waitlist
               </Link>
             </div>
           </div>
