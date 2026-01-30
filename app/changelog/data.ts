@@ -16,6 +16,45 @@ export interface ChangelogItem {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: "0.1.28-beta",
+    date: "January 30, 2026",
+    summaryTitle: "Canvas upgrades & Drive refinement",
+    summaryBody:
+      "This release delivers major upgrades to the Canvas core, a completely refined Drive interface, and a performance-optimized workspace loading engine.",
+    changes: [
+      {
+        type: "feature",
+        title: "Smart Nodes",
+        description:
+          "Overhauled AIChatNode and MultimediaNode to deliver significantly smoother interactivity and optimized performance.",
+      },
+      {
+        type: "feature",
+        title: "Workspace Loading",
+        description:
+          "Engineered a seamless workspace loading state, eliminating visual stutter during context switches.",
+      },
+      {
+        type: "improvement",
+        title: "Auth Experience",
+        description:
+          "Redesigned the authentication flow for a cleaner, more intuitive user onboarding experience.",
+      },
+      {
+        type: "improvement",
+        title: "Drive Interface",
+        description:
+          "Revamped the Drive interface with improved file management controls and instant visual feedback.",
+      },
+      {
+        type: "improvement",
+        title: "Unified Sidebar",
+        description:
+          "Unified the sidebar architecture to ensure consistent navigation across the entire application platform.",
+      },
+    ],
+  },
+  {
     version: "0.0.27-beta",
     date: "January 18, 2026",
     summaryTitle: "Reliability improvements",
