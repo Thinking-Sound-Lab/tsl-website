@@ -131,7 +131,7 @@ export function Footer() {
 							</li>
 							<li>
 								<Link
-									href="https://invook.notion.site/Privacy-Policy-28f7f199308b80608fa3f2c03408099f"
+									href="/privacy-policy"
 									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
 								>
 									Privacy Policy
