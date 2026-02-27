@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
+
+// Get protocol based on environment (dev vs prod)
+const getProtocol = (searchParams: URLSearchParams): string => {
+	const isDev = searchParams.get("env") === "dev";
+	return isDev ? "invook-dev" : "invook";
+};
 
 function CheckoutSuccessContent() {
 	const searchParams = useSearchParams();
 	const [email, setEmail] = useState<string>("");
+	const [isDev, setIsDev] = useState<boolean>(false);
 
-	const buildDeepLink = () => {
+	const buildDeepLink = useCallback(() => {
 		const params = new URLSearchParams();
 		const subscriptionId = searchParams.get("subscription_id");
 		const status = searchParams.get("status");
@@ -17,17 +24,21 @@ function CheckoutSuccessContent() {
 		if (status) params.set("status", status);
 		if (emailParam) params.set("email", emailParam);
 
+		const protocol = getProtocol(searchParams);
 		const query = params.toString();
-		return `invook://payment/success${query ? `?${query}` : ""}`;
-	};
+		return `${protocol}://payment/success${query ? `?${query}` : ""}`;
+	}, [searchParams]);
 
 	useEffect(() => {
 		const emailParam = searchParams.get("email");
 		if (emailParam) setEmail(emailParam);
 
+		// Check if dev environment
+		setIsDev(searchParams.get("env") === "dev");
+
 		// Redirect to Electron app with payment success deep link
 		window.location.href = buildDeepLink();
-	}, [searchParams]);
+	}, [searchParams, buildDeepLink]);
 
 	const handleOpenApp = () => {
 		window.location.href = buildDeepLink();
@@ -38,7 +49,9 @@ function CheckoutSuccessContent() {
 			<div className="text-center max-w-md w-full">
 				{/* Logo */}
 				<div className="mb-8">
-					<span className="text-3xl font-medium text-emerald-700">Invook</span>
+					<span className="text-3xl font-medium text-emerald-700">
+						{isDev ? "Invook Dev" : "Invook"}
+					</span>
 				</div>
 
 				{/* Success Message */}
@@ -80,7 +93,7 @@ function CheckoutSuccessContent() {
 					onClick={handleOpenApp}
 					className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
 				>
-					Open Invook App
+					Open {isDev ? "Invook Dev" : "Invook"} App
 				</button>
 			</div>
 		</div>
