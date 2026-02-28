@@ -54,12 +54,12 @@ export function Navigation() {
 
           {/* Right: Sign In & Download Buttons */}
           <div className="flex items-center space-x-3">
-            <Link
+{/* <Link
               href="/sign-in"
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
             >
               Sign In
-            </Link>
+            </Link> */}
             <Link
               href="/download"
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 border border-primary text-sm font-normal rounded-full shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors cursor-pointer"
@@ -128,13 +128,13 @@ export function Navigation() {
               >
                 About
               </a>
-              <Link
+{/* <Link
                 href="/sign-in"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"
               >
                 Sign In
-              </Link>
+              </Link> */}
               <Link
                 href="/download"
                 onClick={() => setIsMobileMenuOpen(false)}
