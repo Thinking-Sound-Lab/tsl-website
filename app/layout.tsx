@@ -16,8 +16,7 @@ export const metadata: Metadata = {
 		template: "%s . Invook",
 		default: "Invook",
 	},
-	description:
-		"Invook is an AI Drive and Canvas for Creative people and teams.",
+	description: "An infinite canvas for your creative mind",
 	verification: {
 		google: "vJ-6dPaGIkwacm6PDDYNLnbZAJVqClg6jDOa57rA424",
 	},

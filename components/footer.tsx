@@ -56,8 +56,10 @@ export function Footer() {
 							</li>
 							<li>
 								<Link
-									href="https://invook.notion.site/Public-Invook-2917f199308b80da8923e91ff857e08d?source=copy_link"
+									href="https://docs.thinkingsoundlab.com"
 									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
+									target="_blank"
+									rel="noopener noreferrer"
 								>
 									Docs
 								</Link>

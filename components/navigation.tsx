@@ -29,12 +29,12 @@ export function Navigation() {
           {/* Center: Navigation Links */}
           <div className="hidden lg:flex items-center justify-center space-x-10 absolute left-1/2 transform -translate-x-1/2">
             <a
-              href="https://invook.notion.site/Support-28f7f199308b80658fc8f2e93ec90087" 
+              href="https://docs.thinkingsoundlab.com"
               className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Support
+              Docs
             </a>
             <Link
               href="/changelog"
@@ -52,13 +52,19 @@ export function Navigation() {
             </a>
           </div>
 
-          {/* Right: Join Waitlist & Mobile Menu Button */}
-          <div className="flex items-center space-x-4">
+          {/* Right: Sign In & Download Buttons */}
+          <div className="flex items-center space-x-3">
             <Link
-              href="/waitlist"
+              href="/sign-in"
+              className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/download"
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 border border-primary text-sm font-normal rounded-full shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors cursor-pointer"
             >
-              Join Waitlist
+              Download
             </Link>
 
             {/* Mobile menu button */}
@@ -98,13 +104,13 @@ export function Navigation() {
           <div className="lg:hidden py-4 border-t border-border bg-background">
             <div className="flex flex-col space-y-4 px-2">
               <a
-                href="https://invook.notion.site/Support-28f7f199308b80658fc8f2e93ec90087"
+                href="https://docs.thinkingsoundlab.com"
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Support
+                Docs
               </a>
               <Link
                 href="/changelog"
@@ -123,11 +129,18 @@ export function Navigation() {
                 About
               </a>
               <Link
-                href="/waitlist"
+                href="/sign-in"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/download"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full inline-flex items-center justify-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
               >
-                Join Waitlist
+                Download
               </Link>
             </div>
           </div>

@@ -12,10 +12,10 @@ export function CTASection() {
         
         <div className="flex justify-center">
           <Link
-            href="/waitlist"
+            href="/download"
             className="inline-flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-sm text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
           >
-            Join Waitlist
+            Download
             <svg
               className="ml-2 w-4 h-4"
               fill="none"

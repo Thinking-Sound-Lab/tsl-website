@@ -1,164 +1,171 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-interface BenefitCardProps {
-  title: string;
-  description: string;
-  image: string;
-  imageAlt: string;
-  video?: string;
-  linkText: string;
-  linkUrl: string;
-  layout: "left" | "right";
+interface Model {
+	name: string;
+	description: string;
 }
 
-function BenefitCard({
-  title,
-  description,
-  image,
-  imageAlt,
-  video: videoSrc,
-  linkText,
-  linkUrl,
-  layout,
-}: BenefitCardProps) {
-  return (
-    <div className="bg-secondary w-full py-4 md:py-8 rounded-sm border border-border/50">
-      <div
-        className={cn(
-          "container mx-auto max-w-[1400px] flex flex-col gap-8 lg:gap-12 items-start lg:items-center px-4 md:px-8",
-          layout === "left" ? "lg:flex-row-reverse" : "lg:flex-row"
-        )}
-      >
-        {/* Content Side */}
-        <div className="flex-1 flex flex-col items-start gap-2 lg:gap-4 max-w-xl">
-          <div className="space-y-2 lg:space-y-2">
-            <h3 className="text-[15px] md:text-[18px] lg:text-[20px] text-foreground tracking-tight leading-[1.1]">
-              {title}
-            </h3>
-            <p className="text-[15px] md:text-[18px] lg:text-[20px] font-normal text-muted-foreground tracking-tight leading-[1.4]">
-              {description}
-            </p>
-          </div>
-          <Link
-            href={linkUrl}
-            className="inline-flex items-center text-[15px] md:text-[16px] text-[#FF4500] hover:text-[#FF4500]/90 transition-colors group"
-          >
-            {linkText}
-            <svg
-              className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </Link>
-        </div>
+interface Provider {
+	name: string;
+	displayName?: string;
+	models: Model[];
+	colSpan?: number;
+	rowSpan?: number;
+}
 
-        {/* Image/Video Side */}
-        <div className="flex-1 w-full">
-           <div className="relative rounded-sm overflow-hidden bg-secondary aspect-square w-full border border-border/50">
-            {videoSrc ? (
-              <div className="relative w-full h-full flex items-center justify-center p-4 md:p-6">
-                 <Image
-                  src="https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/benefits-bg.png"
-                  alt="Background"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="relative z-10 w-full aspect-video rounded-lg overflow-hidden">
-                  {videoSrc.endsWith(".mp4") || videoSrc.endsWith(".mov") ? (
-                    <video
-                      src={videoSrc}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Image
-                      src={videoSrc}
-                      alt={imageAlt}
-                      fill
-                      className="w-full h-full object-contain"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  )}
-                </div>
-                <div className="absolute inset-0 bg-black/10 pointer-events-none z-20" />
-              </div>
-            ) : (
-              <Image
-                src={image}
-                alt={imageAlt}
-                width={800}
-                height={600}
-                className="w-full h-full object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const providers: Provider[] = [
+	{
+		name: "Google",
+		colSpan: 2,
+		models: [
+			{ name: "Gemini 2.5 Flash Image", description: "State-of-the-art image generation" },
+			{ name: "Imagen 3", description: "Photorealistic image generation" },
+			{ name: "Imagen 4", description: "High-fidelity image synthesis" },
+			{ name: "Gemini 2.5 Pro", description: "Advanced multimodal reasoning" },
+			{ name: "Veo2", description: "Realistic short video clips" },
+			{ name: "Veo3", description: "Cinematic long-form video" },
+		],
+	},
+	{
+		name: "runway",
+		rowSpan: 2,
+		models: [
+			{ name: "Aleph", description: "Creative media foundation model" },
+			{ name: "Gen-4 Turbo", description: "Real-time video generation" },
+			{ name: "References", description: "Style/subject consistency from refs" },
+			{ name: "Act-Two", description: "Narrative video storytelling" },
+			{ name: "Gen-3 Alpha", description: "Cinematic video realism" },
+		],
+	},
+	{
+		name: "Wan",
+		models: [{ name: "Wan2.2", description: "Culturally tuned image model" }],
+	},
+	{
+		name: "OpenAI",
+		models: [
+			{ name: "GPT-5", description: "State-of-the-art multimodal AI" },
+			{ name: "GPT-4o Mini", description: "Small, fast multimodal" },
+			{ name: "GPT Image", description: "Detailed image editing" },
+		],
+	},
+	{
+		name: "Black Forest Labs",
+		colSpan: 2,
+		models: [
+			{ name: "FLUX 1.1 Pro", description: "Balanced photo/creative images" },
+			{ name: "FLUX Dev", description: "Developer-focused generator" },
+			{ name: "FLUX Depth", description: "Depth-map guided images" },
+			{ name: "FLUX Kontext Max", description: "Multi-reference guided images" },
+			{ name: "FLUX Redux", description: "Image refinement and polish" },
+			{ name: "FLUX Canny", description: "Edge-map controlled images" },
+		],
+	},
+	{
+		name: "stability.ai",
+		models: [
+			{ name: "Stable Diffusion 3.5", description: "Open, versatile image synthesis" },
+		],
+	},
+	{
+		name: "Hailuo AI",
+		models: [
+			{ name: "Minimax Hailuo", description: "General-purpose image generator" },
+			{ name: "Minimax Hailuo-02 Pro", description: "Enhanced precision image generation" },
+		],
+	},
+	{
+		name: "Pika",
+		models: [
+			{ name: "Pika", description: "Creative, fast video generation" },
+		],
+	},
+	{
+		name: "KlingAI",
+		models: [
+			{ name: "Kling 2.1 Master", description: "Refined cinematic video model" },
+			{ name: "Kling 2.0 Master", description: "Advanced cinematic video model" },
+			{ name: "Kling Pro 1.5", description: "Prior-gen high-quality video model" },
+			{ name: "Kling Pro 1.6", description: "High-quality video generation" },
+		],
+	},
+	{
+		name: "RECRAFT",
+		models: [
+			{ name: "Recraft V3", description: "Vector & design-oriented image generation" },
+		],
+	},
+	{
+		name: "ByteDance Seed",
+		displayName: "ByteDance | Seed",
+		models: [
+			{ name: "Seedream 4.0", description: "Multimodal image generation and editing" },
+			{ name: "Seeldance 1.0 Pro", description: "Multi-shot videos from text or images" },
+		],
+	},
+	{
+		name: "Luma AI",
+		models: [
+			{ name: "Dream Machine", description: "AI video generation" },
+			{ name: "Ray2", description: "Next-gen video synthesis" },
+		],
+	},
+	{
+		name: "MOONVALLEY",
+		colSpan: 2,
+		models: [
+			{ name: "Marey", description: "Commercially safe, production-grade video creation" },
+		],
+	},
+];
+
+function ProviderCard({ provider }: { provider: Provider }) {
+	const colSpanClass = provider.colSpan === 2 ? "md:col-span-2" : "";
+	const rowSpanClass = provider.rowSpan === 2 ? "md:row-span-2" : "";
+	const gridCols = provider.colSpan === 2 && provider.models.length > 3 ? "grid-cols-2 md:grid-cols-3" : "grid-cols-1";
+
+	return (
+		<div
+			className={cn(
+				"bg-secondary rounded-sm p-4 flex flex-col h-full min-h-[200px] border border-border/50",
+				colSpanClass,
+				rowSpanClass
+			)}
+		>
+			<h3 className="text-[15px] lg:text-[16px] text-foreground mb-4">
+				{provider.displayName || provider.name}
+			</h3>
+			<div className={cn("grid gap-x-6 gap-y-3 mt-auto", gridCols)}>
+				{provider.models.map((model, idx) => (
+					<div key={idx}>
+						<p className="text-[15px] lg:text-[16px] text-foreground">{model.name}</p>
+						<p className="text-[15px] lg:text-[16px] text-muted-foreground tracking-tight">{model.description}</p>
+					</div>
+				))}
+			</div>
+		</div>
+	);
 }
 
 export function Benefits() {
-  const benefits: BenefitCardProps[] = [
-    {
-      title: "A better drive for your creative mind",
-      description:
-        "Upload PDFs, YouTube links, or social posts. Everything is automatically transcribed, auto-tagged, and organized by AI. No more folder shuffling.",
-      image: "/images/Drive.png",
-      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/drive2.png",
-      imageAlt: "Intelligent Drive Interface",
-      linkText: "Learn about Drive",
-      linkUrl: "/waitlist",
-      layout: "right",
-    },
-    {
-      title: "Find anything, exactly as you remember it",
-      description:
-        "Search for \"pink sweater\" or \"cake cutting\" to find the exact video frame, audio clip, or document snippet. Invook never forgets.",
-      image: "/images/Search.png",
-      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/Search2.mp4",
-      imageAlt: "Universal Search Interface",
-      linkText: "Learn about Search",
-      linkUrl: "/waitlist",
-      layout: "left",
-    },
-    {
-      title: "One intelligent canvas for deep work",
-      description:
-        "Break free from tabs. Visually map out topics, connect assets from your drive, and run multiple AI chats in a single view for true creative flow.",
-      image: "/images/Canvas.png",
-      video: "https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/canvas2.png",
-      imageAlt: "Spatial Canvas Interface",
-      linkText: "Learn about Canvas",
-      linkUrl: "/waitlist",
-      layout: "right",
-    },
-  ];
+	return (
+		<section className="bg-background">
+			<div className="flex flex-col items-start max-w-2xl mb-10">
+				<h2 className="text-3xl md:text-4xl text-foreground mb-4 tracking-tight">
+					One subscription to rule them all.
+				</h2>
+				<p className="text-lg text-muted-foreground tracking-tight text-balance">
+					One plan. 50+ models. Stay on the creative edge without chasing licenses.
+				</p>
+			</div>
 
-  return (
-    <section>
-      <div className="flex flex-col gap-12 md:gap-20">
-        {benefits.map((benefit, index) => (
-          <BenefitCard key={index} {...benefit} />
-        ))}
-      </div>
-    </section>
-  );
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-3 auto-rows-[minmax(250px,auto)]">
+				{providers.map((provider, idx) => (
+					<ProviderCard key={idx} provider={provider} />
+				))}
+			</div>
+		</section>
+	);
 }
