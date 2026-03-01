@@ -10,6 +10,7 @@ interface Model {
 interface Provider {
 	name: string;
 	displayName?: string;
+	imageUrl?: string;
 	models: Model[];
 	colSpan?: number;
 	rowSpan?: number;
@@ -18,6 +19,7 @@ interface Provider {
 const providers: Provider[] = [
 	{
 		name: "Google",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371325/Dnd_background__view_gothic_city_gar59w.jpg",
 		colSpan: 2,
 		models: [
 			{ name: "Gemini 2.5 Flash Image", description: "State-of-the-art image generation" },
@@ -30,6 +32,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "runway",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371900/download_53_ghvo8g.jpg",
 		rowSpan: 2,
 		models: [
 			{ name: "Aleph", description: "Creative media foundation model" },
@@ -41,10 +44,12 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Wan",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371899/%E8%8F%8A%E8%8A%B1%E8%82%96%E5%83%8F_Chrysanthemum_portrait_no_05904_yg6hwu.jpg",
 		models: [{ name: "Wan2.2", description: "Culturally tuned image model" }],
 	},
 	{
 		name: "OpenAI",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371900/download_55_xapi87.jpg",
 		models: [
 			{ name: "GPT-5", description: "State-of-the-art multimodal AI" },
 			{ name: "GPT-4o Mini", description: "Small, fast multimodal" },
@@ -53,6 +58,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Black Forest Labs",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380683/download_65_kpvo2q.jpg",
 		colSpan: 2,
 		models: [
 			{ name: "FLUX 1.1 Pro", description: "Balanced photo/creative images" },
@@ -65,12 +71,14 @@ const providers: Provider[] = [
 	},
 	{
 		name: "stability.ai",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371524/download_57_xtkts6.jpg",
 		models: [
 			{ name: "Stable Diffusion 3.5", description: "Open, versatile image synthesis" },
 		],
 	},
 	{
 		name: "Hailuo AI",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772372155/download_59_trjpl7.jpg",
 		models: [
 			{ name: "Minimax Hailuo", description: "General-purpose image generator" },
 			{ name: "Minimax Hailuo-02 Pro", description: "Enhanced precision image generation" },
@@ -78,12 +86,14 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Pika",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371899/download_51_insz4l.jpg",
 		models: [
 			{ name: "Pika", description: "Creative, fast video generation" },
 		],
 	},
 	{
 		name: "KlingAI",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380207/download_63_dzvtpu.jpg",
 		models: [
 			{ name: "Kling 2.1 Master", description: "Refined cinematic video model" },
 			{ name: "Kling 2.0 Master", description: "Advanced cinematic video model" },
@@ -93,6 +103,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "RECRAFT",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380035/download_60_anmzgg.jpg",
 		models: [
 			{ name: "Recraft V3", description: "Vector & design-oriented image generation" },
 		],
@@ -100,6 +111,7 @@ const providers: Provider[] = [
 	{
 		name: "ByteDance Seed",
 		displayName: "ByteDance | Seed",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380215/download_61_q9iyb4.jpg",
 		models: [
 			{ name: "Seedream 4.0", description: "Multimodal image generation and editing" },
 			{ name: "Seeldance 1.0 Pro", description: "Multi-shot videos from text or images" },
@@ -107,6 +119,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Luma AI",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380213/download_62_qaspc5.jpg",
 		models: [
 			{ name: "Dream Machine", description: "AI video generation" },
 			{ name: "Ray2", description: "Next-gen video synthesis" },
@@ -114,6 +127,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "MOONVALLEY",
+		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380683/download_64_zaeu0i.jpg",
 		colSpan: 2,
 		models: [
 			{ name: "Marey", description: "Commercially safe, production-grade video creation" },
@@ -129,21 +143,32 @@ function ProviderCard({ provider }: { provider: Provider }) {
 	return (
 		<div
 			className={cn(
-				"bg-secondary rounded-sm p-4 flex flex-col h-full min-h-[200px] border border-border/50",
+				"relative rounded-sm flex flex-col h-full min-h-[380px] border border-border/50 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-border hover:shadow-lg hover:shadow-black/20",
 				colSpanClass,
 				rowSpanClass
 			)}
+			style={
+				provider.imageUrl
+					? { backgroundImage: `url(${provider.imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+					: undefined
+			}
 		>
-			<h3 className="text-[15px] lg:text-[16px] text-foreground mb-4">
-				{provider.displayName || provider.name}
-			</h3>
-			<div className={cn("grid gap-x-6 gap-y-3 mt-auto", gridCols)}>
-				{provider.models.map((model, idx) => (
-					<div key={idx}>
-						<p className="text-[15px] lg:text-[16px] text-foreground">{model.name}</p>
-						<p className="text-[15px] lg:text-[16px] text-muted-foreground tracking-tight">{model.description}</p>
-					</div>
-				))}
+			{/* Dark gradient overlay for readability */}
+			<div className={cn("absolute inset-0", provider.imageUrl ? "bg-gradient-to-t from-black/90 via-black/60 to-black/30" : "bg-secondary")} />
+
+			{/* Content on top */}
+			<div className="relative z-10 p-4 flex flex-col h-full">
+				<h3 className="text-[15px] lg:text-[16px] text-white mb-4">
+					{provider.displayName || provider.name}
+				</h3>
+				<div className={cn("grid gap-x-6 gap-y-3 mt-auto", gridCols)}>
+					{provider.models.map((model, idx) => (
+						<div key={idx}>
+							<p className="text-[15px] lg:text-[16px] text-white">{model.name}</p>
+							<p className="text-[15px] lg:text-[16px] text-white/70 tracking-tight">{model.description}</p>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);
