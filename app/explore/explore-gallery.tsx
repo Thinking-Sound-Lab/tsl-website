@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { createClient } from "@/lib/supabase/client";
+
 /* ───────────────────────────────────────────────
    Demo data — structured to match Gallery API shape.
    Replace with `fetch("/api/gallery")` when backend is live.
@@ -449,6 +451,28 @@ export default function ExploreGallery() {
     const [selectedPost, setSelectedPost] = useState<GalleryPost | null>(null);
     const [copied, setCopied] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+    /* Report Modal State */
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [postToReport, setPostToReport] = useState<GalleryPost | null>(null);
+    const [reportReason, setReportReason] = useState("");
+
+    /* Upload Modal State */
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [uploadFilePreview, setUploadFilePreview] = useState<string | null>(null);
+    const [uploadFileType, setUploadFileType] = useState<"image" | "video" | null>(null);
+    const [uploadTitle, setUploadTitle] = useState("");
+    const [uploadPrompt, setUploadPrompt] = useState("");
+    const [uploadModel, setUploadModel] = useState("");
+    const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+    const [uploadTags, setUploadTags] = useState("");
+
+    // Loading state for submitting the post
+    const [isSubmittingUpload, setIsSubmittingUpload] = useState(false);
+
+    // Loading state for auth check
+    const [isCheckingAuth, setIsCheckingAuth] = useState(false);
+
     const videoRef = useRef<HTMLVideoElement>(null);
 
     /* Autoplay video when lightbox opens on a video post */
@@ -461,8 +485,13 @@ export default function ExploreGallery() {
     /* Close dropdown when clicking outside */
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if ((e.target as Element).closest('.dropdown-trigger')) return;
-            setOpenMenuId(null);
+            const target = e.target as Element;
+            if (!target.closest('.dropdown-trigger')) {
+                setOpenMenuId(null);
+            }
+            if (!target.closest('.model-dropdown-trigger')) {
+                setIsModelDropdownOpen(false);
+            }
         };
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
@@ -485,6 +514,27 @@ export default function ExploreGallery() {
         await navigator.clipboard.writeText(selectedPost.prompt);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleUploadClick = async () => {
+        setIsCheckingAuth(true);
+        try {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                // If not logged in, redirect to sign in and back to explore afterwards
+                router.push("/sign-in?redirect=/explore");
+                return;
+            }
+            // User is authenticated, open modal
+            setIsUploadModalOpen(true);
+        } catch (error) {
+            console.error("Auth check failed:", error);
+            router.push("/sign-in?redirect=/explore");
+        } finally {
+            setIsCheckingAuth(false);
+        }
     };
 
     return (
@@ -531,6 +581,24 @@ export default function ExploreGallery() {
                             {model}
                         </button>
                     ))}
+
+                    <div className="flex-1" />
+
+                    {/* Upload Button */}
+                    <button
+                        onClick={handleUploadClick}
+                        disabled={isCheckingAuth}
+                        className="px-5 py-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-wait"
+                    >
+                        {isCheckingAuth ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                            </svg>
+                        )}
+                        Upload
+                    </button>
                 </div>
             </header>
 
@@ -623,34 +691,41 @@ export default function ExploreGallery() {
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <button
-                                                    className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2"
-                                                    onClick={() => {
+                                                    className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
                                                         const url = "/sign-in";
                                                         router.push(url);
                                                         setOpenMenuId(null);
                                                     }}
                                                 >
-                                                    <svg className="w-4 h-4 text-foreground/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" /></svg>
+                                                    <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" /></svg>
                                                     Use in Canvas
                                                 </button>
                                                 <button
-                                                    className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2"
-                                                    onClick={() => {
+                                                    className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
                                                         navigator.clipboard.writeText(post.prompt);
                                                         setOpenMenuId(null);
                                                     }}
                                                 >
-                                                    <svg className="w-4 h-4 text-foreground/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                                    <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                                                     Copy prompt
                                                 </button>
                                                 <button
-                                                    className="w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
-                                                    onClick={() => {
-                                                        alert("Reported successfully (demo).");
+                                                    className="w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                        setPostToReport(post);
+                                                        setIsReportModalOpen(true);
                                                         setOpenMenuId(null);
                                                     }}
                                                 >
-                                                    <svg className="w-4 h-4 text-destructive/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                    <svg className="w-4 h-4 text-destructive/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                                     Report
                                                 </button>
                                             </motion.div>
@@ -788,6 +863,286 @@ export default function ExploreGallery() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
                                             </svg>
                                             Use in Canvas
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ── Report Modal ─────────────── */}
+            <AnimatePresence>
+                {isReportModalOpen && postToReport && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6"
+                        onClick={() => setIsReportModalOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                            className="bg-background border border-border rounded-2xl shadow-2xl p-6 w-full max-w-md"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                                <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                Report Content
+                            </h2>
+                            <p className="text-sm text-foreground/70 mb-4">
+                                Please describe why you are reporting this content from <span className="font-medium text-foreground">{postToReport.username}</span>.
+                            </p>
+
+                            <textarea
+                                value={reportReason}
+                                onChange={(e) => setReportReason(e.target.value)}
+                                placeholder="Why is this inappropriate?"
+                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors resize-none"
+                                rows={4}
+                            />
+
+                            <div className="flex items-center justify-end gap-3 mt-6">
+                                <button
+                                    onClick={() => {
+                                        setIsReportModalOpen(false);
+                                        setReportReason("");
+                                    }}
+                                    className="px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-full transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        // TODO: Wire up to Supabase reportItem flow
+                                        alert(`Reported item ${postToReport.id} for: ${reportReason}`);
+                                        setIsReportModalOpen(false);
+                                        setReportReason("");
+                                    }}
+                                    disabled={!reportReason.trim()}
+                                    className="px-5 py-2 text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                >
+                                    Submit Feedback
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ── Upload Modal ─────────────── */}
+            <AnimatePresence>
+                {isUploadModalOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6"
+                        onClick={() => setIsUploadModalOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.92, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            className="lightbox-container max-w-[1000px] w-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Close button */}
+                            <button
+                                onClick={() => setIsUploadModalOpen(false)}
+                                className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <div className="flex flex-col lg:flex-row h-full">
+                                {/* ── Left Side: Media Upload ────────────────── */}
+                                <div className="relative lg:flex-1 flex flex-col bg-black/20 p-6 lg:p-10 min-h-[300px] lg:border-r border-border/50">
+                                    {!uploadFilePreview ? (
+                                        <label className="flex-1 w-full min-h-[300px] flex flex-col items-center justify-center border-2 border-dashed border-border/50 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all text-center group">
+                                            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                                <svg className="w-8 h-8 text-foreground/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
+                                            </div>
+                                            <span className="text-lg font-medium text-foreground">Click or Drag to Upload</span>
+                                            <span className="text-sm text-foreground/50 mt-2">Images or Videos (max 50MB)</span>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*,video/*"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        setUploadFilePreview(URL.createObjectURL(file));
+                                                        setUploadFileType(file.type.startsWith("video") ? "video" : "image");
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    ) : (
+                                        <div className="flex-1 relative w-full h-full flex flex-col items-center justify-center min-h-[300px]">
+                                            {uploadFileType === 'video' ? (
+                                                <video src={uploadFilePreview} controls className="max-h-full max-w-full rounded-lg" />
+                                            ) : (
+                                                <Image src={uploadFilePreview} alt="Upload preview" fill className="object-contain rounded-lg" />
+                                            )}
+                                            <button
+                                                onClick={() => { setUploadFilePreview(null); setUploadFileType(null); }}
+                                                className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors z-10"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* ── Right Side: Details Form ──────────────── */}
+                                <div className="lightbox-details bg-background flex flex-col pt-8 sm:pt-10">
+                                    <h2 className="text-xl font-bold text-foreground mb-6">Create Post</h2>
+
+                                    <div className="flex-1 overflow-y-auto space-y-6 pr-2 lg:pr-4 pl-1 custom-scrollbar w-full">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-foreground/80">Title</label>
+                                            <input
+                                                value={uploadTitle}
+                                                onChange={(e) => setUploadTitle(e.target.value)}
+                                                placeholder="Give your artwork a title"
+                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-foreground/80">Prompt</label>
+                                            <textarea
+                                                value={uploadPrompt}
+                                                onChange={(e) => setUploadPrompt(e.target.value)}
+                                                placeholder="What prompt did you use?"
+                                                rows={4}
+                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors resize-none"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2 relative model-dropdown-trigger">
+                                            <label className="text-sm font-medium text-foreground/80">Model</label>
+                                            <div className="relative">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                                                    className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors flex items-center justify-between"
+                                                >
+                                                    <span className={uploadModel ? "text-foreground" : "text-muted-foreground"}>
+                                                        {uploadModel || "Select a model"}
+                                                    </span>
+                                                    <svg className={`w-4 h-4 transition-transform ${isModelDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                </button>
+                                                <AnimatePresence>
+                                                    {isModelDropdownOpen && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: -5 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            exit={{ opacity: 0, y: -5 }}
+                                                            transition={{ duration: 0.15 }}
+                                                            className="absolute top-full mt-2 w-full bg-background border border-border rounded-xl shadow-xl overflow-hidden z-20"
+                                                        >
+                                                            <div className="max-h-60 overflow-y-auto w-full custom-scrollbar py-1">
+                                                                {modelTabs.map(m => (
+                                                                    <button
+                                                                        key={m}
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            setUploadModel(m);
+                                                                            setIsModelDropdownOpen(false);
+                                                                        }}
+                                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors ${uploadModel === m ? 'bg-secondary/50 text-foreground font-medium' : 'text-foreground/80'}`}
+                                                                    >
+                                                                        {m}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-foreground/80">Tags <span className="text-muted-foreground font-normal">(comma separated)</span></label>
+                                            <input
+                                                value={uploadTags}
+                                                onChange={(e) => setUploadTags(e.target.value)}
+                                                placeholder="e.g. cinematic, neon, 4k"
+                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-6 mt-4 border-t border-border/50">
+                                        <button
+                                            disabled={!uploadFilePreview || !uploadTitle.trim() || !uploadPrompt.trim() || !uploadModel || isSubmittingUpload}
+                                            onClick={async () => {
+                                                setIsSubmittingUpload(true);
+                                                try {
+                                                    // This is the simulated implementation flow for backend developers:
+
+                                                    // 1. Get Presigned URL from Backend
+                                                    /*
+                                                    const presignedRes = await fetch("/api/upload/presigned-url", {
+                                                        method: "POST",
+                                                        body: JSON.stringify({ filename: "upload.mp4", contentType: uploadFileType === "video" ? "video/mp4" : "image/jpeg" })
+                                                    });
+                                                    const { uploadUrl, assetUrl } = await presignedRes.json();
+                                                    
+                                                    // 2. Put binary to S3
+                                                    await fetch(uploadUrl, { method: "PUT", body: actualFileBlob });
+                                                    */
+
+                                                    // Simulated network delay
+                                                    await new Promise(r => setTimeout(r, 1500));
+
+                                                    // 3. Post Metadata to explore endpoint
+                                                    /*
+                                                    await fetch("/api/explore", {
+                                                        method: "POST",
+                                                        body: JSON.stringify({
+                                                            url: assetUrl,
+                                                            thumbnail_url: assetUrl, // Will be generated by backend
+                                                            item_type: uploadFileType,
+                                                            title: uploadTitle,
+                                                            prompt: uploadPrompt,
+                                                            model_name: uploadModel,
+                                                            tags: uploadTags.split(",").map(t => t.trim()).filter(Boolean),
+                                                            width: 1024,
+                                                            height: 1024
+                                                        })
+                                                    });
+                                                    */
+
+                                                    alert("Upload success (API interaction simulated). Metadata submitted.");
+                                                    setIsUploadModalOpen(false);
+                                                    setUploadFilePreview(null);
+                                                    setUploadTitle("");
+                                                    setUploadPrompt("");
+                                                    setUploadTags("");
+                                                } finally {
+                                                    setIsSubmittingUpload(false);
+                                                }
+                                            }}
+                                            className="w-full py-3 rounded-full bg-[#F54E00] text-white font-semibold hover:bg-[#F54E00]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        >
+                                            {isSubmittingUpload ? (
+                                                <>
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                    Uploading...
+                                                </>
+                                            ) : (
+                                                "Post to Explore"
+                                            )}
                                         </button>
                                     </div>
                                 </div>
