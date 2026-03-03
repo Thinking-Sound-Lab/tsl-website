@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { createClient } from "@/lib/supabase/client";
+import { uploadOrchestrator } from "@/lib/upload/orchestrator";
 
 /* ───────────────────────────────────────────────
    Demo data — structured to match Gallery API shape.
@@ -460,6 +461,7 @@ export default function ExploreGallery() {
     /* Upload Modal State */
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [uploadFilePreview, setUploadFilePreview] = useState<string | null>(null);
+    const [uploadFile, setUploadFile] = useState<File | null>(null);
     const [uploadFileType, setUploadFileType] = useState<"image" | "video" | null>(null);
     const [uploadTitle, setUploadTitle] = useState("");
     const [uploadPrompt, setUploadPrompt] = useState("");
@@ -469,6 +471,8 @@ export default function ExploreGallery() {
 
     // Loading state for submitting the post
     const [isSubmittingUpload, setIsSubmittingUpload] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     // Loading state for auth check
     const [isCheckingAuth, setIsCheckingAuth] = useState(false);
@@ -941,7 +945,9 @@ export default function ExploreGallery() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6"
-                        onClick={() => setIsUploadModalOpen(false)}
+                        onClick={() => {
+                            if (!isSubmittingUpload) setIsUploadModalOpen(false);
+                        }}
                     >
                         <motion.div
                             initial={{ scale: 0.92, opacity: 0 }}
@@ -952,8 +958,14 @@ export default function ExploreGallery() {
                         >
                             {/* Close button */}
                             <button
-                                onClick={() => setIsUploadModalOpen(false)}
-                                className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+                                onClick={() => {
+                                    if (isSubmittingUpload && abortControllerRef.current) {
+                                        abortControllerRef.current.abort();
+                                    }
+                                    setIsUploadModalOpen(false);
+                                }}
+                                disabled={isSubmittingUpload}
+                                className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -979,6 +991,7 @@ export default function ExploreGallery() {
                                                 onChange={(e) => {
                                                     const file = e.target.files?.[0];
                                                     if (file) {
+                                                        setUploadFile(file);
                                                         setUploadFilePreview(URL.createObjectURL(file));
                                                         setUploadFileType(file.type.startsWith("video") ? "video" : "image");
                                                     }
@@ -993,8 +1006,13 @@ export default function ExploreGallery() {
                                                 <Image src={uploadFilePreview} alt="Upload preview" fill className="object-contain rounded-lg" />
                                             )}
                                             <button
-                                                onClick={() => { setUploadFilePreview(null); setUploadFileType(null); }}
-                                                className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors z-10"
+                                                onClick={() => {
+                                                    setUploadFile(null);
+                                                    setUploadFilePreview(null);
+                                                    setUploadFileType(null);
+                                                }}
+                                                disabled={isSubmittingUpload}
+                                                className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors z-10 disabled:opacity-50"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                             </button>
@@ -1082,67 +1100,77 @@ export default function ExploreGallery() {
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 mt-4 border-t border-border/50">
+                                    <div className="pt-6 mt-4 border-t border-border/50 relative">
                                         <button
-                                            disabled={!uploadFilePreview || !uploadTitle.trim() || !uploadPrompt.trim() || !uploadModel || isSubmittingUpload}
+                                            disabled={!uploadFile || !uploadTitle.trim() || !uploadPrompt.trim() || !uploadModel || isSubmittingUpload}
                                             onClick={async () => {
+                                                if (!uploadFile || !uploadFileType) return;
+
                                                 setIsSubmittingUpload(true);
+                                                setUploadProgress(0);
+
+                                                const controller = new AbortController();
+                                                abortControllerRef.current = controller;
+
+                                                const metadataPayload = {
+                                                    url: "", // Provided safely by backend based on S3 key
+                                                    thumbnail_url: "",
+                                                    item_type: uploadFileType,
+                                                    title: uploadTitle,
+                                                    prompt: uploadPrompt,
+                                                    model_name: uploadModel,
+                                                    tags: uploadTags.split(",").map(t => t.trim()).filter(Boolean),
+                                                    width: 1024,
+                                                    height: 1024,
+                                                };
+
                                                 try {
-                                                    // This is the simulated implementation flow for backend developers:
-
-                                                    // 1. Get Presigned URL from Backend
-                                                    /*
-                                                    const presignedRes = await fetch("/api/upload/presigned-url", {
-                                                        method: "POST",
-                                                        body: JSON.stringify({ filename: "upload.mp4", contentType: uploadFileType === "video" ? "video/mp4" : "image/jpeg" })
+                                                    await uploadOrchestrator({
+                                                        file: uploadFile,
+                                                        metadata: metadataPayload as never,
+                                                        onProgress: (p) => setUploadProgress(p),
+                                                        signal: controller.signal
                                                     });
-                                                    const { uploadUrl, assetUrl } = await presignedRes.json();
-                                                    
-                                                    // 2. Put binary to S3
-                                                    await fetch(uploadUrl, { method: "PUT", body: actualFileBlob });
-                                                    */
 
-                                                    // Simulated network delay
-                                                    await new Promise(r => setTimeout(r, 1500));
-
-                                                    // 3. Post Metadata to explore endpoint
-                                                    /*
-                                                    await fetch("/api/explore", {
-                                                        method: "POST",
-                                                        body: JSON.stringify({
-                                                            url: assetUrl,
-                                                            thumbnail_url: assetUrl, // Will be generated by backend
-                                                            item_type: uploadFileType,
-                                                            title: uploadTitle,
-                                                            prompt: uploadPrompt,
-                                                            model_name: uploadModel,
-                                                            tags: uploadTags.split(",").map(t => t.trim()).filter(Boolean),
-                                                            width: 1024,
-                                                            height: 1024
-                                                        })
-                                                    });
-                                                    */
-
-                                                    alert("Upload success (API interaction simulated). Metadata submitted.");
+                                                    alert("Upload success! Your post is live.");
                                                     setIsUploadModalOpen(false);
+                                                    setUploadFile(null);
                                                     setUploadFilePreview(null);
                                                     setUploadTitle("");
                                                     setUploadPrompt("");
                                                     setUploadTags("");
+                                                    setUploadProgress(0);
+                                                } catch (err) {
+                                                    const error = err as Error;
+                                                    if (error.message !== "Aborted" && error.message !== "Upload aborted by user") {
+                                                        console.error("Upload failed", error);
+                                                        alert(`Upload failed: ${error.message}`);
+                                                    }
                                                 } finally {
                                                     setIsSubmittingUpload(false);
+                                                    abortControllerRef.current = null;
                                                 }
                                             }}
-                                            className="w-full py-3 rounded-full bg-[#F54E00] text-white font-semibold hover:bg-[#F54E00]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                            className="w-full py-3 rounded-full bg-[#F54E00] text-white font-semibold hover:bg-[#F54E00]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 relative overflow-hidden"
                                         >
-                                            {isSubmittingUpload ? (
-                                                <>
-                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                    Uploading...
-                                                </>
-                                            ) : (
-                                                "Post to Explore"
+                                            {/* Progress Bar Background */}
+                                            {isSubmittingUpload && uploadProgress > 0 && (
+                                                <div
+                                                    className="absolute left-0 top-0 bottom-0 bg-black/20 transition-all duration-300 pointer-events-none"
+                                                    style={{ width: `${uploadProgress}%` }}
+                                                />
                                             )}
+
+                                            <span className="relative z-10 flex items-center gap-2">
+                                                {isSubmittingUpload ? (
+                                                    <>
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        Uploading... {uploadProgress}%
+                                                    </>
+                                                ) : (
+                                                    "Post to Explore"
+                                                )}
+                                            </span>
                                         </button>
                                     </div>
                                 </div>

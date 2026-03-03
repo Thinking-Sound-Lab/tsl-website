@@ -4,11 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json();
-		const { provider, email } = body;
+		const { provider, email, redirectToPath = "/explore" } = body;
 
 		const supabase = await createClient();
 		const origin = request.headers.get("origin") || "http://localhost:3000";
-		const redirectTo = `${origin}/download`;
+		const redirectTo = `${origin}${redirectToPath}`;
 
 		if (provider === "google") {
 			const { data, error } = await supabase.auth.signInWithOAuth({

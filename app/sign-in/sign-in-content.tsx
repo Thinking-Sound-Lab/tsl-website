@@ -13,6 +13,7 @@ export default function SignInContent() {
 
 	// Check if dev environment for protocol handling
 	const env = searchParams.get("env") === "dev" ? "dev" : undefined;
+	const redirectParam = searchParams.get("redirect") || "/explore";
 
 	const handleGoogleSignIn = async () => {
 		setIsLoading(true);
@@ -22,7 +23,7 @@ export default function SignInContent() {
 			const response = await fetch("/api/auth", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ provider: "google", env }),
+				body: JSON.stringify({ provider: "google", env, redirectToPath: redirectParam }),
 			});
 
 			const data = await response.json();
@@ -52,7 +53,7 @@ export default function SignInContent() {
 			const response = await fetch("/api/auth", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ provider: "email", email, env }),
+				body: JSON.stringify({ provider: "email", email, env, redirectToPath: redirectParam }),
 			});
 
 			const data = await response.json();
@@ -101,11 +102,10 @@ export default function SignInContent() {
 					{/* Message */}
 					{message && (
 						<div
-							className={`p-3 rounded-md text-sm ${
-								message.type === "success"
+							className={`p-3 rounded-md text-sm ${message.type === "success"
 									? "bg-green-500/10 text-green-500 border border-green-500/20"
 									: "bg-red-500/10 text-red-500 border border-red-500/20"
-							}`}
+								}`}
 						>
 							{message.text}
 						</div>
