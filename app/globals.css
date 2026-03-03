@@ -111,9 +111,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
+
   --font-sans: "Inter", system-ui, sans-serif;
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -144,6 +144,7 @@ html {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -158,6 +159,7 @@ html {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -165,11 +167,259 @@ html {
 
 /* Custom Autofill Styles to prevent background color change */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--secondary) inset !important;
-    -webkit-text-fill-color: var(--foreground) !important;
-    transition: background-color 5000s ease-in-out 0s;
-    caret-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 30px var(--secondary) inset !important;
+  -webkit-text-fill-color: var(--foreground) !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--foreground);
+}
+
+/* ── Masonry Grid ──────────────────────────────── */
+
+.masonry-grid {
+  column-count: 5;
+  column-gap: 14px;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 1280px) {
+  .masonry-grid {
+    column-count: 4;
+  }
+}
+
+@media (max-width: 1024px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 640px) {
+  .masonry-grid {
+    column-count: 2;
+    column-gap: 10px;
+  }
+
+  .masonry-item {
+    margin-bottom: 10px;
+  }
+}
+
+/* ── Gallery Card ──────────────────────────────── */
+
+.gallery-card {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--secondary);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.gallery-card-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.gallery-card:hover .gallery-card-image {
+  transform: scale(1.04);
+}
+
+.gallery-card-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.gallery-card-play svg {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  padding: 8px;
+  width: 44px;
+  height: 44px;
+}
+
+/* Gradient overlay — hidden by default, revealed on hover */
+.gallery-card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  background: linear-gradient(180deg,
+      transparent 40%,
+      rgba(0, 0, 0, 0.65) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .gallery-card-overlay {
+  opacity: 1;
+}
+
+.gallery-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gallery-card-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ── Lightbox / Detail Modal ───────────────────── */
+
+.lightbox-container {
+  position: relative;
+  max-width: 1400px;
+  width: 100%;
+  height: 90vh;
+  max-height: 90vh;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--secondary);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-details {
+  width: 420px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lightbox-prompt-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for prompt area */
+.lightbox-prompt-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.lightbox-prompt-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lightbox-prompt-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.lightbox-tag {
+  display: inline-flex;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Mobile: stack vertically, detail panel not fixed width */
+@media (max-width: 1024px) {
+  .lightbox-container {
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .lightbox-details {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .lightbox-prompt-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+.lightbox-model-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: #F54E00;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+
+/* Primary button — orange fill (Use in Canvas) */
+.lightbox-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: #F54E00;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.lightbox-btn-primary:hover {
+  background: #e04500;
+}
+
+/* Outline button — transparent with stroke (Copy Prompt) */
+.lightbox-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.lightbox-btn-outline:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--foreground);
 }

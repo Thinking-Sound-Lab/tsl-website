@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         hostname: "q3kusohadpqcfxz4.public.blob.vercel-storage.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+      },
     ],
   },
 };

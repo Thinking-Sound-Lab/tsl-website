@@ -15,12 +15,12 @@ export function Navigation() {
           <Link href="/" className="flex-shrink-0">
             <div className="flex items-center">
               <Image
-                src="/svgs/web_logo.svg" 
+                src="/svgs/web_logo.svg"
                 alt="Invook"
                 width={0}
                 height={0}
                 style={{ height: '1.5rem', width: 'auto' }}
-                className="h-6 w-auto brightness-0 dark:invert" 
+                className="h-6 w-auto brightness-0 dark:invert"
                 priority
               />
             </div>
@@ -50,11 +50,17 @@ export function Navigation() {
             >
               About
             </a>
+            <Link
+              href="/explore"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+            >
+              Explore
+            </Link>
           </div>
 
           {/* Right: Sign In & Download Buttons */}
           <div className="flex items-center space-x-3">
-{/* <Link
+            {/* <Link
               href="/sign-in"
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
             >
@@ -128,7 +134,14 @@ export function Navigation() {
               >
                 About
               </a>
-{/* <Link
+              <Link
+                href="/explore"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Explore
+              </Link>
+              {/* <Link
                 href="/sign-in"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getWaitlistEmailHtml } from "@/lib/templates/waitlist";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY || "dummy");
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     // 2️⃣ Try sending email (non-blocking, Production ONLY)
     try {
       if (process.env.RESEND_FROM_EMAIL) {
-        const { error } = await resend.emails.send({
+        const { error } = await getResend().emails.send({
           from: `Invook Team <${process.env.RESEND_FROM_EMAIL}>`,
           to: email,
           subject: "The operating system for your mind",
