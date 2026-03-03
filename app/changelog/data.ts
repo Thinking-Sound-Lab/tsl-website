@@ -16,6 +16,181 @@ export interface ChangelogItem {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: "0.1.34",
+    date: "March 1, 2026",
+    summaryTitle: "Invook is now General Available",
+    summaryBody:
+      "The biggest update to how Invook handles plans — now with a proper welcome experience when you first sign up.",
+    changes: [
+      {
+        type: "feature",
+        title: "Revamped Pricing",
+        description:
+          "New plans are live with clearer features and better value.",
+      },
+      {
+        type: "feature",
+        title: "Welcome Email",
+        description:
+          "You now get a welcome email when you sign up. A small touch that makes onboarding feel more complete.",
+      },
+    ],
+  },
+  {
+    version: "0.1.33",
+    date: "March 1, 2026",
+    summaryTitle: "UI Polish & Pricing Updates",
+    summaryBody:
+      "A round of visual improvements, smarter Drive filters, and pricing changes now fully live.",
+    changes: [
+      {
+        type: "improvement",
+        title: "UI Improvements",
+        description:
+          "Various UI improvements — buttons, spacing, and visual consistency across the app.",
+      },
+      {
+        type: "bugfix",
+        title: "Drive File Filters",
+        description:
+          "Drive file filters now work correctly — removed a broken status filter that was causing issues.",
+      },
+      {
+        type: "feature",
+        title: "Pricing Rollout",
+        description:
+          "Updated pricing is now fully rolled out to all users.",
+      },
+    ],
+  },
+  {
+    version: "0.1.32",
+    date: "February 28, 2026",
+    summaryTitle: "The Big Foundations Update",
+    summaryBody:
+      "A massive under-the-hood overhaul — new Pro features, auto-updates, multi-language support, Linux compatibility, and a much more stable app overall.",
+    changes: [
+      {
+        type: "feature",
+        title: "Pro Feature Gating",
+        description:
+          "Pro features are now properly gated — upgrade to unlock the full Invook experience.",
+      },
+      {
+        type: "feature",
+        title: "Auto-Updates",
+        description:
+          "Auto-updates are here. Invook now updates itself in the background and lets you know when a new version is ready.",
+      },
+
+      {
+        type: "feature",
+        title: "Onboarding Help Button",
+        description:
+          "A persistent Help button now appears throughout the onboarding flow — so you're never stuck.",
+      },
+      {
+        type: "feature",
+        title: "Settings & Profile",
+        description:
+          "Settings dialog and Profile popover added — manage your account and preferences in one place.",
+      },
+      {
+        type: "improvement",
+        title: "Network Detection",
+        description:
+          "Smarter network detection — Invook now handles going offline and back online more gracefully.",
+      },
+      {
+        type: "improvement",
+        title: "Navigation Refresh",
+        description:
+          "Navigation got a refresh — cleaner flow and fixed redirects after login.",
+      },
+      {
+        type: "bugfix",
+        title: "Sign-Out Bug",
+        description:
+          "Fixed a bug where you'd stay \"logged in\" even after signing out or deleting your account.",
+      },
+      {
+        type: "bugfix",
+        title: "Error Tracking",
+        description:
+          "Error tracking added via PostHog — crashes and issues are now reported automatically to help us fix things faster.",
+      },
+    ],
+  },
+  {
+    version: "0.1.31-beta",
+    date: "February 25, 2026",
+    summaryTitle: "Video Thumbnails & Analytics",
+    summaryBody:
+      "Videos in your files now show real thumbnails, and we've added analytics to help improve the app based on real usage.",
+    changes: [
+      {
+        type: "feature",
+        title: "Video Thumbnails",
+        description:
+          "Video files now generate proper preview thumbnails — easier to tell what's what at a glance.",
+      },
+    ],
+  },
+  {
+    version: "0.1.30-beta",
+    date: "February 23, 2026",
+    summaryTitle: "Pricing & Stability",
+    summaryBody:
+      "Pricing changes landed, plus a fix for image handling that was causing crashes.",
+    changes: [
+      {
+        type: "feature",
+        title: "New Pricing Structure",
+        description:
+          "New pricing structure rolled out — updated plans with refreshed feature breakdown.",
+      },
+      {
+        type: "bugfix",
+        title: "AI Image Processing",
+        description:
+          "Fixed a crash when AI nodes received images as input — everything processes smoothly now.",
+      },
+    ],
+  },
+  {
+    version: "0.1.29-beta",
+    date: "February 16, 2026",
+    summaryTitle: "Gemini, Canvas & Smarter Files",
+    summaryBody:
+      "Invook gets smarter about your files — plus Gemini AI joins the canvas, and search is faster than ever.",
+    changes: [
+      {
+        type: "feature",
+        title: "Gemini AI Node",
+        description:
+          "Gemini AI node added to the canvas — more AI choices, more power in your workflow.",
+      },
+      {
+        type: "feature",
+        title: "File Thumbnails",
+        description:
+          "Thumbnails now generated for all major file types — PDFs, images, spreadsheets, and more.",
+      },
+      {
+        type: "improvement",
+        title: "Search Performance",
+        description:
+          "Search is now faster and more accurate — results feel much more relevant.",
+      },
+      {
+        type: "improvement",
+        title: "Canvas Refactor",
+        description:
+          "Canvas refactored for better performance — smoother when working with large workflows.",
+      },
+    ],
+  },
+  {
     version: "0.1.28-beta",
     date: "January 30, 2026",
     summaryTitle: "Canvas upgrades & Drive refinement",
