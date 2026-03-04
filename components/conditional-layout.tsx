@@ -4,20 +4,23 @@ import { usePathname } from "next/navigation";
 import { Navigation } from "./navigation";
 import { Footer } from "./footer";
 
-export function ConditionalLayout({ 
-  children 
-}: { 
-  children: React.ReactNode; 
+export function ConditionalLayout({
+	children
+}: {
+	children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isAuthPage = pathname?.startsWith("/auth");
-  const isDownloadsPage = pathname === "/downloads";
+	const pathname = usePathname();
+	const isAuthPage = pathname?.startsWith("/auth");
+	const isDownloadsPage = pathname === "/downloads";
+	const isCheckoutSuccessPage = pathname?.startsWith("/checkout");
 
-  return (
-    <>
-      {!isAuthPage && !isDownloadsPage && <Navigation />}
-      {children}
-      {!isAuthPage && !isDownloadsPage && <Footer />}
-    </>
-  );
+	const shouldHideLayout = isAuthPage || isDownloadsPage || isCheckoutSuccessPage;
+
+	return (
+		<>
+			{!shouldHideLayout && <Navigation />}
+			{children}
+			{!shouldHideLayout && <Footer />}
+		</>
+	);
 }
