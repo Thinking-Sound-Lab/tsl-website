@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignInContent() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
+	const { handleOAuth, isAuthenticated } = useAuth();
 	const [email, setEmail] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -14,6 +17,26 @@ export default function SignInContent() {
 	// Check if dev environment for protocol handling
 	const env = searchParams.get("env") === "dev" ? "dev" : undefined;
 	const redirectParam = searchParams.get("redirect") || "/explore";
+
+	// If the user lands on sign-in with a hash token (e.g. from an email Magic Link or manual injection),
+	// process it immediately and redirect to the intended destination.
+	useEffect(() => {
+		if (typeof window !== "undefined" && window.location.hash.includes("access_token=")) {
+			setIsLoading(true);
+			handleOAuth(window.location.href).then((res) => {
+				if (res.authenticated) {
+					setMessage({ type: "success", text: "Successfully authenticated!" });
+					setTimeout(() => router.push(redirectParam), 500);
+				} else {
+					setIsLoading(false);
+					setMessage({ type: "error", text: "Invalid or expired link." });
+				}
+			});
+		} else if (isAuthenticated) {
+			// Already logged in, just redirect
+			router.push(redirectParam);
+		}
+	}, [handleOAuth, isAuthenticated, redirectParam, router]);
 
 	const handleGoogleSignIn = async () => {
 		setIsLoading(true);
@@ -103,8 +126,8 @@ export default function SignInContent() {
 					{message && (
 						<div
 							className={`p-3 rounded-md text-sm ${message.type === "success"
-									? "bg-green-500/10 text-green-500 border border-green-500/20"
-									: "bg-red-500/10 text-red-500 border border-red-500/20"
+								? "bg-green-500/10 text-green-500 border border-green-500/20"
+								: "bg-red-500/10 text-red-500 border border-red-500/20"
 								}`}
 						>
 							{message.text}

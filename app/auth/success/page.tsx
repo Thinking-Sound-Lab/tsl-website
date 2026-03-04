@@ -1,6 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+
+/**
+ * OAuth Callback Page.
+ *
+ * Supabase redirects here with tokens in the URL hash:
+ *   /auth/success#access_token=...&refresh_token=...&expires_in=...
+ *
+ * Two flows:
+ *   1. Web App: Parse tokens → store in localStorage → redirect to /explore.
+ *   2. Electron App: Forward the hash to the invook:// deep link protocol.
+ */
 
 // Get protocol based on environment (dev vs prod)
 const getProtocol = (): string => {
@@ -11,143 +24,104 @@ const getProtocol = (): string => {
 };
 
 export default function AuthSuccessPage() {
+	const router = useRouter();
+	const { handleOAuth } = useAuth();
+	const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 	const [userEmail, setUserEmail] = useState<string>("");
-	const [isDev, setIsDev] = useState<boolean>(false);
 
 	useEffect(() => {
-		// Check if dev environment
-		const params = new URLSearchParams(window.location.search);
-		setIsDev(params.get("env") === "dev");
-
-		// Decode JWT token to extract user info
-		const decodeJWT = (token: string) => {
+		const processAuth = async () => {
 			try {
-				// JWT structure: header.payload.signature
-				const parts = token.split(".");
-				if (parts.length !== 3) {
-					throw new Error("Invalid JWT token");
-				}
-
-				// Decode the payload (second part)
-				const payload = parts[1];
-				// Replace URL-safe characters
-				const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-				// Decode base64
-				const jsonPayload = decodeURIComponent(
-					atob(base64)
-						.split("")
-						.map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-						.join("")
-				);
-
-				return JSON.parse(jsonPayload);
-			} catch (error) {
-				console.error("Error decoding JWT:", error);
-				return null;
-			}
-		};
-
-		// Extract OAuth tokens from URL hash fragment
-		const extractTokensAndRedirect = () => {
-			try {
+				const params = new URLSearchParams(window.location.search);
+				const isElectron = params.get("env") === "dev" || params.get("env") === "electron";
 				const hash = window.location.hash;
 
-				if (hash && hash.length > 1) {
-					// Parse the hash to extract user email if available
-					const hashParams = new URLSearchParams(hash.substring(1));
-					const accessToken = hashParams.get("access_token");
+				// Read the redirect_to cookie set by the auth route
+				let nextPath = "/explore";
+				const match = document.cookie.match(/(^|;)\s*redirect_to\s*=\s*([^;]+)/);
+				if (match) {
+					nextPath = decodeURIComponent(match[2]);
+				}
 
-					// If we have an access token, try to get user info
-					if (accessToken) {
-						// Decode JWT to extract user email
-						const decodedToken = decodeJWT(accessToken);
-						if (decodedToken && decodedToken.email) {
-							setUserEmail(decodedToken.email);
-						}
-					}
-
-					// Create custom protocol URL for Electron app
+				// ─── Electron Flow ──────────────────────
+				if (isElectron && hash && hash.length > 1) {
 					const protocol = getProtocol();
 					const electronCallbackUrl = `${protocol}://oauth/callback${hash}`;
-
-					// Redirect to Electron app with tokens
 					window.location.href = electronCallbackUrl;
-
-					return true;
-				} else {
-					console.warn("No OAuth tokens found in URL hash");
-					return false;
+					return;
 				}
-			} catch (error) {
-				console.error("Error extracting OAuth tokens:", error);
-				return false;
+
+				// ─── Web App Flow ───────────────────────
+				if (hash && hash.length > 1) {
+					const result = await handleOAuth(window.location.href);
+
+					if (result.authenticated && result.user) {
+						setUserEmail(result.user.email);
+						setStatus("success");
+
+						// Redirect to the intended destination after a brief visual confirmation
+						setTimeout(() => {
+							router.push(nextPath);
+						}, 1500);
+						return;
+					}
+				}
+
+				// No tokens found
+				setStatus("error");
+			} catch {
+				setStatus("error");
 			}
 		};
 
-		// Try to extract tokens and redirect
-		extractTokensAndRedirect();
-
-		// Optional: Listen for messages from parent window (if opened as popup)
-		const handleMessage = (event: MessageEvent) => {
-			if (event.data === "close") {
-				window.close();
-			}
-		};
-
-		window.addEventListener("message", handleMessage);
-
-		return () => {
-			window.removeEventListener("message", handleMessage);
-		};
-	}, []);
-
-	const handleOpenApp = () => {
-		// Fallback button to manually open the app
-		const hash = window.location.hash;
-		if (hash) {
-			const protocol = getProtocol();
-			const electronCallbackUrl = `${protocol}://oauth/callback${hash}`;
-			window.location.href = electronCallbackUrl;
-		}
-	};
+		processAuth();
+	}, [handleOAuth, router]);
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-			<div className="text-center max-w-md w-full">
-				{/* Logo */}
-				<div className="mb-8">
-					<span className="text-3xl font-medium text-emerald-700">
-						{isDev ? "Invook Dev" : "Invook"}
-					</span>
-				</div>
-
-				{/* User Email Section */}
-				{userEmail && (
-					<div className="mb-4">
-						<p className="text-gray-600">Logged in as:</p>
-						<p className="font-mono text-lg text-gray-900">{userEmail}</p>
-					</div>
+		<div className="min-h-screen bg-background flex items-center justify-center p-4">
+			<div className="text-center max-w-md w-full space-y-6">
+				{status === "loading" && (
+					<>
+						<div className="w-12 h-12 border-4 border-foreground/20 border-t-foreground rounded-full animate-spin mx-auto" />
+						<p className="text-lg text-foreground">Signing you in...</p>
+					</>
 				)}
 
-				{/* Open App Button */}
-				<button
-					onClick={handleOpenApp}
-					className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
-				>
-					Open {isDev ? "Invook Dev" : "Invook"} App
-				</button>
-			</div>
+				{status === "success" && (
+					<>
+						<div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+							<svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+							</svg>
+						</div>
+						<div>
+							<p className="text-lg font-medium text-foreground">Welcome back!</p>
+							{userEmail && (
+								<p className="text-sm text-muted-foreground mt-1">{userEmail}</p>
+							)}
+						</div>
+						<p className="text-sm text-muted-foreground">Redirecting to Explore...</p>
+					</>
+				)}
 
-			<style jsx>{`
-        @keyframes fill {
-          0% {
-            width: 0%;
-          }
-          100% {
-            width: 100%;
-          }
-        }
-      `}</style>
+				{status === "error" && (
+					<>
+						<div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
+							<svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</div>
+						<p className="text-lg font-medium text-foreground">Authentication failed</p>
+						<p className="text-sm text-muted-foreground">No tokens found. Please try signing in again.</p>
+						<button
+							onClick={() => router.push("/sign-in")}
+							className="mt-4 px-6 py-2 rounded-full bg-[#F54E00] text-white font-medium hover:bg-[#F54E00]/90 transition-colors"
+						>
+							Back to Sign In
+						</button>
+					</>
+				)}
+			</div>
 		</div>
 	);
 }

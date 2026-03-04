@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
 
 		const supabase = await createClient();
 		const origin = request.headers.get("origin") || "http://localhost:3000";
+
+		// The global AuthProvider will catch the #access_token=... hash
+		// on ANY page on mount, so we can safely redirect the user directly
+		// to their intended destination (e.g. /explore) and it will be parsed.
 		const redirectTo = `${origin}${redirectToPath}`;
 
 		if (provider === "google") {
@@ -39,6 +43,7 @@ export async function POST(request: NextRequest) {
 			});
 
 			if (error) {
+				console.error("Supabase OTP Error:", error);
 				return NextResponse.json({ error: error.message }, { status: 400 });
 			}
 

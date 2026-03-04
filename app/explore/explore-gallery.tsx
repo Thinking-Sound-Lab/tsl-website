@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { uploadOrchestrator } from "@/lib/upload/orchestrator";
 
 /* ───────────────────────────────────────────────
@@ -448,6 +448,7 @@ const BASE_FILTERS = ["All", "Images", "Videos"] as const;
 
 export default function ExploreGallery() {
     const router = useRouter();
+    const { isAuthenticated } = useAuth();
     const [activeFilter, setActiveFilter] = useState<string>("All");
     const [selectedPost, setSelectedPost] = useState<GalleryPost | null>(null);
     const [copied, setCopied] = useState(false);
@@ -474,8 +475,6 @@ export default function ExploreGallery() {
     const [uploadProgress, setUploadProgress] = useState(0);
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    // Loading state for auth check
-    const [isCheckingAuth, setIsCheckingAuth] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -521,24 +520,11 @@ export default function ExploreGallery() {
     };
 
     const handleUploadClick = async () => {
-        setIsCheckingAuth(true);
-        try {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (!user) {
-                // If not logged in, redirect to sign in and back to explore afterwards
-                router.push("/sign-in?redirect=/explore");
-                return;
-            }
-            // User is authenticated, open modal
-            setIsUploadModalOpen(true);
-        } catch (error) {
-            console.error("Auth check failed:", error);
+        if (!isAuthenticated) {
             router.push("/sign-in?redirect=/explore");
-        } finally {
-            setIsCheckingAuth(false);
+            return;
         }
+        setIsUploadModalOpen(true);
     };
 
     return (
@@ -591,16 +577,11 @@ export default function ExploreGallery() {
                     {/* Upload Button */}
                     <button
                         onClick={handleUploadClick}
-                        disabled={isCheckingAuth}
-                        className="px-5 py-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-wait"
+                        className="px-5 py-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer"
                     >
-                        {isCheckingAuth ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                            </svg>
-                        )}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                        </svg>
                         Upload
                     </button>
                 </div>
