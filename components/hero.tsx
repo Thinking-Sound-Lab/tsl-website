@@ -11,7 +11,7 @@ export function Hero() {
 						An infinite canvas for your creative mind.
 					</h1>
 					<p className="text-sm sm:text-base text-muted-foreground/70 mb-8 max-w-md">
-						Bring your ideas to life faster than ever before. Every creative AI tools, one unified process.
+						Bring your ideas to life faster than ever before. Every creative AI tool, one unified process.
 					</p>
 
 					<Link
