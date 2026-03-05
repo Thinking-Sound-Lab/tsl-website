@@ -9,7 +9,9 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { initialize, signOut as authSignOut, handleOAuthCallback, type InitResult } from "@/lib/authService";
+import { createClient } from "@/lib/supabase/client";
 import type { UserData } from "@/lib/tokenStore";
+import { setTokenStore, setUser as setStoredUser, type TokenStoreData } from "@/lib/tokenStore";
 
 interface AuthContextValue {
     user: UserData | null;
@@ -42,7 +44,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     // Clean the hash from the URL so it looks nice and doesn't trigger again
                     window.history.replaceState(null, "", window.location.pathname + window.location.search);
                 } else {
+                    // Try localStorage-based session first
                     result = await initialize();
+
+                    // If localStorage had nothing, check for a Supabase cookie-based session
+                    // (set by /auth/callback after Magic Link PKCE code exchange)
+                    if (!result.authenticated) {
+                        try {
+                            const supabase = createClient();
+                            const { data: { session } } = await supabase.auth.getSession();
+
+                            if (session?.access_token && session?.refresh_token) {
+                                // Sync the cookie-based session into localStorage
+                                const newStore: TokenStoreData = {
+                                    accessToken: session.access_token,
+                                    refreshToken: session.refresh_token,
+                                    expiresIn: session.expires_in || 3600,
+                                    tokenExpiresAt: Date.now() + (session.expires_in || 3600) * 1000,
+                                };
+                                setTokenStore(newStore);
+
+                                const userData = {
+                                    userId: session.user.id,
+                                    email: session.user.email || "user@example.com",
+                                };
+                                setStoredUser(userData);
+
+                                result = { authenticated: true, user: userData };
+                            }
+                        } catch (e) {
+                            console.error("Supabase session check failed:", e);
+                        }
+                    }
                 }
 
                 if (mounted) {

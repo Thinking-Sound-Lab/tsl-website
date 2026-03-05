@@ -12,7 +12,10 @@ export async function POST(request: NextRequest) {
 		// The global AuthProvider will catch the #access_token=... hash
 		// on ANY page on mount, so we can safely redirect the user directly
 		// to their intended destination (e.g. /explore) and it will be parsed.
+		// For email OTP (Magic Link), redirect via /auth/callback so the PKCE code
+		// gets exchanged server-side. For Google OAuth, redirect directly (uses hash fragments).
 		const redirectTo = `${origin}${redirectToPath}`;
+		const emailRedirectTo = `${origin}/auth/callback?next=${encodeURIComponent(redirectToPath)}`;
 
 		if (provider === "google") {
 			const { data, error } = await supabase.auth.signInWithOAuth({
@@ -38,7 +41,7 @@ export async function POST(request: NextRequest) {
 			const { error } = await supabase.auth.signInWithOtp({
 				email,
 				options: {
-					emailRedirectTo: redirectTo,
+					emailRedirectTo: emailRedirectTo,
 				},
 			});
 
