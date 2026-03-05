@@ -1,9 +1,15 @@
 /**
- * BackendAPIService — Centralized HTTP client with:
+ * BackendAPIService — Centralized HTTP client using Axios with:
  * - Automatic Bearer token injection from tokenStore
  * - 401 interceptor with single-flight refresh + retry
  * - Refresh lock (isRefreshing) to prevent concurrent refresh races
  */
+
+import axios, {
+    AxiosError,
+    type AxiosRequestConfig,
+    type InternalAxiosRequestConfig,
+} from "axios";
 
 import {
     getTokenStore,
@@ -49,67 +55,54 @@ function waitForRefresh(): Promise<string | null> {
     });
 }
 
-// ─── Core Request Function ─────────────────────
+// ─── Axios Instance ────────────────────────────
 
-interface RequestOptions extends RequestInit {
-    skipAuth?: boolean;
-}
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
-/**
- * Central request dispatcher. Reads the access token from localStorage,
- * injects the Authorization header, and retries once on 401.
- */
-export async function request<T>(
-    endpoint: string,
-    options: RequestOptions = {}
-): Promise<T> {
-    const { skipAuth = false, ...fetchOptions } = options;
+export const api = axios.create({
+    baseURL: backendUrl,
+    headers: { "Content-Type": "application/json" },
+});
 
-    const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...((fetchOptions.headers as Record<string, string>) || {}),
-    };
+// ── Request Interceptor — inject token ─────────
 
-    // Inject token unless explicitly skipped
-    if (!skipAuth) {
-        const store = getTokenStore();
-        if (store?.accessToken) {
-            headers["Authorization"] = `Bearer ${store.accessToken}`;
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    // Skip auth if explicitly flagged
+    if ((config as InternalAxiosRequestConfig & { _skipAuth?: boolean })._skipAuth) return config;
+
+    const store = getTokenStore();
+    if (store?.accessToken) {
+        config.headers.Authorization = `Bearer ${store.accessToken}`;
+    }
+    return config;
+});
+
+// ── Response Interceptor — 401 retry ───────────
+
+api.interceptors.response.use(
+    (response) => response,
+    async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+            _retry?: boolean;
+            _skipAuth?: boolean;
+        };
+
+        // Only handle 401 on authenticated requests
+        if (error.response?.status !== 401 || originalRequest._skipAuth || originalRequest._retry) {
+            return Promise.reject(error);
         }
-    }
 
-    // Resolve endpoint: if it starts with /api, prepend the backend URL
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-    const resolvedEndpoint = endpoint.startsWith("/api") ? `${backendUrl}${endpoint}` : endpoint;
+        originalRequest._retry = true;
 
-    const config: RequestInit = { ...fetchOptions, headers };
-
-    let response: Response;
-    try {
-        response = await fetch(resolvedEndpoint, config);
-    } catch {
-        throw new ApiError({ message: "Network error occurred", status: 0 });
-    }
-
-    // ─── 401 Interceptor ───────────────────────
-    if (response.status === 401 && !skipAuth) {
-        // If someone else is already refreshing, wait for their result
+        // If someone else is already refreshing, queue this request
         if (isRefreshing) {
             const newToken = await waitForRefresh();
             if (newToken) {
-                headers["Authorization"] = `Bearer ${newToken}`;
-                const retryResponse = await fetch(resolvedEndpoint, { ...fetchOptions, headers });
-                if (!retryResponse.ok) {
-                    return handleErrorResponse(retryResponse);
-                }
-                return retryResponse.status === 204
-                    ? (null as unknown as T)
-                    : retryResponse.json();
-            } else {
-                // Refresh failed — force logout
-                redirectToLogin();
-                throw new UnauthorizedError("Session expired. Please log in again.");
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                return api(originalRequest);
             }
+            redirectToLogin();
+            return Promise.reject(new UnauthorizedError("Session expired. Please log in again."));
         }
 
         // We are the first caller to hit 401 — attempt refresh
@@ -117,42 +110,43 @@ export async function request<T>(
         if (refreshed) {
             const newStore = getTokenStore();
             if (newStore?.accessToken) {
-                headers["Authorization"] = `Bearer ${newStore.accessToken}`;
-                const retryResponse = await fetch(resolvedEndpoint, { ...fetchOptions, headers });
-                if (!retryResponse.ok) {
-                    return handleErrorResponse(retryResponse);
-                }
-                return retryResponse.status === 204
-                    ? (null as unknown as T)
-                    : retryResponse.json();
+                originalRequest.headers.Authorization = `Bearer ${newStore.accessToken}`;
+                return api(originalRequest);
             }
         }
 
         // Refresh failed completely
         redirectToLogin();
-        throw new UnauthorizedError("Session expired. Please log in again.");
+        return Promise.reject(new UnauthorizedError("Session expired. Please log in again."));
     }
+);
 
-    if (!response.ok) {
-        return handleErrorResponse(response);
-    }
+// ─── Legacy request() wrapper ──────────────────
+// Keeps backward-compat with existing code that uses request<T>(endpoint, options)
 
-    return response.status === 204 ? (null as unknown as T) : response.json();
+interface RequestOptions extends RequestInit {
+    skipAuth?: boolean;
 }
 
-async function handleErrorResponse(response: Response): Promise<never> {
-    let errorMsg = "API Request Failed";
-    try {
-        const errData = await response.json();
-        errorMsg = errData.error || errData.message || errorMsg;
-    } catch {
-        try {
-            errorMsg = await response.text();
-        } catch {
-            // use default
-        }
+export async function request<T>(
+    endpoint: string,
+    options: RequestOptions = {}
+): Promise<T> {
+    const { skipAuth = false, method = "GET", body, headers: customHeaders } = options;
+
+    const config: AxiosRequestConfig & { _skipAuth?: boolean } = {
+        url: endpoint,
+        method: method as string,
+        _skipAuth: skipAuth,
+        headers: customHeaders as Record<string, string>,
+    };
+
+    if (body) {
+        config.data = typeof body === "string" ? JSON.parse(body) : body;
     }
-    throw new ApiError({ message: errorMsg, status: response.status });
+
+    const response = await api(config);
+    return response.data as T;
 }
 
 function redirectToLogin() {
@@ -179,19 +173,11 @@ export async function refreshAccessToken(): Promise<boolean> {
     isRefreshing = true;
 
     try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        const response = await fetch(`${backendUrl}/api/auth/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken: store.refreshToken }),
+        const response = await axios.post(`${backendUrl}/api/auth/refresh`, {
+            refreshToken: store.refreshToken,
         });
 
-        if (!response.ok) {
-            onRefreshComplete(null);
-            return false;
-        }
-
-        const data = await response.json();
+        const data = response.data;
         const { access_token, refresh_token, expires_in } = data.data || data;
 
         if (!access_token) {
@@ -221,10 +207,8 @@ export async function refreshAccessToken(): Promise<boolean> {
 
 export async function verifyToken(): Promise<{ userId: string; email: string } | null> {
     try {
-        const data = await request<{ data: { userId: string; email: string } }>(
-            "/api/auth/verify"
-        );
-        return data.data;
+        const response = await api.get<{ data: { userId: string; email: string } }>("/api/auth/verify");
+        return response.data.data;
     } catch {
         return null;
     }
@@ -238,14 +222,9 @@ export async function logout(): Promise<void> {
 
     // Best-effort server logout
     try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-        await fetch(`${backendUrl}/api/auth/logout`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                refreshToken: store?.refreshToken || "",
-                userId: user?.userId || "",
-            }),
+        await axios.post(`${backendUrl}/api/auth/logout`, {
+            refreshToken: store?.refreshToken || "",
+            userId: user?.userId || "",
         });
     } catch {
         // Always succeeds conceptually — clear local state regardless

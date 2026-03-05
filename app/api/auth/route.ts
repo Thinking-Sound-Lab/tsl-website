@@ -1,58 +1,84 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
-	try {
-		const body = await request.json();
-		const { provider, email, redirectToPath = "/explore" } = body;
+    try {
+        const body = await request.json();
+        const { provider, email, isSignUp, env, redirectToPath = "/explore" } = body;
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
-		const supabase = await createClient();
-		const origin = request.headers.get("origin") || "http://localhost:3000";
+        const source = env === "dev" ? "desktop-dev" : env === "electron" ? "desktop" : "web";
 
-		// The global AuthProvider will catch the #access_token=... hash
-		// on ANY page on mount, so we can safely redirect the user directly
-		// to their intended destination (e.g. /explore) and it will be parsed.
-		const redirectTo = `${origin}${redirectToPath}`;
+        if (provider === "google") {
+            const response = await fetch(`${backendUrl}/api/auth/oauth/google`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({redirectTo: 'http://localhost:3000/auth/success?source=web' }),
+            });
 
-		if (provider === "google") {
-			const { data, error } = await supabase.auth.signInWithOAuth({
-				provider: "google",
-				options: {
-					redirectTo,
-					skipBrowserRedirect: true,
-				},
-			});
+            const data = await response.json();
 
-			if (error) {
-				return NextResponse.json({ error: error.message }, { status: 400 });
-			}
+            if (!response.ok || !data.success) {
+                return NextResponse.json(
+                    { error: data.error || "Google OAuth failed" },
+                    { status: 400 }
+                );
+            }
 
-			return NextResponse.json({ url: data.url });
-		}
+            const oauthUrl = data.data?.url;
 
-		if (provider === "email") {
-			if (!email) {
-				return NextResponse.json({ error: "Email is required" }, { status: 400 });
-			}
+            // Store both source and redirect_to in cookies
+            // since Supabase will strip any custom query params from redirect_to
+            const responseHeaders = new Headers();
+            responseHeaders.append(
+                "Set-Cookie",
+                `auth_source=${source}; Path=/; Max-Age=3600; SameSite=Lax`
+            );
+            if (redirectToPath) {
+                responseHeaders.append(
+                    "Set-Cookie",
+                    `redirect_to=${encodeURIComponent(redirectToPath)}; Path=/; Max-Age=3600; SameSite=Lax`
+                );
+            }
 
-			const { error } = await supabase.auth.signInWithOtp({
-				email,
-				options: {
-					emailRedirectTo: redirectTo,
-				},
-			});
+            return NextResponse.json({ url: oauthUrl }, { headers: responseHeaders });
+        }
 
-			if (error) {
-				console.error("Supabase OTP Error:", error);
-				return NextResponse.json({ error: error.message }, { status: 400 });
-			}
+        if (provider === "email") {
+            if (!email) {
+                return NextResponse.json({ error: "Email is required" }, { status: 400 });
+            }
 
-			return NextResponse.json({ success: true, message: "Check your email for the magic link!" });
-		}
+            const origin = request.headers.get("origin") || "http://localhost:3000";
+            const baseRedirectUrl = `${origin}/auth/success`;
 
-		return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
-	} catch (error) {
-		console.error("Auth error:", error);
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-	}
+            const response = await fetch(`${backendUrl}/api/auth/magic-link`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    isSignUp: !!isSignUp,
+                    redirectTo: baseRedirectUrl,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                return NextResponse.json(
+                    { error: data.error || "Failed to send magic link" },
+                    { status: 400 }
+                );
+            }
+
+            return NextResponse.json({
+                success: true,
+                message: data.message || "Check your email for the magic link!",
+            });
+        }
+
+        return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
+    } catch (error) {
+        console.error("Auth error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }

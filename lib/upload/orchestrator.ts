@@ -1,13 +1,25 @@
-import { ExploreAPI, ExplorePostPayload } from "../api/explore";
+import { ExploreAPI, type CompleteUploadPayload } from "../api/explore";
 import { splitFileIntoChunks } from "./chunker";
 
 interface UploadProgressCallback {
     (percentage: number): void;
 }
 
+export interface UploadMetadata {
+    prompt: string;
+    modelName: string;
+    mimeType: string;
+    width: number;
+    height: number;
+    itemType?: "image" | "video";
+    tags?: string[];
+    duration?: number;
+    isPublic?: boolean;
+}
+
 interface OrchestratorOptions {
     file: File;
-    metadata: ExplorePostPayload;
+    metadata: UploadMetadata;
     onProgress?: UploadProgressCallback;
     signal?: AbortSignal;
 }
@@ -71,11 +83,10 @@ function uploadPartWithXHR(
 /**
  * Orchestrates the full multipart upload lifecycle:
  * 1. File validation & chunking (5MB limits)
- * 2. POST /init (Get uploadId)
- * 3. POST /urls (Get Presigned S3 URLs)
- * 4. XHR PUT parts concurrently (Max 3, Retries = 3)
- * 5. POST /complete (Finalize AWS assembly + Supabase insert)
- * 6. POST /abort (Cleans up orphaned chunks on failure/cancellation)
+ * 2. POST /upload/init (Get uploadId, uploadKey, and first batch of URLs)
+ * 3. XHR PUT parts concurrently (Max 3, Retries = 3)
+ * 4. POST /upload/complete (Finalize AWS assembly + DB insert)
+ * 5. POST /upload/abort (Cleans up orphaned chunks on failure/cancellation)
  */
 export async function uploadOrchestrator({
     file,
@@ -102,25 +113,29 @@ export async function uploadOrchestrator({
     };
 
     let uploadId: string | undefined;
-    let fileKey: string | undefined;
+    let uploadKey: string | undefined;
 
     try {
-        // 2. Init Upload
+        // 2. Init Upload — returns uploadId, uploadKey, and first batch of presigned URLs
         if (signal?.aborted) throw new Error("Aborted");
-        const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size);
-        uploadId = initRes.uploadId;
-        fileKey = initRes.fileKey;
+        const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size, totalParts);
+        uploadId = initRes.data.uploadId;
+        uploadKey = initRes.data.uploadKey;
 
-        // 3. Get Presigned URLs
-        if (signal?.aborted) throw new Error("Aborted");
-        const urlsRes = await ExploreAPI.getUploadUrls(uploadId, fileKey, totalParts);
-        const presignedUrls = urlsRes.presignedUrls;
+        let presignedUrls = initRes.data.urls;
+
+        // If the init didn't return enough URLs (unlikely but safe), fetch more
+        if (presignedUrls.length < totalParts) {
+            if (signal?.aborted) throw new Error("Aborted");
+            const moreUrls = await ExploreAPI.getUploadUrls(uploadKey, uploadId, totalParts - presignedUrls.length);
+            presignedUrls = [...presignedUrls, ...moreUrls.data];
+        }
 
         if (presignedUrls.length !== totalParts) {
             throw new Error("Mismatch between requested parts and received URLs");
         }
 
-        // 4. Upload Parts concurrently (Limit: 3)
+        // 3. Upload Parts concurrently (Limit: 3)
         const CONCURRENCY_LIMIT = 3;
         const completedParts: { PartNumber: number; ETag: string }[] = [];
         let currentIndex = 0;
@@ -131,7 +146,7 @@ export async function uploadOrchestrator({
 
                 const taskIndex = currentIndex++;
                 const chunk = chunks[taskIndex];
-                const presignedUrl = presignedUrls.find(p => p.partNumber === chunk.partNumber)?.url;
+                const presignedUrl = presignedUrls.find(p => p.partNumber === chunk.partNumber)?.presignedUrl;
 
                 if (!presignedUrl) {
                     throw new Error(`Missing presigned URL for part ${chunk.partNumber}`);
@@ -180,20 +195,33 @@ export async function uploadOrchestrator({
 
         if (signal?.aborted) throw new Error("Aborted");
 
-        // 5. Complete Upload
-        // Sort parts by PartNumber sequentially as required by AWS S3 Multipart API
+        // 4. Complete Upload — flat body with parts + metadata
         completedParts.sort((a, b) => a.PartNumber - b.PartNumber);
 
-        await ExploreAPI.completeUpload(uploadId, fileKey, completedParts, metadata);
+        const completePayload: CompleteUploadPayload = {
+            uploadKey,
+            uploadId,
+            parts: completedParts,
+            prompt: metadata.prompt,
+            modelName: metadata.modelName,
+            mimeType: metadata.mimeType || file.type,
+            width: metadata.width,
+            height: metadata.height,
+            itemType: metadata.itemType,
+            tags: metadata.tags,
+            duration: metadata.duration,
+            isPublic: metadata.isPublic,
+        };
+
+        await ExploreAPI.completeUpload(completePayload);
 
         // Upload success! Fill progress bar visually if calculation was off
         onProgress?.(100);
 
     } catch (error) {
-        // 6. Handle Abort/Failure Cleanup
-        if (uploadId && fileKey) {
-            // Fire-and-forget abort endpoint to trigger AWS S3 to delete the orphaned multipart chunks
-            ExploreAPI.abortUpload(uploadId, fileKey).catch((e) => console.error("Failed to abort orphaned upload", e));
+        // 5. Handle Abort/Failure Cleanup
+        if (uploadId && uploadKey) {
+            ExploreAPI.abortUpload(uploadKey, uploadId).catch((e) => console.error("Failed to abort orphaned upload", e));
         }
         throw error;
     }

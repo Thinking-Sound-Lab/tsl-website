@@ -76,7 +76,7 @@ export default function SignUpContent() {
 			const response = await fetch("/api/auth", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ provider: "email", email, env, redirectToPath: redirectParam }),
+				body: JSON.stringify({ provider: "email", email, isSignUp: true, env, redirectToPath: redirectParam }),
 			});
 
 			const data = await response.json();
