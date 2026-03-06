@@ -19,21 +19,20 @@ function timeAgo(iso: string): string {
     if (hrs < 24) return `${hrs}h`;
     const days = Math.floor(hrs / 24);
     if (days < 7) return `${days}d`;
-    const weeks = Math.floor(days / 7);
-    return `${weeks}w`;
+    return `${Math.floor(days / 7)}w`;
 }
 
 function formatDuration(seconds?: number | null): string {
     if (!seconds) return "0:15";
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
-    return m + ":" + s.toString().padStart(2, "0");
+    return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-/* ─── Filter Tabs ─────────────────────────────── */
+/* ─── Constants ─────────────────────────────── */
 const BASE_FILTERS = ["All", "Images", "Videos"] as const;
 
-/* ─── Component ───────────────────────────────── */
+/* ─── Component ─────────────────────────────── */
 
 export default function ExploreGallery() {
     const router = useRouter();
@@ -54,13 +53,13 @@ export default function ExploreGallery() {
     const [copied, setCopied] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-    /* Report Modal State */
+    /* Report Modal */
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [postToReport, setPostToReport] = useState<ExploreItem | null>(null);
     const [reportReason, setReportReason] = useState("");
     const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
-    /* Upload Modal State */
+    /* Upload Modal */
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [uploadFilePreview, setUploadFilePreview] = useState<string | null>(null);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -71,38 +70,30 @@ export default function ExploreGallery() {
     const [uploadTags, setUploadTags] = useState("");
     const [isSubmittingUpload, setIsSubmittingUpload] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const abortControllerRef = useRef<AbortController | null>(null);
 
+    const abortControllerRef = useRef<AbortController | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const sentinelRef = useRef<HTMLDivElement>(null);
 
-    /* ─── Derive filter params from active filter ─── */
-    const getFilterParams = useCallback(
-        (filter: string) => {
-            if (filter === "Images") return { item_type: "image" };
-            if (filter === "Videos") return { item_type: "video" };
-            if (filter !== "All") return { model_name: filter };
-            return {};
-        },
-        []
-    );
+    /* ─── Filter Params ─── */
+    const getFilterParams = useCallback((filter: string) => {
+        if (filter === "Images") return { item_type: "image" };
+        if (filter === "Videos") return { item_type: "video" };
+        if (filter !== "All") return { model_name: filter };
+        return {};
+    }, []);
 
-    /* ─── Fetch Posts ─────────────────────────────── */
+    /* ─── Fetch Posts ─── */
     const fetchPosts = useCallback(
         async (pageNum: number, filter: string, append = false) => {
             try {
                 if (pageNum === 1) setIsLoadingPosts(true);
                 else setIsLoadingMore(true);
 
-                const filters = getFilterParams(filter);
-                const res = await ExploreAPI.getPosts(pageNum, 30, filters);
+                const res = await ExploreAPI.getPosts(pageNum, 30, getFilterParams(filter));
                 const { data: items, hasMore: more } = res.data;
 
-                if (append) {
-                    setPosts((prev) => [...prev, ...items]);
-                } else {
-                    setPosts(items);
-                }
+                setPosts((prev) => (append ? [...prev, ...items] : items));
                 setHasMore(more);
                 setError(null);
             } catch (err) {
@@ -116,7 +107,7 @@ export default function ExploreGallery() {
         [getFilterParams]
     );
 
-    /* ─── Fetch Models ────────────────────────────── */
+    /* ─── Fetch Models ─── */
     const fetchModels = useCallback(async () => {
         try {
             const res = await ExploreAPI.getModels();
@@ -126,58 +117,56 @@ export default function ExploreGallery() {
         }
     }, []);
 
-    /* ─── Initial Load ────────────────────────────── */
+    /* ─── Initial Load ─── */
     useEffect(() => {
         fetchPosts(1, activeFilter);
         fetchModels();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    /* ─── Re-fetch on filter change ───────────────── */
+    /* ─── Filter Change ─── */
     useEffect(() => {
         setPage(1);
         fetchPosts(1, activeFilter);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeFilter]);
 
-    /* ─── Infinite Scroll via IntersectionObserver ── */
+    /* ─── Infinite Scroll ─── */
     useEffect(() => {
         if (!sentinelRef.current) return;
-
         const observer = new IntersectionObserver(
-            (entries) => {
-                const entry = entries[0];
+            ([entry]) => {
                 if (entry.isIntersecting && hasMore && !isLoadingMore && !isLoadingPosts) {
-                    const nextPage = page + 1;
-                    setPage(nextPage);
-                    fetchPosts(nextPage, activeFilter, true);
+                    const next = page + 1;
+                    setPage(next);
+                    fetchPosts(next, activeFilter, true);
                 }
             },
             { rootMargin: "200px" }
         );
-
         observer.observe(sentinelRef.current);
         return () => observer.disconnect();
     }, [hasMore, isLoadingMore, isLoadingPosts, page, activeFilter, fetchPosts]);
 
-    /* ─── Autoplay video when lightbox opens ──────── */
+    /* ─── Autoplay video in lightbox ─── */
     useEffect(() => {
         if (selectedPost?.item_type === "video" && videoRef.current) {
-            videoRef.current.play().catch(() => { });
+            videoRef.current.play().catch(() => {});
         }
     }, [selectedPost]);
 
-    /* ─── Close dropdown when clicking outside ────── */
+    /* ─── Close dropdowns on outside click ─── */
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            const target = e.target as Element;
-            if (!target.closest(".dropdown-trigger")) setOpenMenuId(null);
-            if (!target.closest(".model-dropdown-trigger")) setIsModelDropdownOpen(false);
+        const handler = (e: MouseEvent) => {
+            const t = e.target as Element;
+            if (!t.closest(".dropdown-trigger")) setOpenMenuId(null);
+            if (!t.closest(".model-dropdown-trigger")) setIsModelDropdownOpen(false);
         };
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
+        document.addEventListener("click", handler);
+        return () => document.removeEventListener("click", handler);
     }, []);
 
+    /* ─── Handlers ─── */
     const handleCopyPrompt = async () => {
         if (!selectedPost) return;
         await navigator.clipboard.writeText(selectedPost.prompt);
@@ -185,7 +174,7 @@ export default function ExploreGallery() {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const handleUploadClick = async () => {
+    const handleUploadClick = () => {
         if (!isAuthenticated) {
             router.push("/sign-in?redirect=/explore");
             return;
@@ -199,7 +188,6 @@ export default function ExploreGallery() {
             router.push("/sign-in?redirect=/explore");
             return;
         }
-
         setIsSubmittingReport(true);
         try {
             await ExploreAPI.reportPost(postToReport.id, reportReason.trim());
@@ -214,10 +202,64 @@ export default function ExploreGallery() {
         }
     };
 
-    /* ─── Skeleton Loader ─────────────────────────── */
+    const resetUploadModal = () => {
+        setUploadFile(null);
+        setUploadFilePreview(null);
+        setUploadFileType(null);
+        setUploadPrompt("");
+        setUploadModel("");
+        setUploadTags("");
+        setUploadProgress(0);
+    };
+
+    const handleSubmitUpload = async () => {
+        if (!uploadFile || !uploadFileType) return;
+        setIsSubmittingUpload(true);
+        setUploadProgress(0);
+
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
+        const metadata: UploadMetadata = {
+            prompt: uploadPrompt,
+            modelName: uploadModel,
+            mimeType: uploadFile.type,
+            width: 1024,
+            height: 1024,
+            itemType: uploadFileType,
+            tags: uploadTags.split(",").map((t) => t.trim()).filter(Boolean),
+        };
+
+        try {
+            await uploadOrchestrator({
+                file: uploadFile,
+                metadata,
+                onProgress: (p) => setUploadProgress(p),
+                signal: controller.signal,
+            });
+            setIsUploadModalOpen(false);
+            resetUploadModal();
+            setPage(1);
+            fetchPosts(1, activeFilter);
+        } catch (err) {
+            const e = err as Error;
+            if (e.message !== "Aborted" && e.message !== "Upload aborted by user") {
+                console.error("Upload failed", e);
+                alert(`Upload failed: ${e.message}`);
+            }
+        } finally {
+            setIsSubmittingUpload(false);
+            abortControllerRef.current = null;
+        }
+    };
+
+    /* ─── Skeleton ─── */
     const SkeletonCard = () => (
         <div className="masonry-item animate-pulse">
-            <div className="gallery-card-image-wrapper bg-secondary/50 rounded-xl" style={{ paddingBottom: `${100 + Math.random() * 60}%` }} />
+            <div
+                className="gallery-card-image-wrapper bg-secondary/50 rounded-xl"
+                style={{ paddingBottom: `${100 + Math.random() * 60}%` }}
+            />
             <div className="flex items-center justify-between mt-2.5 px-0.5">
                 <div className="h-4 bg-secondary/50 rounded w-24" />
                 <div className="w-8 h-8 bg-secondary/30 rounded-full" />
@@ -225,45 +267,45 @@ export default function ExploreGallery() {
         </div>
     );
 
+    /* ─── Render ─── */
     return (
         <div className="min-h-screen bg-background pt-20 pb-16">
-            {/* ── Header ─────────────────────────────── */}
+
+            {/* ── Header ── */}
             <header className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px] mb-10">
-                <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">
-                    Explore
-                </h1>
+                <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">Explore</h1>
                 <p className="mt-3 text-base text-muted-foreground max-w-xl">
                     Discover stunning AI-generated artwork from the Invook community.
                     Every image tells a story powered by prompts and imagination.
                 </p>
 
-                {/* Filters */}
+                {/* Filter Tabs */}
                 <div className="flex items-center gap-2 mt-6 flex-wrap">
                     {BASE_FILTERS.map((f) => (
                         <button
                             key={f}
                             onClick={() => setActiveFilter(f)}
-                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${activeFilter === f
+                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${
+                                activeFilter === f
                                     ? "bg-foreground text-background"
                                     : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
-                                }`}
+                            }`}
                         >
                             {f}
                         </button>
                     ))}
 
-                    {/* Divider */}
                     {models.length > 0 && <div className="w-px h-6 bg-foreground/15 mx-1" />}
 
-                    {/* Model filters — from API */}
                     {models.map((model) => (
                         <button
                             key={model}
                             onClick={() => setActiveFilter(model)}
-                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${activeFilter === model
+                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${
+                                activeFilter === model
                                     ? "bg-foreground text-background"
                                     : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
-                                }`}
+                            }`}
                         >
                             {model}
                         </button>
@@ -271,7 +313,6 @@ export default function ExploreGallery() {
 
                     <div className="flex-1" />
 
-                    {/* Upload Button */}
                     <button
                         onClick={handleUploadClick}
                         className="px-5 py-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer"
@@ -284,7 +325,7 @@ export default function ExploreGallery() {
                 </div>
             </header>
 
-            {/* ── Error Banner ─────────────────────────── */}
+            {/* ── Error Banner ── */}
             {error && (
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px] mb-6">
                     <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-sm text-destructive flex items-center gap-2">
@@ -292,21 +333,22 @@ export default function ExploreGallery() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         {error}
-                        <button onClick={() => { setError(null); fetchPosts(1, activeFilter); }} className="ml-auto underline hover:no-underline">
+                        <button
+                            onClick={() => { setError(null); fetchPosts(1, activeFilter); }}
+                            className="ml-auto underline hover:no-underline"
+                        >
                             Retry
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* ── Masonry Grid ───────────────────────── */}
+            {/* ── Masonry Grid ── */}
             <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
                 <div className="masonry-grid">
-                    {/* Skeleton loading */}
                     {isLoadingPosts &&
                         Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={`skel-${i}`} />)}
 
-                    {/* Actual items */}
                     {!isLoadingPosts &&
                         posts.map((post, i) => (
                             <motion.div
@@ -317,10 +359,7 @@ export default function ExploreGallery() {
                                 className="masonry-item"
                             >
                                 <button
-                                    onClick={() => {
-                                        setSelectedPost(post);
-                                        setCopied(false);
-                                    }}
+                                    onClick={() => { setSelectedPost(post); setCopied(false); }}
                                     className="gallery-card group w-full text-left cursor-pointer"
                                 >
                                     <div className="gallery-card-image-wrapper">
@@ -331,36 +370,31 @@ export default function ExploreGallery() {
                                             height={post.height}
                                             className="gallery-card-image"
                                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                            unoptimized
+                                            loading="lazy"
                                         />
 
-                                        {/* Video duration badge */}
                                         {post.item_type === "video" && (
                                             <div className="absolute top-2.5 left-2.5 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[11px] font-semibold text-white tracking-wide border border-white/10">
                                                 {formatDuration(post.duration)}
                                             </div>
                                         )}
 
-                                        {/* Hover overlay */}
                                         <div className="gallery-card-overlay">
                                             <div className="gallery-card-info">
                                                 <h3 className="text-sm font-semibold text-white truncate">
                                                     {post.prompt.slice(0, 50)}
                                                 </h3>
-                                                <span className="text-xs text-white/70">
-                                                    {post.model_name}
-                                                </span>
+                                                <span className="text-xs text-white/70">{post.model_name}</span>
                                             </div>
-
                                             <div className="gallery-card-user">
-                                                <span className="text-xs text-white/80">
-                                                    {timeAgo(post.created_at)}
-                                                </span>
+                                                <span className="text-xs text-white/80">{timeAgo(post.created_at)}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </button>
 
-                                {/* ── Bottom Info Bar ── */}
+                                {/* Bottom Info Bar */}
                                 <div className="flex items-center justify-between mt-2.5 px-0.5 relative">
                                     <span className="text-sm font-medium text-foreground/80 truncate pr-4">
                                         {post.model_name}
@@ -379,7 +413,6 @@ export default function ExploreGallery() {
                                             </svg>
                                         </button>
 
-                                        {/* Dropdown Menu */}
                                         <AnimatePresence>
                                             {openMenuId === post.id && (
                                                 <motion.div
@@ -394,37 +427,40 @@ export default function ExploreGallery() {
                                                         className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            e.preventDefault();
                                                             router.push("/sign-in");
                                                             setOpenMenuId(null);
                                                         }}
                                                     >
-                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" /></svg>
+                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                                        </svg>
                                                         Use in Canvas
                                                     </button>
                                                     <button
                                                         className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            e.preventDefault();
                                                             navigator.clipboard.writeText(post.prompt);
                                                             setOpenMenuId(null);
                                                         }}
                                                     >
-                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                        </svg>
                                                         Copy prompt
                                                     </button>
                                                     <button
                                                         className="w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 whitespace-nowrap"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            e.preventDefault();
                                                             setPostToReport(post);
                                                             setIsReportModalOpen(true);
                                                             setOpenMenuId(null);
                                                         }}
                                                     >
-                                                        <svg className="w-4 h-4 text-destructive/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                        <svg className="w-4 h-4 text-destructive/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                        </svg>
                                                         Report
                                                     </button>
                                                 </motion.div>
@@ -436,7 +472,7 @@ export default function ExploreGallery() {
                         ))}
                 </div>
 
-                {/* Empty state */}
+                {/* Empty State */}
                 {!isLoadingPosts && posts.length === 0 && !error && (
                     <div className="text-center py-20">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
@@ -449,18 +485,17 @@ export default function ExploreGallery() {
                     </div>
                 )}
 
-                {/* Loading more spinner */}
+                {/* Loading More */}
                 {isLoadingMore && (
                     <div className="flex justify-center py-8">
                         <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
                     </div>
                 )}
 
-                {/* Infinite scroll sentinel */}
                 <div ref={sentinelRef} className="h-1" />
             </section>
 
-            {/* ── Lightbox / Detail Modal ─────────────── */}
+            {/* ── Lightbox Modal ── */}
             <AnimatePresence>
                 {selectedPost && (
                     <motion.div
@@ -473,11 +508,11 @@ export default function ExploreGallery() {
                         <motion.div
                             initial={{ scale: 0.92, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.92, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
                             className="lightbox-container"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Close button */}
                             <button
                                 onClick={() => setSelectedPost(null)}
                                 className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
@@ -488,7 +523,7 @@ export default function ExploreGallery() {
                             </button>
 
                             <div className="flex flex-col lg:flex-row h-full">
-                                {/* ── Media Side ────────────────── */}
+                                {/* Media Side */}
                                 <div className="relative lg:flex-1 flex items-center justify-center bg-black/20 p-2 sm:p-3 lg:p-4 min-h-[250px]">
                                     {selectedPost.item_type === "video" && selectedPost.url ? (
                                         <video
@@ -510,43 +545,34 @@ export default function ExploreGallery() {
                                             height={selectedPost.height}
                                             className="max-h-[50vh] lg:max-h-[85vh] w-auto object-contain rounded-lg"
                                             priority
+                                            unoptimized
                                         />
                                     )}
                                 </div>
 
-                                {/* ── Details Side ──────────────── */}
+                                {/* Details Side */}
                                 <div className="lightbox-details">
-                                    {/* Fixed top: model badge + time */}
                                     <div className="flex flex-col gap-3 flex-shrink-0">
-                                        <span className="lightbox-model-badge">
-                                            {selectedPost.model_name}
-                                        </span>
+                                        <span className="lightbox-model-badge">{selectedPost.model_name}</span>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm text-muted-foreground">
-                                                {timeAgo(selectedPost.created_at)}
-                                            </span>
+                                            <span className="text-sm text-muted-foreground">{timeAgo(selectedPost.created_at)}</span>
                                         </div>
                                     </div>
 
-                                    {/* Scrollable prompt area */}
                                     <div className="lightbox-prompt-scroll">
                                         <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                                             {selectedPost.prompt}
                                         </p>
                                     </div>
 
-                                    {/* Tags */}
                                     {selectedPost.tags && selectedPost.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-2 flex-shrink-0">
                                             {selectedPost.tags.map((tag) => (
-                                                <span key={tag} className="lightbox-tag">
-                                                    {tag}
-                                                </span>
+                                                <span key={tag} className="lightbox-tag">{tag}</span>
                                             ))}
                                         </div>
                                     )}
 
-                                    {/* Action buttons — pinned at bottom */}
                                     <div className="flex items-center gap-3 flex-shrink-0 pt-1">
                                         <button onClick={handleCopyPrompt} className="lightbox-btn-outline">
                                             {copied ? (
@@ -583,7 +609,7 @@ export default function ExploreGallery() {
                 )}
             </AnimatePresence>
 
-            {/* ── Report Modal ─────────────── */}
+            {/* ── Report Modal ── */}
             <AnimatePresence>
                 {isReportModalOpen && postToReport && (
                     <motion.div
@@ -601,27 +627,24 @@ export default function ExploreGallery() {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
                                 Report Content
                             </h2>
                             <p className="text-sm text-foreground/70 mb-4">
                                 Please describe why you are reporting this content.
                             </p>
-
                             <textarea
                                 value={reportReason}
                                 onChange={(e) => setReportReason(e.target.value)}
                                 placeholder="Why is this inappropriate?"
-                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors resize-none"
+                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors resize-none"
                                 rows={4}
                             />
-
                             <div className="flex items-center justify-end gap-3 mt-6">
                                 <button
-                                    onClick={() => {
-                                        setIsReportModalOpen(false);
-                                        setReportReason("");
-                                    }}
+                                    onClick={() => { setIsReportModalOpen(false); setReportReason(""); }}
                                     className="px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-full transition-colors"
                                 >
                                     Cancel
@@ -636,9 +659,7 @@ export default function ExploreGallery() {
                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                             Submitting...
                                         </>
-                                    ) : (
-                                        "Submit Feedback"
-                                    )}
+                                    ) : "Submit Feedback"}
                                 </button>
                             </div>
                         </motion.div>
@@ -646,7 +667,7 @@ export default function ExploreGallery() {
                 )}
             </AnimatePresence>
 
-            {/* ── Upload Modal ─────────────── */}
+            {/* ── Upload Modal ── */}
             <AnimatePresence>
                 {isUploadModalOpen && (
                     <motion.div
@@ -654,23 +675,19 @@ export default function ExploreGallery() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6"
-                        onClick={() => {
-                            if (!isSubmittingUpload) setIsUploadModalOpen(false);
-                        }}
+                        onClick={() => { if (!isSubmittingUpload) setIsUploadModalOpen(false); }}
                     >
                         <motion.div
                             initial={{ scale: 0.92, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.92, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
                             className="lightbox-container max-w-[1000px] w-full"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Close button */}
                             <button
                                 onClick={() => {
-                                    if (isSubmittingUpload && abortControllerRef.current) {
-                                        abortControllerRef.current.abort();
-                                    }
+                                    if (isSubmittingUpload) abortControllerRef.current?.abort();
                                     setIsUploadModalOpen(false);
                                 }}
                                 disabled={isSubmittingUpload}
@@ -682,7 +699,7 @@ export default function ExploreGallery() {
                             </button>
 
                             <div className="flex flex-col lg:flex-row h-full">
-                                {/* ── Left Side: Media Upload ────────────────── */}
+                                {/* Left: File Upload */}
                                 <div className="relative lg:flex-1 flex flex-col bg-black/20 p-6 lg:p-10 min-h-[300px] lg:border-r border-border/50">
                                     {!uploadFilePreview ? (
                                         <label className="flex-1 w-full min-h-[300px] flex flex-col items-center justify-center border-2 border-dashed border-border/50 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all text-center group">
@@ -712,28 +729,33 @@ export default function ExploreGallery() {
                                             {uploadFileType === "video" ? (
                                                 <video src={uploadFilePreview} controls className="max-h-full max-w-full rounded-lg" />
                                             ) : (
-                                                <Image src={uploadFilePreview} alt="Upload preview" fill className="object-contain rounded-lg" />
+                                                <Image
+                                                    src={uploadFilePreview}
+                                                    alt="Upload preview"
+                                                    fill
+                                                    className="object-contain rounded-lg"
+                                                    unoptimized
+                                                />
                                             )}
                                             <button
-                                                onClick={() => {
-                                                    setUploadFile(null);
-                                                    setUploadFilePreview(null);
-                                                    setUploadFileType(null);
-                                                }}
+                                                onClick={() => resetUploadModal()}
                                                 disabled={isSubmittingUpload}
                                                 className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors z-10 disabled:opacity-50"
                                             >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* ── Right Side: Details Form ──────────────── */}
+                                {/* Right: Form */}
                                 <div className="lightbox-details bg-background flex flex-col pt-8 sm:pt-10">
                                     <h2 className="text-xl font-bold text-foreground mb-6">Create Post</h2>
 
                                     <div className="flex-1 overflow-y-auto space-y-6 pr-2 lg:pr-4 pl-1 custom-scrollbar w-full">
+                                        {/* Prompt */}
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium text-foreground/80">Prompt</label>
                                             <textarea
@@ -741,23 +763,30 @@ export default function ExploreGallery() {
                                                 onChange={(e) => setUploadPrompt(e.target.value)}
                                                 placeholder="What prompt did you use?"
                                                 rows={4}
-                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors resize-none"
+                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors resize-none"
                                             />
                                         </div>
 
+                                        {/* Model Dropdown */}
                                         <div className="space-y-2 relative model-dropdown-trigger">
                                             <label className="text-sm font-medium text-foreground/80">Model</label>
                                             <div className="relative">
                                                 <button
                                                     type="button"
                                                     onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-                                                    className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors flex items-center justify-between"
+                                                    className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors flex items-center justify-between"
                                                 >
                                                     <span className={uploadModel ? "text-foreground" : "text-muted-foreground"}>
                                                         {uploadModel || "Select a model"}
                                                     </span>
-                                                    <svg className={`w-4 h-4 transition-transform ${isModelDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                    <svg
+                                                        className={`w-4 h-4 transition-transform ${isModelDropdownOpen ? "rotate-180" : ""}`}
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                    >
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                    </svg>
                                                 </button>
+
                                                 <AnimatePresence>
                                                     {isModelDropdownOpen && (
                                                         <motion.div
@@ -776,7 +805,11 @@ export default function ExploreGallery() {
                                                                             setUploadModel(m);
                                                                             setIsModelDropdownOpen(false);
                                                                         }}
-                                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors ${uploadModel === m ? "bg-secondary/50 text-foreground font-medium" : "text-foreground/80"}`}
+                                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors ${
+                                                                            uploadModel === m
+                                                                                ? "bg-secondary/50 text-foreground font-medium"
+                                                                                : "text-foreground/80"
+                                                                        }`}
                                                                     >
                                                                         {m}
                                                                     </button>
@@ -791,90 +824,40 @@ export default function ExploreGallery() {
                                             </div>
                                         </div>
 
+                                        {/* Tags */}
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground/80">Tags <span className="text-muted-foreground font-normal">(comma separated)</span></label>
+                                            <label className="text-sm font-medium text-foreground/80">
+                                                Tags <span className="text-muted-foreground font-normal">(comma separated)</span>
+                                            </label>
                                             <input
                                                 value={uploadTags}
                                                 onChange={(e) => setUploadTags(e.target.value)}
                                                 placeholder="e.g. cinematic, neon, 4k"
-                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:border-transparent focus:ring-0 transition-colors"
+                                                className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors"
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 mt-4 border-t border-border/50 relative">
+                                    {/* Submit */}
+                                    <div className="pt-6 mt-4 border-t border-border/50">
                                         <button
                                             disabled={!uploadFile || !uploadPrompt.trim() || !uploadModel || isSubmittingUpload}
-                                            onClick={async () => {
-                                                if (!uploadFile || !uploadFileType) return;
-
-                                                setIsSubmittingUpload(true);
-                                                setUploadProgress(0);
-
-                                                const controller = new AbortController();
-                                                abortControllerRef.current = controller;
-
-                                                const metadataPayload: UploadMetadata = {
-                                                    prompt: uploadPrompt,
-                                                    modelName: uploadModel,
-                                                    mimeType: uploadFile.type,
-                                                    width: 1024,
-                                                    height: 1024,
-                                                    itemType: uploadFileType,
-                                                    tags: uploadTags
-                                                        .split(",")
-                                                        .map((t) => t.trim())
-                                                        .filter(Boolean),
-                                                };
-
-                                                try {
-                                                    await uploadOrchestrator({
-                                                        file: uploadFile,
-                                                        metadata: metadataPayload,
-                                                        onProgress: (p) => setUploadProgress(p),
-                                                        signal: controller.signal,
-                                                    });
-
-                                                    // Success — close modal and refresh page 1
-                                                    setIsUploadModalOpen(false);
-                                                    setUploadFile(null);
-                                                    setUploadFilePreview(null);
-                                                    setUploadPrompt("");
-                                                    setUploadModel("");
-                                                    setUploadTags("");
-                                                    setUploadProgress(0);
-                                                    setPage(1);
-                                                    fetchPosts(1, activeFilter);
-                                                } catch (err) {
-                                                    const error = err as Error;
-                                                    if (error.message !== "Aborted" && error.message !== "Upload aborted by user") {
-                                                        console.error("Upload failed", error);
-                                                        alert(`Upload failed: ${error.message}`);
-                                                    }
-                                                } finally {
-                                                    setIsSubmittingUpload(false);
-                                                    abortControllerRef.current = null;
-                                                }
-                                            }}
+                                            onClick={handleSubmitUpload}
                                             className="w-full py-3 rounded-full bg-[#F54E00] text-white font-semibold hover:bg-[#F54E00]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 relative overflow-hidden"
                                         >
-                                            {/* Progress Bar Background */}
                                             {isSubmittingUpload && uploadProgress > 0 && (
                                                 <div
                                                     className="absolute left-0 top-0 bottom-0 bg-black/20 transition-all duration-300 pointer-events-none"
                                                     style={{ width: `${uploadProgress}%` }}
                                                 />
                                             )}
-
                                             <span className="relative z-10 flex items-center gap-2">
                                                 {isSubmittingUpload ? (
                                                     <>
                                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                         Uploading... {uploadProgress}%
                                                     </>
-                                                ) : (
-                                                    "Post to Explore"
-                                                )}
+                                                ) : "Post to Explore"}
                                             </span>
                                         </button>
                                     </div>
