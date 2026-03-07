@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/store/useAuthStore";
 import { uploadOrchestrator, type UploadMetadata } from "@/lib/upload/orchestrator";
 import { ExploreAPI, type ExploreItem } from "@/lib/api/explore";
+import { ExploreHeader } from "@/components/explore-header";
 
 /* ─── Helpers ───────────────────────────────── */
 
@@ -22,8 +23,8 @@ function timeAgo(iso: string): string {
     return `${Math.floor(days / 7)}w`;
 }
 
-function formatDuration(seconds?: number | null): string {
-    if (!seconds) return "0:15";
+function formatDuration(seconds?: number | null): string | null {
+    if (!seconds || seconds <= 0) return null;
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
     return `${m}:${s.toString().padStart(2, "0")}`;
@@ -36,7 +37,7 @@ const BASE_FILTERS = ["All", "Images", "Videos"] as const;
 
 export default function ExploreGallery() {
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuthStore();
 
     /* Data State */
     const [posts, setPosts] = useState<ExploreItem[]>([]);
@@ -74,6 +75,7 @@ export default function ExploreGallery() {
     const abortControllerRef = useRef<AbortController | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const sentinelRef = useRef<HTMLDivElement>(null);
+    const fetchingPageRef = useRef<number | null>(null);
 
     /* ─── Filter Params ─── */
     const getFilterParams = useCallback((filter: string) => {
@@ -94,14 +96,18 @@ export default function ExploreGallery() {
                 const { data: items, hasMore: more } = res.data;
 
                 setPosts((prev) => (append ? [...prev, ...items] : items));
-                setHasMore(more);
+                setHasMore(more && items.length > 0);
                 setError(null);
+                return true;
             } catch (err) {
                 console.error("Failed to fetch explore posts", err);
                 setError("Failed to load gallery. Please refresh.");
+                setHasMore(false); // Stop infinite scroll if we hit an error
+                return false;
             } finally {
                 setIsLoadingPosts(false);
                 setIsLoadingMore(false);
+                fetchingPageRef.current = null;
             }
         },
         [getFilterParams]
@@ -119,10 +125,8 @@ export default function ExploreGallery() {
 
     /* ─── Initial Load ─── */
     useEffect(() => {
-        fetchPosts(1, activeFilter);
         fetchModels();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchModels]);
 
     /* ─── Filter Change ─── */
     useEffect(() => {
@@ -135,14 +139,19 @@ export default function ExploreGallery() {
     useEffect(() => {
         if (!sentinelRef.current) return;
         const observer = new IntersectionObserver(
-            ([entry]) => {
+            async ([entry]) => {
                 if (entry.isIntersecting && hasMore && !isLoadingMore && !isLoadingPosts) {
                     const next = page + 1;
-                    setPage(next);
-                    fetchPosts(next, activeFilter, true);
+                    if (fetchingPageRef.current === next) return;
+
+                    fetchingPageRef.current = next;
+                    const success = await fetchPosts(next, activeFilter, true);
+                    if (success) {
+                        setPage(next);
+                    }
                 }
             },
-            { rootMargin: "200px" }
+            { rootMargin: "50px" }
         );
         observer.observe(sentinelRef.current);
         return () => observer.disconnect();
@@ -151,7 +160,7 @@ export default function ExploreGallery() {
     /* ─── Autoplay video in lightbox ─── */
     useEffect(() => {
         if (selectedPost?.item_type === "video" && videoRef.current) {
-            videoRef.current.play().catch(() => {});
+            videoRef.current.play().catch(() => { });
         }
     }, [selectedPost]);
 
@@ -176,7 +185,7 @@ export default function ExploreGallery() {
 
     const handleUploadClick = () => {
         if (!isAuthenticated) {
-            router.push("/sign-in?redirect=/explore");
+            router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
             return;
         }
         setIsUploadModalOpen(true);
@@ -185,7 +194,7 @@ export default function ExploreGallery() {
     const handleReport = async () => {
         if (!postToReport || !reportReason.trim()) return;
         if (!isAuthenticated) {
-            router.push("/sign-in?redirect=/explore");
+            router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
             return;
         }
         setIsSubmittingReport(true);
@@ -220,13 +229,31 @@ export default function ExploreGallery() {
         const controller = new AbortController();
         abortControllerRef.current = controller;
 
+        let duration: number | undefined = undefined;
+        if (uploadFileType === "video") {
+            try {
+                duration = await new Promise((resolve) => {
+                    const video = document.createElement("video");
+                    video.preload = "metadata";
+                    video.onloadedmetadata = () => {
+                        resolve(Math.round(video.duration));
+                    };
+                    video.onerror = () => resolve(undefined);
+                    video.src = URL.createObjectURL(uploadFile);
+                });
+            } catch (e) {
+                console.warn("Failed to get video duration", e);
+            }
+        }
+
         const metadata: UploadMetadata = {
             prompt: uploadPrompt,
-            modelName: uploadModel,
-            mimeType: uploadFile.type,
+            model_name: uploadModel,
+            mime_type: uploadFile.type,
             width: 1024,
             height: 1024,
-            itemType: uploadFileType,
+            item_type: uploadFileType,
+            duration,
             tags: uploadTags.split(",").map((t) => t.trim()).filter(Boolean),
         };
 
@@ -254,42 +281,41 @@ export default function ExploreGallery() {
     };
 
     /* ─── Skeleton ─── */
-    const SkeletonCard = () => (
-        <div className="masonry-item animate-pulse">
-            <div
-                className="gallery-card-image-wrapper bg-secondary/50 rounded-xl"
-                style={{ paddingBottom: `${100 + Math.random() * 60}%` }}
-            />
-            <div className="flex items-center justify-between mt-2.5 px-0.5">
-                <div className="h-4 bg-secondary/50 rounded w-24" />
-                <div className="w-8 h-8 bg-secondary/30 rounded-full" />
+    const SkeletonCard = ({ index }: { index: number }) => {
+        const heights = ["140%", "160%", "110%", "135%", "150%"];
+        const paddingBottom = heights[index % heights.length];
+
+        return (
+            <div className="masonry-item animate-pulse">
+                <div
+                    className="gallery-card-image-wrapper bg-secondary/50 rounded-xl"
+                    style={{ paddingBottom }}
+                />
+                <div className="flex items-center justify-between mt-2.5 px-0.5">
+                    <div className="h-4 bg-secondary/50 rounded w-24" />
+                    <div className="w-8 h-8 bg-secondary/30 rounded-full" />
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     /* ─── Render ─── */
     return (
         <div className="min-h-screen bg-background pt-20 pb-16">
+            <ExploreHeader onCreateClick={handleUploadClick} />
 
             {/* ── Header ── */}
             <header className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px] mb-10">
-                <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">Explore</h1>
-                <p className="mt-3 text-base text-muted-foreground max-w-xl">
-                    Discover stunning AI-generated artwork from the Invook community.
-                    Every image tells a story powered by prompts and imagination.
-                </p>
-
                 {/* Filter Tabs */}
                 <div className="flex items-center gap-2 mt-6 flex-wrap">
                     {BASE_FILTERS.map((f) => (
                         <button
                             key={f}
                             onClick={() => setActiveFilter(f)}
-                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${
-                                activeFilter === f
-                                    ? "bg-foreground text-background"
-                                    : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
-                            }`}
+                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${activeFilter === f
+                                ? "bg-foreground text-background"
+                                : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
+                                }`}
                         >
                             {f}
                         </button>
@@ -301,27 +327,14 @@ export default function ExploreGallery() {
                         <button
                             key={model}
                             onClick={() => setActiveFilter(model)}
-                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${
-                                activeFilter === model
-                                    ? "bg-foreground text-background"
-                                    : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
-                            }`}
+                            className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${activeFilter === model
+                                ? "bg-foreground text-background"
+                                : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
+                                }`}
                         >
                             {model}
                         </button>
                     ))}
-
-                    <div className="flex-1" />
-
-                    <button
-                        onClick={handleUploadClick}
-                        className="px-5 py-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                        </svg>
-                        Upload
-                    </button>
                 </div>
             </header>
 
@@ -347,129 +360,140 @@ export default function ExploreGallery() {
             <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
                 <div className="masonry-grid">
                     {isLoadingPosts &&
-                        Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={`skel-${i}`} />)}
+                        Array.from({ length: 12 }).map((_, i) => (
+                            <SkeletonCard key={`skel-${i}`} index={i} />
+                        ))}
 
                     {!isLoadingPosts &&
-                        posts.map((post, i) => (
-                            <motion.div
-                                key={post.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: Math.min(i, 20) * 0.03 }}
-                                className="masonry-item"
-                            >
-                                <button
-                                    onClick={() => { setSelectedPost(post); setCopied(false); }}
-                                    className="gallery-card group w-full text-left cursor-pointer"
+                        posts.map((post, i) => {
+                            const duration = formatDuration(post.duration);
+                            return (
+                                <motion.div
+                                    key={post.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: Math.min(i, 20) * 0.03 }}
+                                    className="masonry-item"
                                 >
-                                    <div className="gallery-card-image-wrapper">
-                                        <Image
-                                            src={post.thumbnail_url || post.url}
-                                            alt={post.prompt.slice(0, 60)}
-                                            width={post.width}
-                                            height={post.height}
-                                            className="gallery-card-image"
-                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                                            unoptimized
-                                            loading="lazy"
-                                        />
+                                    <button
+                                        onClick={() => { setSelectedPost(post); setCopied(false); }}
+                                        className="gallery-card group w-full text-left cursor-pointer"
+                                    >
+                                        <div className="gallery-card-image-wrapper">
+                                            {(post.thumbnail_url || post.url) ? (
+                                                <Image
+                                                    src={post.thumbnail_url || post.url}
+                                                    alt={post.prompt.slice(0, 60)}
+                                                    width={post.width}
+                                                    height={post.height}
+                                                    className="gallery-card-image"
+                                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                                    unoptimized
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="w-full aspect-square bg-secondary flex items-center justify-center">
+                                                    <span className="text-xs text-muted-foreground">No preview</span>
+                                                </div>
+                                            )}
 
-                                        {post.item_type === "video" && (
-                                            <div className="absolute top-2.5 left-2.5 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[11px] font-semibold text-white tracking-wide border border-white/10">
-                                                {formatDuration(post.duration)}
-                                            </div>
-                                        )}
+                                            {post.item_type === "video" && duration && (
+                                                <div className="absolute top-2.5 left-2.5 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[11px] font-semibold text-white tracking-wide border border-white/10">
+                                                    {duration}
+                                                </div>
+                                            )}
 
-                                        <div className="gallery-card-overlay">
-                                            <div className="gallery-card-info">
-                                                <h3 className="text-sm font-semibold text-white truncate">
-                                                    {post.prompt.slice(0, 50)}
-                                                </h3>
-                                                <span className="text-xs text-white/70">{post.model_name}</span>
-                                            </div>
-                                            <div className="gallery-card-user">
-                                                <span className="text-xs text-white/80">{timeAgo(post.created_at)}</span>
+                                            <div className="gallery-card-overlay">
+                                                <div className="gallery-card-info">
+                                                    <h3 className="text-sm font-semibold text-white truncate">
+                                                        {post.prompt.slice(0, 50)}
+                                                    </h3>
+                                                    <span className="text-xs text-white/70">{post.model_name}</span>
+                                                </div>
+                                                <div className="gallery-card-user">
+                                                    <span className="text-xs text-white/80">{timeAgo(post.created_at)}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                    </button>
+
+                                    {/* Bottom Info Bar */}
+                                    <div className="flex items-center justify-between mt-2.5 px-0.5 relative">
+                                        <span className="text-sm font-medium text-foreground/80 truncate pr-4">
+                                            {post.model_name}
+                                        </span>
+
+                                        <div className="relative flex-shrink-0">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setOpenMenuId(openMenuId === post.id ? null : post.id);
+                                                }}
+                                                className="dropdown-trigger w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary text-foreground/70 hover:text-foreground transition-colors"
+                                            >
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                                </svg>
+                                            </button>
+
+                                            <AnimatePresence>
+                                                {openMenuId === post.id && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 5, scale: 0.95 }}
+                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                        exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                                                        transition={{ duration: 0.15 }}
+                                                        className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl overflow-hidden z-20 py-1"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <button
+                                                            className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
+                                                                setOpenMenuId(null);
+                                                            }}
+                                                        >
+                                                            <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                                            </svg>
+                                                            Use in Canvas
+                                                        </button>
+                                                        <button
+                                                            className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                navigator.clipboard.writeText(post.prompt);
+                                                                setOpenMenuId(null);
+                                                            }}
+                                                        >
+                                                            <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                            </svg>
+                                                            Copy prompt
+                                                        </button>
+                                                        <button
+                                                            className="w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 whitespace-nowrap"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setPostToReport(post);
+                                                                setIsReportModalOpen(true);
+                                                                setOpenMenuId(null);
+                                                            }}
+                                                        >
+                                                            <svg className="w-4 h-4 text-destructive/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                            </svg>
+                                                            Report
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     </div>
-                                </button>
-
-                                {/* Bottom Info Bar */}
-                                <div className="flex items-center justify-between mt-2.5 px-0.5 relative">
-                                    <span className="text-sm font-medium text-foreground/80 truncate pr-4">
-                                        {post.model_name}
-                                    </span>
-
-                                    <div className="relative flex-shrink-0">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setOpenMenuId(openMenuId === post.id ? null : post.id);
-                                            }}
-                                            className="dropdown-trigger w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary text-foreground/70 hover:text-foreground transition-colors"
-                                        >
-                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                                            </svg>
-                                        </button>
-
-                                        <AnimatePresence>
-                                            {openMenuId === post.id && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 5, scale: 0.95 }}
-                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                    exit={{ opacity: 0, y: 5, scale: 0.95 }}
-                                                    transition={{ duration: 0.15 }}
-                                                    className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl overflow-hidden z-20 py-1"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    <button
-                                                        className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            router.push("/sign-in");
-                                                            setOpenMenuId(null);
-                                                        }}
-                                                    >
-                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
-                                                        </svg>
-                                                        Use in Canvas
-                                                    </button>
-                                                    <button
-                                                        className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigator.clipboard.writeText(post.prompt);
-                                                            setOpenMenuId(null);
-                                                        }}
-                                                    >
-                                                        <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                        </svg>
-                                                        Copy prompt
-                                                    </button>
-                                                    <button
-                                                        className="w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 whitespace-nowrap"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setPostToReport(post);
-                                                            setIsReportModalOpen(true);
-                                                            setOpenMenuId(null);
-                                                        }}
-                                                    >
-                                                        <svg className="w-4 h-4 text-destructive/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                                        </svg>
-                                                        Report
-                                                    </button>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            );
+                        })}
                 </div>
 
                 {/* Empty State */}
@@ -510,98 +534,109 @@ export default function ExploreGallery() {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.92, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            className="lightbox-container"
+                            className="bg-background max-w-[1400px] w-full max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl relative flex flex-col lg:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <button
                                 onClick={() => setSelectedPost(null)}
-                                className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+                                className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors cursor-pointer"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
 
-                            <div className="flex flex-col lg:flex-row h-full">
-                                {/* Media Side */}
-                                <div className="relative lg:flex-1 flex items-center justify-center bg-black/20 p-2 sm:p-3 lg:p-4 min-h-[250px]">
-                                    {selectedPost.item_type === "video" && selectedPost.url ? (
-                                        <video
-                                            ref={videoRef}
-                                            src={selectedPost.url}
-                                            poster={selectedPost.thumbnail_url || undefined}
-                                            controls
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            className="max-h-[50vh] lg:max-h-[85vh] w-auto rounded-lg"
-                                        />
-                                    ) : (
-                                        <Image
-                                            src={selectedPost.thumbnail_url || selectedPost.url}
-                                            alt={selectedPost.prompt.slice(0, 60)}
-                                            width={selectedPost.width}
-                                            height={selectedPost.height}
-                                            className="max-h-[50vh] lg:max-h-[85vh] w-auto object-contain rounded-lg"
-                                            priority
-                                            unoptimized
-                                        />
-                                    )}
+                            {/* Media Side */}
+                            <div className="relative flex-1 bg-black flex items-center justify-center min-h-[300px] lg:h-[90vh]">
+                                {selectedPost.item_type === "video" && selectedPost.url ? (
+                                    <video
+                                        ref={videoRef}
+                                        src={selectedPost.url}
+                                        poster={selectedPost.thumbnail_url || undefined}
+                                        controls
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="max-h-full max-w-full w-auto"
+                                    />
+                                ) : (
+                                    <div className="relative w-full h-full flex items-center justify-center">
+                                        {(selectedPost.url || selectedPost.thumbnail_url) ? (
+                                            <Image
+                                                src={(selectedPost.url || selectedPost.thumbnail_url) as string}
+                                                alt={selectedPost.prompt.slice(0, 60)}
+                                                width={selectedPost.width}
+                                                height={selectedPost.height}
+                                                className="max-h-full max-w-full w-auto object-contain"
+                                                priority
+                                                unoptimized
+                                            />
+                                        ) : (
+                                            <span className="text-muted-foreground">No preview available</span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Details Side */}
+                            <div className="w-full lg:w-[420px] p-6 lg:p-8 flex flex-col bg-background h-full lg:max-h-[90vh]">
+                                <div className="flex flex-col gap-4 flex-shrink-0">
+                                    <span className="inline-flex self-start px-3 py-1 bg-[#F54E00] text-white text-xs font-bold rounded-full uppercase tracking-wider">
+                                        {selectedPost.model_name}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-muted-foreground">{timeAgo(selectedPost.created_at)}</span>
+                                    </div>
                                 </div>
 
-                                {/* Details Side */}
-                                <div className="lightbox-details">
-                                    <div className="flex flex-col gap-3 flex-shrink-0">
-                                        <span className="lightbox-model-badge">{selectedPost.model_name}</span>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm text-muted-foreground">{timeAgo(selectedPost.created_at)}</span>
-                                        </div>
+                                <div className="flex-1 overflow-y-auto mt-6 pr-2 custom-scrollbar">
+                                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap font-medium">
+                                        {selectedPost.prompt}
+                                    </p>
+                                </div>
+
+                                {selectedPost.tags && selectedPost.tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-6 flex-shrink-0">
+                                        {selectedPost.tags.map((tag) => (
+                                            <span key={tag} className="px-2.5 py-1 text-[11px] font-semibold bg-secondary text-muted-foreground rounded-md border border-border">
+                                                {tag}
+                                            </span>
+                                        ))}
                                     </div>
+                                )}
 
-                                    <div className="lightbox-prompt-scroll">
-                                        <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                                            {selectedPost.prompt}
-                                        </p>
-                                    </div>
+                                <div className="flex flex-col sm:flex-row items-center gap-3 mt-8 pt-6 border-t border-border flex-shrink-0">
+                                    <button 
+                                        onClick={handleCopyPrompt} 
+                                        className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full border border-border hover:bg-secondary transition-colors"
+                                    >
+                                        {copied ? (
+                                            <>
+                                                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Copied
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Copy Prompt
+                                            </>
+                                        )}
+                                    </button>
 
-                                    {selectedPost.tags && selectedPost.tags.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 flex-shrink-0">
-                                            {selectedPost.tags.map((tag) => (
-                                                <span key={tag} className="lightbox-tag">{tag}</span>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-center gap-3 flex-shrink-0 pt-1">
-                                        <button onClick={handleCopyPrompt} className="lightbox-btn-outline">
-                                            {copied ? (
-                                                <>
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    Copied!
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                    </svg>
-                                                    Copy Prompt
-                                                </>
-                                            )}
-                                        </button>
-
-                                        <button
-                                            onClick={() => router.push("/sign-in")}
-                                            className="lightbox-btn-primary"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
-                                            </svg>
-                                            Use in Canvas
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={() => router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`)}
+                                        className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors shadow-md"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                        </svg>
+                                        Use in Canvas
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>
@@ -805,11 +840,10 @@ export default function ExploreGallery() {
                                                                             setUploadModel(m);
                                                                             setIsModelDropdownOpen(false);
                                                                         }}
-                                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors ${
-                                                                            uploadModel === m
-                                                                                ? "bg-secondary/50 text-foreground font-medium"
-                                                                                : "text-foreground/80"
-                                                                        }`}
+                                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors ${uploadModel === m
+                                                                            ? "bg-secondary/50 text-foreground font-medium"
+                                                                            : "text-foreground/80"
+                                                                            }`}
                                                                     >
                                                                         {m}
                                                                     </button>

@@ -36,43 +36,43 @@ export interface ExploreListResponse {
 }
 
 export interface UploadInitResponse {
-    uploadId: string;
-    uploadKey: string;
-    urls: { partNumber: number; presignedUrl: string }[];
+    upload_id: string;
+    upload_key: string;
+    urls: { part_number: number; presigned_url: string }[];
 }
 
 export interface UploadPartUrl {
-    partNumber: number;
-    presignedUrl: string;
+    part_number: number;
+    presigned_url: string;
 }
 
 export interface CreateItemPayload {
     url: string;
-    thumbnailUrl?: string;
-    itemType?: "image" | "video";
-    mimeType: string;
+    thumbnail_url?: string;
+    item_type?: "image" | "video";
+    mime_type: string;
     prompt: string;
-    modelName: string;
+    model_name: string;
     tags?: string[];
     width: number;
     height: number;
     duration?: number;
-    isPublic?: boolean;
+    is_public?: boolean;
 }
 
 export interface CompleteUploadPayload {
-    uploadKey: string;
-    uploadId: string;
+    upload_key: string;
+    upload_id: string;
     parts: { PartNumber: number; ETag: string }[];
     prompt: string;
-    modelName: string;
-    mimeType: string;
+    model_name: string;
+    mime_type: string;
     width: number;
     height: number;
-    itemType?: "image" | "video";
+    item_type?: "image" | "video";
     tags?: string[];
     duration?: number;
-    isPublic?: boolean;
+    is_public?: boolean;
 }
 
 // ─── API Methods ───────────────────────────────

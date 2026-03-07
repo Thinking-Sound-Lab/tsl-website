@@ -2,30 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
-function getCookie(name: string): string | null {
-    if (typeof document === "undefined") return null;
-    const match = document.cookie.match(new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`));
-    return match ? decodeURIComponent(match[2]) : null;
-}
 
 export default function AuthSuccessPage() {
     const router = useRouter();
-    const { handleOAuth } = useAuth();
+    const { handleOAuth } = useAuthStore();
     const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
     const [userEmail, setUserEmail] = useState<string>("");
 
     useEffect(() => {
         const processAuth = async () => {
             try {
-                // Read source from cookie (set before OAuth redirect)
-                const source = getCookie("auth_source") ?? "web";
+                // Read from URL parameters
+                const searchParams = new URLSearchParams(window.location.search);
+                const source = searchParams.get("source") ?? "web";
+                const nextPath = searchParams.get("redirect_to") ?? "/explore";
+
                 const isElectron = source === "desktop" || source === "desktop-dev";
                 const isDev = source === "desktop-dev";
 
                 const hash = window.location.hash;
-                const nextPath = getCookie("redirect_to") ?? "/explore";
 
                 // ─── Electron Flow ──────────────────────
                 if (isElectron && hash && hash.length > 1) {

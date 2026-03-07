@@ -61,7 +61,7 @@ export function Navigation() {
           {/* Right: Sign In & Download Buttons */}
           <div className="flex items-center space-x-3">
             {/* <Link
-              href="/sign-in"
+              href={`/sign-in?redirect=${typeof window !== "undefined" ? encodeURIComponent(window.location.pathname) : "/explore"}`}
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
             >
               Sign In

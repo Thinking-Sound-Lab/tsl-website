@@ -9,10 +9,15 @@ export async function POST(request: NextRequest) {
         const source = env === "dev" ? "desktop-dev" : env === "electron" ? "desktop" : "web";
 
         if (provider === "google") {
+            const origin = request.headers.get("origin") || "http://localhost:3000";
+            const googleRedirectUrl = `${origin}/auth/success?source=web&redirect_to=${encodeURIComponent(redirectToPath)}`;
+
+            console.log("Initiating Google OAuth with redirectTo:", googleRedirectUrl);
+
             const response = await fetch(`${backendUrl}/api/auth/oauth/google`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({redirectTo: 'http://localhost:3000/auth/success?source=web' }),
+                body: JSON.stringify({ redirectTo: googleRedirectUrl }),
             });
 
             const data = await response.json();
@@ -26,21 +31,7 @@ export async function POST(request: NextRequest) {
 
             const oauthUrl = data.data?.url;
 
-            // Store both source and redirect_to in cookies
-            // since Supabase will strip any custom query params from redirect_to
-            const responseHeaders = new Headers();
-            responseHeaders.append(
-                "Set-Cookie",
-                `auth_source=${source}; Path=/; Max-Age=3600; SameSite=Lax`
-            );
-            if (redirectToPath) {
-                responseHeaders.append(
-                    "Set-Cookie",
-                    `redirect_to=${encodeURIComponent(redirectToPath)}; Path=/; Max-Age=3600; SameSite=Lax`
-                );
-            }
-
-            return NextResponse.json({ url: oauthUrl }, { headers: responseHeaders });
+            return NextResponse.json({ url: oauthUrl });
         }
 
         if (provider === "email") {
@@ -49,7 +40,7 @@ export async function POST(request: NextRequest) {
             }
 
             const origin = request.headers.get("origin") || "http://localhost:3000";
-            const baseRedirectUrl = `${origin}/auth/success`;
+            const baseRedirectUrl = `${origin}/auth/success?source=${source}&redirect_to=${encodeURIComponent(redirectToPath)}`;
 
             const response = await fetch(`${backendUrl}/api/auth/magic-link`, {
                 method: "POST",

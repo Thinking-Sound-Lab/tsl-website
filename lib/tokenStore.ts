@@ -17,6 +17,10 @@ export interface TokenStoreData {
 export interface UserData {
     userId: string;
     email: string;
+    user_metadata?: {
+        avatar_url?: string;
+        full_name?: string;
+    };
 }
 
 const STORAGE_KEY_TOKENS = "tokenStore";

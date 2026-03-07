@@ -5,7 +5,7 @@ import { ConditionalLayout } from "@/components/conditional-layout";
 import { Analytics } from "@vercel/analytics/react";
 
 import { ThemeProvider } from "./theme-provider";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthInitializer } from "@/components/auth-initializer";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -39,9 +39,8 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<AuthProvider>
-						<ConditionalLayout>{children}</ConditionalLayout>
-					</AuthProvider>
+					<AuthInitializer />
+					<ConditionalLayout>{children}</ConditionalLayout>
 					<Analytics />
 				</ThemeProvider>
 			</body>

@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function SignUpContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
-	const { handleOAuth, isAuthenticated } = useAuth();
+	const { handleOAuth, isAuthenticated } = useAuthStore();
 	const [email, setEmail] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
