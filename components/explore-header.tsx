@@ -3,18 +3,22 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, LogOut, User, Plus } from "lucide-react";
+import { Search, LogOut, User, Plus, X } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface ExploreHeaderProps {
   onCreateClick?: () => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  onSearchConfirm: () => void;
+  onClearSearch: () => void;
 }
 
-export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
+export function ExploreHeader({ onCreateClick, searchValue, onSearchChange, onSearchConfirm, onClearSearch }: ExploreHeaderProps) {
   const { user, isAuthenticated, signOut } = useAuthStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   // Close profile menu on click outside
@@ -29,6 +33,16 @@ export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      onSearchConfirm();
+    }
+  };
+
+  const handleClear = () => {
+    onClearSearch();
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
@@ -49,24 +63,43 @@ export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
             </div>
           </Link>
 
-          {/* Center: Search Bar */}
+          {/* Center: Search Bar (Desktop) */}
           <div className="flex-1 max-w-2xl mx-auto hidden md:block relative">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-foreground transition-colors">
+              <div 
+                className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                onClick={onSearchConfirm}
+              >
                 <Search className="h-4 w-4" />
               </div>
               <input
                 type="text"
+                value={searchValue}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Search for images, videos..."
-                className="block w-full pl-10 pr-3 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               />
+              {searchValue && (
+                <button
+                  onClick={handleClear}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center space-x-3">
-             {/* Mobile Search Icon (visible only on small screens) */}
-             <Button variant="ghost" size="icon" className="md:hidden">
+             {/* Mobile Search Icon */}
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+             >
                 <Search className="h-5 w-5" />
              </Button>
 
@@ -124,6 +157,37 @@ export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
             )}
           </div>
         </div>
+
+        {/* Mobile Search Bar (Expandable) */}
+        {isMobileSearchOpen && (
+          <div className="md:hidden pb-4 px-2 animate-in slide-in-from-top-2 duration-200">
+            <div className="relative">
+              <div 
+                className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer text-muted-foreground"
+                onClick={onSearchConfirm}
+              >
+                <Search className="h-4 w-4" />
+              </div>
+              <input
+                type="text"
+                autoFocus
+                value={searchValue}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search images, videos..."
+                className="block w-full pl-10 pr-10 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              />
+              {searchValue && (
+                <button
+                  onClick={handleClear}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
