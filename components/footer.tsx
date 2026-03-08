@@ -7,30 +7,21 @@ export function Footer() {
 			<div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
 				<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">
 					{/* Product Column */}
-					{/* Product Column */}
-					{/* <div className="col-span-1">
-            <h3 className="text-sm font-normal text-muted-foreground mb-4">
-              Product
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <Link
-                  href="/pricing"
-                  className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
-                >
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/use-cases"
-                  className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
-                >
-                  Use cases
-                </Link>
-              </li>
-            </ul>
-          </div> */}
+					<div className="col-span-1">
+						<h3 className="text-sm font-normal text-muted-foreground mb-4">
+							Product
+						</h3>
+						<ul className="space-y-1">
+							<li>
+								<Link
+									href="/pricing"
+									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
+								>
+									Pricing
+								</Link>
+							</li>
+						</ul>
+					</div>
 
 					{/* Resources Column */}
 					<div className="col-span-1">
@@ -38,14 +29,6 @@ export function Footer() {
 							Resources
 						</h3>
 						<ul className="space-y-1">
-							{/* <li>
-                <Link
-                  href="https://invook.notion.site/Getting-Started-28f7f199308b80658fc8f2e93ec90087?source=copy_link"
-                  className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
-                >
-                  Download
-                </Link>
-              </li> */}
 							<li>
 								<Link
 									href="/changelog"
@@ -62,14 +45,6 @@ export function Footer() {
 									rel="noopener noreferrer"
 								>
 									Docs
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/community"
-									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
-								>
-									Community
 								</Link>
 							</li>
 							<li>

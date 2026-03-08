@@ -1,16 +1,20 @@
-# Thinking Sound Lab Website
+# Invook (Thinking Sound Lab Website)
 
-This is the official website for Thinking Sound Lab, built with Next.js 15 and TypeScript.
+The official web presence for **Invook**, an infinite canvas for creative minds to bring ideas to life with unified AI tools.
+
+- **Primary Domain**: [invook.ai](https://invook.ai)
+- **Secondary Domain**: [thinkingsoundlab.com](https://thinkingsoundlab.com)
+
+Built with Next.js 15 and TypeScript.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.5.4 with App Router
+- **Framework**: Next.js 15.5 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
-- **UI Components**: shadcn/ui
-- **Fonts**: Inter font family
+- **UI Components**: shadcn/ui & Framer Motion
 - **Analytics**: Vercel Analytics
-- **Linting**: ESLint with Next.js configuration
+- **Linting**: ESLint
 
 ## Getting Started
 
@@ -34,55 +38,43 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
+- `npx tsc --noEmit` - Run type check
 
 ## Project Structure
 
 ```
 ├── app/                    # Next.js App Router pages
-│   ├── layout.tsx         # Root layout with fonts and Analytics
-│   ├── page.tsx           # Homepage
+│   ├── explore/           # Explore Gallery (Images/Videos)
 │   ├── pricing/           # Pricing page
-│   ├── community/         # Community page
 │   ├── contact-us/        # Contact page
-│   └── ...
+│   ├── changelog/         # Product updates
+│   ├── privacy-policy/    # Legal documentation
+│   └── layout.tsx         # Root layout
 ├── components/            # Reusable React components
-├── public/               # Static assets
-└── CLAUDE.md             # Development guidelines
+├── lib/                   # API clients and utilities
+│   ├── api/               # Explore API & Multipart Upload
+│   └── upload/            # Upload Orchestrator
+├── store/                 # State management (Zustand)
+└── public/                # Static assets
 ```
 
 ## Key Features
 
-- Responsive design with mobile-first approach
-- SEO optimized with metadata
-- Vercel Analytics integration for web analytics
-- Custom stitched border design system
-- Animated components and transitions
-- FAQ sections with accordion functionality
-- Community integration (Discord, LinkedIn, YouTube, Instagram)
+- **Explore Gallery**: A community-driven showcase of AI-generated content.
+- **Asset Management**: Authenticated users can view, edit (prompt/tags), and delete their uploads.
+- **Multipart Uploads**: Robust chunked upload system for large media files (up to 50MB).
+- **Responsive Lightbox**: Optimized media viewing experience across all devices.
+- **SEO Ready**: Dynamic sitemap and metadata optimization.
+- **Unified Auth**: Integration with backend magic-link and Google OAuth.
 
 ## Analytics
 
-This project uses [Vercel Analytics](https://vercel.com/docs/analytics) to track page views and user interactions. The Analytics component is integrated in the root layout (`app/layout.tsx`).
-
-## Environment
-
-The site is designed to work on:
-- macOS
-- Windows
-- Modern web browsers (Chrome, Firefox, Safari, Edge)
+This project uses [Vercel Analytics](https://vercel.com/docs/analytics) to track page views and user interactions.
 
 ## Contact
 
-For support or inquiries, email: support@thinkingsoundlab.com
+For support or inquiries, email: [support@thinkingsoundlab.com](mailto:support@thinkingsoundlab.com)
 
 ## Deploy on Vercel
 
 The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new).
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Documentation](https://ui.shadcn.com)

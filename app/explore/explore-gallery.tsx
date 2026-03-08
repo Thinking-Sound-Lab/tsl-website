@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { uploadOrchestrator, type UploadMetadata } from "@/lib/upload/orchestrator";
 import { ExploreAPI, type ExploreItem, type ExploreModel } from "@/lib/api/explore";
 import { ExploreHeader } from "@/components/explore-header";
+import { cn } from "@/lib/utils";
 
 /* ─── Helpers ───────────────────────────────── */
 
@@ -98,7 +99,7 @@ export default function ExploreGallery() {
         if (search.trim()) {
             params.q = search.trim();
         }
-        
+
         return params;
     }, []);
 
@@ -110,7 +111,7 @@ export default function ExploreGallery() {
                 else setIsLoadingMore(true);
 
                 const params = getFilterParams(filter, search);
-                
+
                 let res;
                 if (filter === "My Assets" && user?.userId) {
                     res = await ExploreAPI.getUserPosts(user.userId, pageNum, 30, {
@@ -122,7 +123,7 @@ export default function ExploreGallery() {
                 } else {
                     res = await ExploreAPI.getPosts(pageNum, 30, params);
                 }
-                
+
                 // Extract items from the nested 'data' property of res.data
                 const payload = res.data;
                 const items = payload?.data || [];
@@ -299,7 +300,6 @@ export default function ExploreGallery() {
             if (editingPost) {
                 await ExploreAPI.updateItem(editingPost.id, {
                     prompt: uploadPrompt,
-                    modelName: uploadModel,
                     tags,
                 });
             } else if (uploadFile && uploadFileType) {
@@ -395,8 +395,8 @@ export default function ExploreGallery() {
     /* ─── Render ─── */
     return (
         <div className="min-h-screen bg-background pt-20 pb-16">
-            <ExploreHeader 
-                onCreateClick={handleUploadClick} 
+            <ExploreHeader
+                onCreateClick={handleUploadClick}
                 searchValue={searchQuery}
                 onSearchChange={setSearchQuery}
                 onSearchConfirm={handleSearchConfirm}
@@ -984,13 +984,19 @@ export default function ExploreGallery() {
                                         </div>
 
                                         {/* Model Dropdown */}
-                                        <div className="space-y-2 relative model-dropdown-trigger">
-                                            <label className="text-sm font-medium text-foreground/80">Model</label>
+                                        <div className={cn("space-y-2 relative model-dropdown-trigger", editingPost && "opacity-60 cursor-not-allowed")}>
+                                            <label className="text-sm font-medium text-foreground/80 flex items-center justify-between">
+                                                Model
+                                                {editingPost && (
+                                                    <span className="text-[10px] text-muted-foreground font-normal">Cannot be changed</span>
+                                                )}
+                                            </label>
                                             <div className="relative">
                                                 <button
                                                     type="button"
+                                                    disabled={!!editingPost}
                                                     onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-                                                    className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors flex items-center justify-between"
+                                                    className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-0 transition-colors flex items-center justify-between disabled:cursor-not-allowed"
                                                 >
                                                     <span className={uploadModel ? "text-foreground" : "text-muted-foreground"}>
                                                         {models.find(m => m.value === uploadModel)?.label || "Select a model"}

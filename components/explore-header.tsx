@@ -3,16 +3,25 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, LogOut, User, Plus } from "lucide-react";
+import { Search, LogOut, User, Plus, X } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface ExploreHeaderProps {
   onCreateClick?: () => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onSearchConfirm?: () => void;
+  onClearSearch?: () => void;
 }
 
-export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
+export function ExploreHeader({ 
+  onCreateClick, 
+  searchValue = "", 
+  onSearchChange, 
+  onSearchConfirm,
+  onClearSearch 
+}: ExploreHeaderProps) {
   const { user, isAuthenticated, signOut } = useAuthStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -29,6 +38,12 @@ export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && onSearchConfirm) {
+      onSearchConfirm();
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
@@ -57,9 +72,20 @@ export function ExploreHeader({ onCreateClick }: ExploreHeaderProps) {
               </div>
               <input
                 type="text"
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Search for images, videos..."
-                className="block w-full pl-10 pr-3 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               />
+              {searchValue && (
+                <button
+                  onClick={onClearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
 
