@@ -1,4 +1,4 @@
-import { ExploreAPI, type CompleteUploadPayload } from "../api/explore";
+import { ExploreAPI, type ExploreItem } from "../api/explore";
 import { splitFileIntoChunks } from "./chunker";
 
 interface UploadProgressCallback {
@@ -102,13 +102,14 @@ export async function uploadOrchestrator({
     try {
         if (signal?.aborted) throw new Error("Aborted");
         
-        // initUpload uses snake_case arguments for body fields
+        // 1. Init Upload
         const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size, totalParts);
-        uploadId = initRes.data.uploadId;
-        uploadKey = initRes.data.uploadKey;
+        uploadId = initRes.data.upload_id;
+        uploadKey = initRes.data.upload_key;
 
         let presignedUrls = initRes.data.urls;
 
+        // 2. Get more URLs if needed
         if (presignedUrls.length < totalParts) {
             if (signal?.aborted) throw new Error("Aborted");
             const moreUrls = await ExploreAPI.getUploadUrls(uploadKey, uploadId, totalParts - presignedUrls.length);
@@ -125,7 +126,8 @@ export async function uploadOrchestrator({
 
                 const taskIndex = currentIndex++;
                 const chunk = chunks[taskIndex];
-                const presignedUrl = presignedUrls.find(p => p.partNumber === chunk.partNumber)?.presignedUrl;
+                const presignedUrlData = presignedUrls.find(p => p.part_number === chunk.partNumber);
+                const presignedUrl = presignedUrlData?.presigned_url;
 
                 if (!presignedUrl) {
                     throw new Error(`Missing presigned URL for part ${chunk.partNumber}`);
@@ -174,23 +176,22 @@ export async function uploadOrchestrator({
 
         completedParts.sort((a, b) => a.PartNumber - b.PartNumber);
 
-        // completeUpload uses camelCase properties for payload body
-        const completePayload: CompleteUploadPayload = {
-            uploadKey: uploadKey!,
-            uploadId: uploadId!,
+        // 3. Complete Upload
+        await ExploreAPI.completeUpload({
+            upload_key: uploadKey!,
+            upload_id: uploadId!,
             parts: completedParts,
             prompt: metadata.prompt,
-            modelName: metadata.model_name,
-            mimeType: metadata.mime_type || file.type,
+            model_name: metadata.model_name,
+            mime_type: metadata.mime_type || file.type,
             width: metadata.width,
             height: metadata.height,
-            itemType: metadata.item_type,
+            item_type: metadata.item_type,
             tags: metadata.tags,
             duration: metadata.duration,
-            isPublic: metadata.is_public,
-        };
-
-        await ExploreAPI.completeUpload(completePayload);
+            is_public: metadata.is_public,
+        });
+        
         onProgress?.(100);
 
     } catch (error) {

@@ -1,21 +1,35 @@
+/**
+ * Explore API — all endpoints for the public explore gallery.
+ *
+ * Uses the shared axios instance (via apiClient) which handles
+ * token injection, 401 retry, and refresh automatically.
+ */
+
 import { apiClient } from "./apiClient";
 
-// ─── Interfaces ────────────────────────────────
+// ─── Types ─────────────────────────────────────
 
 export interface ExploreItem {
     id: string;
+    user_id: string;
+    item_type: "image" | "video";
+    mime_type: string;
     url: string;
-    thumbnail_url?: string;
+    thumbnail_url: string | null;
     prompt: string;
     model_name: string;
-    mime_type: string;
-    item_type: "image" | "video";
+    tags: string[];
     width: number;
     height: number;
-    tags?: string[];
-    duration?: number;
-    is_public?: boolean;
+    duration: number | null;
+    is_public: boolean;
     created_at: string;
+    updated_at?: string;
+}
+
+export interface ExploreModel {
+    value: string;
+    label: string;
 }
 
 export interface ExploreListResponse {
@@ -27,48 +41,48 @@ export interface ExploreListResponse {
 }
 
 export interface UploadInitResponse {
-    uploadId: string;
-    uploadKey: string;
-    urls: { partNumber: number; presignedUrl: string }[];
+    upload_id: string;
+    upload_key: string;
+    urls: { part_number: number; presigned_url: string }[];
 }
 
 export interface UploadPartUrl {
-    partNumber: number;
-    presignedUrl: string;
+    part_number: number;
+    presigned_url: string;
 }
 
 export interface CreateItemPayload {
-    id?: string;
     url: string;
+    thumbnail_url?: string;
+    item_type?: "image" | "video";
+    mime_type: string;
     prompt: string;
-    modelName: string;
-    itemType?: "image" | "video";
-    mimeType: string;
+    model_name: string;
+    tags?: string[];
     width: number;
     height: number;
-    tags?: string[];
     duration?: number;
-    isPublic?: boolean;
+    is_public?: boolean;
+}
+
+export interface UpdateItemPayload {
+    prompt?: string;
+    tags?: string[];
 }
 
 export interface CompleteUploadPayload {
-    uploadKey: string;
-    uploadId: string;
+    upload_key: string;
+    upload_id: string;
     parts: { PartNumber: number; ETag: string }[];
     prompt: string;
-    modelName: string;
-    mimeType: string;
+    model_name: string;
+    mime_type: string;
     width: number;
     height: number;
-    itemType?: "image" | "video";
+    item_type?: "image" | "video";
     tags?: string[];
     duration?: number;
-    isPublic?: boolean;
-}
-
-export interface ExploreModel {
-    label: string;
-    value: string;
+    is_public?: boolean;
 }
 
 // ─── API Methods ───────────────────────────────
@@ -76,6 +90,7 @@ export interface ExploreModel {
 export const ExploreAPI = {
     /**
      * GET /api/explore
+     * Paginated public explore items with optional filtering.
      */
     getPosts: async (
         page = 1,
@@ -95,113 +110,8 @@ export const ExploreAPI = {
     },
 
     /**
-     * GET /api/explore/search
-     * Used for dedicated keyword search
-     */
-    searchPosts: async (
-        q: string,
-        page = 1,
-        limit = 30
-    ): Promise<{ success: boolean; data: ExploreListResponse }> => {
-        const params = new URLSearchParams({ q, page: String(page), limit: String(limit) });
-        return apiClient<{ success: boolean; data: ExploreListResponse }>(
-            `/api/explore/search?${params.toString()}`,
-            { method: "GET", requiresAuth: false }
-        );
-    },
-
-    /**
-     * GET /api/explore/models
-     */
-    getModels: async (): Promise<{ success: boolean; data: ExploreModel[] }> => {
-        return apiClient<{ success: boolean; data: ExploreModel[] }>("/api/explore/models", {
-            method: "GET",
-            requiresAuth: false,
-        });
-    },
-
-    /**
-     * POST /api/explore
-     * Uses camelCase body per backend
-     */
-    createItem: async (payload: CreateItemPayload): Promise<{ success: boolean; data: ExploreItem }> => {
-        return apiClient<{ success: boolean; data: ExploreItem }>("/api/explore", {
-            method: "POST",
-            body: JSON.stringify(payload),
-            requiresAuth: true,
-        });
-    },
-
-    /**
-     * POST /api/explore/upload/init
-     * Uses snake_case body per backend
-     */
-    initUpload: async (
-        filename: string,
-        mime_type: string,
-        file_size: number,
-        part_count: number
-    ): Promise<{ success: boolean; data: UploadInitResponse }> => {
-        return apiClient<{ success: boolean; data: UploadInitResponse }>("/api/explore/upload/init", {
-            method: "POST",
-            body: JSON.stringify({ filename, mime_type, file_size, part_count }),
-            requiresAuth: true,
-        });
-    },
-
-    /**
-     * POST /api/explore/upload/urls
-     * Uses snake_case body per backend
-     */
-    getUploadUrls: async (
-        upload_key: string,
-        upload_id: string,
-        part_count: number
-    ): Promise<{ success: boolean; data: UploadPartUrl[] }> => {
-        return apiClient<{ success: boolean; data: UploadPartUrl[] }>("/api/explore/upload/urls", {
-            method: "POST",
-            body: JSON.stringify({ upload_key, upload_id, part_count }),
-            requiresAuth: true,
-        });
-    },
-
-    /**
-     * POST /api/explore/upload/complete
-     * Uses camelCase body per backend
-     */
-    completeUpload: async (payload: CompleteUploadPayload): Promise<{ success: boolean; data: ExploreItem }> => {
-        return apiClient<{ success: boolean; data: ExploreItem }>("/api/explore/upload/complete", {
-            method: "POST",
-            body: JSON.stringify(payload),
-            requiresAuth: true,
-        });
-    },
-
-    /**
-     * POST /api/explore/upload/abort
-     * Uses snake_case body per backend
-     */
-    abortUpload: async (upload_key: string, upload_id: string): Promise<{ success: boolean }> => {
-        return apiClient<{ success: boolean }>("/api/explore/upload/abort", {
-            method: "POST",
-            body: JSON.stringify({ upload_key, upload_id }),
-            requiresAuth: true,
-        });
-    },
-
-    /**
-     * POST /api/explore/:id/report
-     */
-    reportItem: async (id: string, reason: string): Promise<{ success: boolean }> => {
-        return apiClient<{ success: boolean }>(`/api/explore/${id}/report`, {
-            method: "POST",
-            body: JSON.stringify({ reason }),
-            requiresAuth: true,
-        });
-    },
-
-    /**
      * GET /api/explore/user/:userId
+     * Paginated items for a specific user.
      */
     getUserPosts: async (
         userId: string,
@@ -220,9 +130,64 @@ export const ExploreAPI = {
     },
 
     /**
-     * PATCH /api/explore/:id
+     * GET /api/explore/search
+     * Search explore items by query string.
      */
-    updateItem: async (id: string, payload: Partial<CreateItemPayload>): Promise<{ success: boolean; data: ExploreItem }> => {
+    searchPosts: async (
+        q: string,
+        page = 1,
+        limit = 30
+    ): Promise<{ success: boolean; data: ExploreListResponse }> => {
+        const params = new URLSearchParams({ q, page: String(page), limit: String(limit) });
+
+        return apiClient<{ success: boolean; data: ExploreListResponse }>(
+            `/api/explore/search?${params.toString()}`,
+            { method: "GET", requiresAuth: false }
+        );
+    },
+
+    /**
+     * GET /api/explore/models
+     * Distinct model names available in the explore feed.
+     */
+    getModels: async (): Promise<{ success: boolean; data: ExploreModel[] }> => {
+        return apiClient<{ success: boolean; data: ExploreModel[] }>("/api/explore/models", {
+            method: "GET",
+            requiresAuth: false,
+        });
+    },
+
+    /**
+     * GET /api/explore/:id
+     * Single explore item detail by ID.
+     */
+    getPostById: async (id: string): Promise<{ success: boolean; data: ExploreItem }> => {
+        return apiClient<{ success: boolean; data: ExploreItem }>(`/api/explore/${id}`, {
+            method: "GET",
+            requiresAuth: false,
+        });
+    },
+
+    /**
+     * POST /api/explore
+     * Create an explore item (metadata already known).
+     */
+    createPost: async (payload: CreateItemPayload): Promise<{ success: boolean; data: ExploreItem }> => {
+        return apiClient<{ success: boolean; data: ExploreItem }>("/api/explore", {
+            method: "POST",
+            body: JSON.stringify(payload),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * PATCH /api/explore/:id
+     * Update metadata for an explore item.
+     */
+    updateItem: async (
+        id: string,
+        payload: UpdateItemPayload
+    ): Promise<{ success: boolean; data: ExploreItem }> => {
         return apiClient<{ success: boolean; data: ExploreItem }>(`/api/explore/${id}`, {
             method: "PATCH",
             body: JSON.stringify(payload),
@@ -231,10 +196,94 @@ export const ExploreAPI = {
     },
 
     /**
-     * DELETE /api/explore/:id
+     * POST /api/explore/upload/init
+     * Initiate multipart upload and get first batch of presigned part URLs.
      */
-    deleteItem: async (id: string): Promise<{ success: boolean }> => {
-        return apiClient<{ success: boolean }>(`/api/explore/${id}`, {
+    initUpload: async (
+        filename: string,
+        mimeType: string,
+        fileSize: number,
+        partCount: number
+    ): Promise<{ success: boolean; data: UploadInitResponse }> => {
+        return apiClient<{ success: boolean; data: UploadInitResponse }>("/api/explore/upload/init", {
+            method: "POST",
+            body: JSON.stringify({
+                filename,
+                file_size: fileSize,
+                mime_type: mimeType,
+                part_count: partCount,
+            }),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * POST /api/explore/upload/urls
+     * Get additional presigned part URLs for an in-progress upload.
+     */
+    getUploadUrls: async (
+        uploadKey: string,
+        uploadId: string,
+        partCount: number
+    ): Promise<{ success: boolean; data: UploadPartUrl[] }> => {
+        return apiClient<{ success: boolean; data: UploadPartUrl[] }>("/api/explore/upload/urls", {
+            method: "POST",
+            body: JSON.stringify({
+                upload_key: uploadKey,
+                upload_id: uploadId,
+                part_count: partCount,
+            }),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * POST /api/explore/upload/complete
+     * Finalize multipart upload and create explore item record.
+     */
+    completeUpload: async (
+        payload: CompleteUploadPayload
+    ): Promise<{ success: boolean; data: ExploreItem }> => {
+        return apiClient<{ success: boolean; data: ExploreItem }>("/api/explore/upload/complete", {
+            method: "POST",
+            body: JSON.stringify(payload),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * POST /api/explore/upload/abort
+     * Cancel an in-progress multipart upload.
+     */
+    abortUpload: async (uploadKey: string, uploadId: string): Promise<{ success: boolean }> => {
+        return apiClient<{ success: boolean }>("/api/explore/upload/abort", {
+            method: "POST",
+            body: JSON.stringify({
+                upload_key: uploadKey,
+                upload_id: uploadId,
+            }),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * POST /api/explore/:id/report
+     * Report an explore item — one report per user per item.
+     */
+    reportItem: async (postId: string, reason: string): Promise<{ success: boolean }> => {
+        return apiClient<{ success: boolean }>(`/api/explore/${postId}/report`, {
+            method: "POST",
+            body: JSON.stringify({ reason }),
+            requiresAuth: true,
+        });
+    },
+
+    /**
+     * DELETE /api/explore/:id
+     * Owner removes their own explore item.
+     */
+    deleteItem: async (postId: string): Promise<{ success: boolean }> => {
+        return apiClient<{ success: boolean }>(`/api/explore/${postId}`, {
             method: "DELETE",
             requiresAuth: true,
         });
