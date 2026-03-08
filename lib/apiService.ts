@@ -1,25 +1,30 @@
 /**
- * BackendAPIService — Centralized HTTP client using Axios with:
- * - Automatic Bearer token injection from tokenStore
- * - 401 interceptor with single-flight refresh + retry
- * - Refresh lock (isRefreshing) to prevent concurrent refresh races
+ * apiService.ts — Production-Grade HTTP Client
+ *
+ * This service handles all direct communication with the backend.
+ * Features:
+ * - Direct Access: Base URL points to NEXT_PUBLIC_BACKEND_URL.
+ * - Auto-Auth: Injects Bearer tokens from localStorage.
+ * - Silent Refresh: Intercepts 401s, queues requests, refreshes token, and retries.
+ * - Loop Safety: Prevents infinite redirect loops on sign-in pages.
  */
 
 import axios, {
     AxiosError,
-    type AxiosRequestConfig,
     type InternalAxiosRequestConfig,
+    type AxiosResponse
 } from "axios";
 
 import {
     getTokenStore,
     setTokenStore,
-    getUser,
     clearAll,
     type TokenStoreData,
 } from "./tokenStore";
 
-// ─── Error Types ───────────────────────────────
+// ─── Configuration ─────────────────────────────
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
 export class UnauthorizedError extends Error {
     constructor(message = "Unauthorized") {
@@ -30,160 +35,146 @@ export class UnauthorizedError extends Error {
 
 export class ApiError extends Error {
     public status: number;
-    constructor({ message, status }: { message: string; status: number }) {
+    public data: unknown;
+    constructor({ message, status, data }: { message: string; status: number; data?: unknown }) {
         super(message);
         this.name = "ApiError";
         this.status = status;
+        this.data = data;
     }
-}
-
-// ─── Refresh Queue ─────────────────────────────
-
-type QueueSubscriber = (token: string | null) => void;
-
-let isRefreshing = false;
-let refreshSubscribers: QueueSubscriber[] = [];
-
-function onRefreshComplete(newToken: string | null) {
-    refreshSubscribers.forEach((cb) => cb(newToken));
-    refreshSubscribers = [];
-}
-
-function waitForRefresh(): Promise<string | null> {
-    return new Promise((resolve) => {
-        refreshSubscribers.push(resolve);
-    });
 }
 
 // ─── Axios Instance ────────────────────────────
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-
 export const api = axios.create({
-    baseURL: backendUrl,
+    baseURL: BACKEND_URL,
     headers: { "Content-Type": "application/json" },
+    withCredentials: true, // Important for CORS if needed, or if backend sets cookies
 });
 
-// ── Request Interceptor — inject token ─────────
+// ─── Request Interceptor (Inject Token) ────────
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    // Skip auth if explicitly flagged
-    if ((config as InternalAxiosRequestConfig & { _skipAuth?: boolean })._skipAuth) return config;
+api.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+        // Skip auth if explicitly flagged (e.g. for public endpoints)
+        const customConfig = config as InternalAxiosRequestConfig & { _skipAuth?: boolean };
+        if (customConfig._skipAuth) return config;
 
-    const store = getTokenStore();
-    if (store?.accessToken) {
-        config.headers.Authorization = `Bearer ${store.accessToken}`;
-    }
-    return config;
-});
+        const store = getTokenStore();
+        if (store?.accessToken) {
+            config.headers.Authorization = `Bearer ${store.accessToken}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
-// ── Response Interceptor — 401 retry ───────────
+// ─── Response Interceptor (Handle 401 & Refresh)
+
+let isRefreshing = false;
+let refreshSubscribers: ((token: string | null) => void)[] = [];
+
+function onRefreshed(token: string | null) {
+    refreshSubscribers.map((callback) => callback(token));
+    refreshSubscribers = [];
+}
+
+function addRefreshSubscriber(callback: (token: string | null) => void) {
+    refreshSubscribers.push(callback);
+}
 
 api.interceptors.response.use(
-    (response) => response,
+    (response: AxiosResponse) => response,
     async (error: AxiosError) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & {
-            _retry?: boolean;
-            _skipAuth?: boolean;
-        };
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean, _skipAuth?: boolean };
 
-        // Only handle 401 on authenticated requests
+        // If error is not 401, or request was skipped auth, or already retried -> reject
         if (error.response?.status !== 401 || originalRequest._skipAuth || originalRequest._retry) {
+            // Transform error to ApiError for cleaner handling
+            if (error.response) {
+                const responseData = error.response.data as Record<string, unknown>;
+                return Promise.reject(new ApiError({
+                    message: (responseData.error as string) || error.message,
+                    status: error.response.status,
+                    data: error.response.data
+                }));
+            }
             return Promise.reject(error);
         }
 
-        originalRequest._retry = true;
-
-        // If someone else is already refreshing, queue this request
         if (isRefreshing) {
-            const newToken = await waitForRefresh();
-            if (newToken) {
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                return api(originalRequest);
-            }
-            redirectToLogin();
-            return Promise.reject(new UnauthorizedError("Session expired. Please log in again."));
+            // Wait for the ongoing refresh
+            return new Promise((resolve, reject) => {
+                addRefreshSubscriber((token: string | null) => {
+                    if (token) {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(api(originalRequest));
+                    } else {
+                        reject(new UnauthorizedError("Session expired"));
+                    }
+                });
+            });
         }
 
-        // We are the first caller to hit 401 — attempt refresh
-        const refreshed = await refreshAccessToken();
-        if (refreshed) {
-            const newStore = getTokenStore();
-            if (newStore?.accessToken) {
-                originalRequest.headers.Authorization = `Bearer ${newStore.accessToken}`;
-                return api(originalRequest);
-            }
-        }
+        originalRequest._retry = true;
+        isRefreshing = true;
 
-        // Refresh failed completely
-        redirectToLogin();
-        return Promise.reject(new UnauthorizedError("Session expired. Please log in again."));
+        try {
+            const success = await refreshAccessToken();
+            if (success) {
+                const store = getTokenStore();
+                if (store?.accessToken) {
+                    onRefreshed(store.accessToken);
+                    originalRequest.headers.Authorization = `Bearer ${store.accessToken}`;
+                    return api(originalRequest);
+                }
+            }
+            
+            // Refresh failed
+            handleSessionExpiry();
+            return Promise.reject(new UnauthorizedError("Session expired"));
+        } catch (refreshError) {
+            handleSessionExpiry();
+            return Promise.reject(refreshError);
+        } finally {
+            isRefreshing = false;
+        }
     }
 );
 
-// ─── Legacy request() wrapper ──────────────────
-// Keeps backward-compat with existing code that uses request<T>(endpoint, options)
+// ─── Helper Functions ──────────────────────────
 
-interface RequestOptions extends RequestInit {
-    skipAuth?: boolean;
-}
+function handleSessionExpiry() {
+    onRefreshed(null); // Notify waiting requests
+    clearAll(); // Clear local storage
 
-export async function request<T>(
-    endpoint: string,
-    options: RequestOptions = {}
-): Promise<T> {
-    const { skipAuth = false, method = "GET", body, headers: customHeaders } = options;
-
-    const config: AxiosRequestConfig & { _skipAuth?: boolean } = {
-        url: endpoint,
-        method: method as string,
-        _skipAuth: skipAuth,
-        headers: customHeaders as Record<string, string>,
-    };
-
-    if (body) {
-        config.data = typeof body === "string" ? JSON.parse(body) : body;
-    }
-
-    const response = await api(config);
-    return response.data as T;
-}
-
-function redirectToLogin() {
-    clearAll();
     if (typeof window !== "undefined") {
-        window.location.href = "/sign-in";
+        const path = window.location.pathname;
+        // Prevent redirect loop if already on auth pages
+        if (path !== "/sign-in" && path !== "/sign-up") {
+            window.location.href = `/sign-in?redirect=${encodeURIComponent(path)}`;
+        }
     }
 }
-
-// ─── Token Refresh ─────────────────────────────
 
 /**
- * POSTs the refresh token to /api/auth/refresh.
- * On success, saves new tokens to localStorage and notifies all queued callers.
- * Returns true if refresh succeeded, false otherwise.
+ * refreshAccessToken
+ * Calls the backend directly to refresh the token using the stored refresh token.
  */
 export async function refreshAccessToken(): Promise<boolean> {
     const store = getTokenStore();
-    if (!store?.refreshToken) {
-        onRefreshComplete(null);
-        return false;
-    }
-
-    isRefreshing = true;
+    if (!store?.refreshToken) return false;
 
     try {
-        const response = await axios.post(`${backendUrl}/api/auth/refresh`, {
+        // Use a fresh axios instance to avoid interceptors
+        const response = await axios.post(`${BACKEND_URL}/api/auth/refresh`, {
             refreshToken: store.refreshToken,
         });
 
         const data = response.data;
         const { access_token, refresh_token, expires_in } = data.data || data;
 
-        if (!access_token) {
-            onRefreshComplete(null);
-            return false;
-        }
+        if (!access_token) return false;
 
         const newStore: TokenStoreData = {
             accessToken: access_token,
@@ -193,42 +184,45 @@ export async function refreshAccessToken(): Promise<boolean> {
         };
 
         setTokenStore(newStore);
-        onRefreshComplete(access_token);
         return true;
-    } catch {
-        onRefreshComplete(null);
+    } catch (e) {
+        console.error("Token refresh failed", e);
         return false;
-    } finally {
-        isRefreshing = false;
     }
 }
 
-// ─── Auth Verification ─────────────────────────
-
+/**
+ * verifyToken
+ * Checks if the current session is valid.
+ * Does NOT trigger a redirect on 401 (uses _skipAuth or handled gracefully).
+ */
 export async function verifyToken(): Promise<{ userId: string; email: string } | null> {
     try {
+        // We use the main 'api' instance but rely on its interceptor.
+        // If it fails with 401, the interceptor will try to refresh.
+        // If refresh fails, it rejects. catch() handles it.
         const response = await api.get<{ data: { userId: string; email: string } }>("/api/auth/verify");
         return response.data.data;
     } catch {
+        // If 401 happens and refresh fails, we return null (not authenticated)
         return null;
     }
 }
 
-// ─── Logout ────────────────────────────────────
-
+/**
+ * logout
+ * Calls backend logout and clears local state.
+ */
 export async function logout(): Promise<void> {
     const store = getTokenStore();
-    const user = getUser();
-
-    // Best-effort server logout
-    try {
-        await axios.post(`${backendUrl}/api/auth/logout`, {
-            refreshToken: store?.refreshToken || "",
-            userId: user?.userId || "",
-        });
-    } catch {
-        // Always succeeds conceptually — clear local state regardless
+    if (store?.refreshToken) {
+        try {
+            await axios.post(`${BACKEND_URL}/api/auth/logout`, {
+                refreshToken: store.refreshToken,
+            });
+        } catch {
+            // Ignore logout errors
+        }
     }
-
-    clearAll();
+    handleSessionExpiry();
 }
