@@ -1,0 +1,210 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Search, LogOut, User, X, FolderHeart } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Button } from "@/components/ui/button";
+
+interface ExploreHeaderProps {
+  onCreateClick?: () => void;
+  onMyAssetsClick?: () => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onSearchConfirm?: () => void;
+  onClearSearch?: () => void;
+}
+
+export function ExploreHeader({ 
+  onCreateClick, 
+  onMyAssetsClick,
+  searchValue = "", 
+  onSearchChange, 
+  onSearchConfirm,
+  onClearSearch 
+}: ExploreHeaderProps) {
+  const { user, isAuthenticated, signOut } = useAuthStore();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // Close profile menu on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && onSearchConfirm) {
+      onSearchConfirm();
+    }
+  };
+
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
+        <div className="flex h-[64px] items-center justify-between gap-4">
+          {/* Left: Logo */}
+          <Link href="/" className="flex-shrink-0">
+            <div className="flex items-center">
+              <Image
+                src="/svgs/web_logo.svg"
+                alt="Invook"
+                width={0}
+                height={0}
+                style={{ height: '1.5rem', width: 'auto' }}
+                className="h-6 w-auto brightness-0 dark:invert"
+                priority
+              />
+            </div>
+          </Link>
+
+          {/* Center: Search Bar (Desktop) */}
+          <div className="flex-1 max-w-2xl mx-auto hidden md:block relative">
+            <div className="relative group">
+              <div 
+                className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                onClick={onSearchConfirm}
+              >
+                <Search className="h-4 w-4" />
+              </div>
+              <input
+                type="text"
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search for images, videos..."
+                className="block w-full pl-10 pr-10 py-2 border border-input rounded-full bg-secondary/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              />
+              {searchValue && (
+                <button
+                  onClick={onClearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center space-x-3">
+             {/* Mobile Search Icon */}
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden rounded-full"
+                onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+             >
+                {isMobileSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+             </Button>
+
+            {/* Publish Button */}
+            <Button onClick={onCreateClick} className="hidden sm:flex items-center gap-2 px-4 py-1.5 h-auto text-sm font-medium rounded-full">
+                <span>Publish</span>
+            </Button>
+            
+            {/* Publish Button (mobile) */}
+             <Button onClick={onCreateClick} className="sm:hidden px-3 py-1.5 h-auto text-xs font-medium rounded-full">
+                <span>Publish</span>
+            </Button>
+
+            {isAuthenticated && (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden border border-border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all hover:opacity-80"
+                >
+                  {user?.user_metadata?.avatar_url ? (
+                    <Image
+                      src={user.user_metadata.avatar_url}
+                      alt={user.email || "User"}
+                      width={36}
+                      height={36}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">
+                      <User className="h-5 w-5" />
+                    </div>
+                  )}
+                </button>
+
+                {/* Popover Menu */}
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-popover border border-border rounded-2xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                    <div className="px-4 py-2 border-b border-border mb-1">
+                        <p className="text-xs font-medium text-muted-foreground truncate">Signed in as</p>
+                        <p className="text-sm font-bold text-foreground truncate">{user?.email}</p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        onMyAssetsClick?.();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary/50 transition-colors text-left"
+                    >
+                      <FolderHeart className="h-4 w-4 text-muted-foreground" />
+                      <span>My Assets</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors text-left"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Log out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Search Bar Expansion */}
+        {isMobileSearchOpen && (
+            <div className="md:hidden pb-4 pt-1 animate-in slide-in-from-top-2 duration-200">
+                <div className="relative">
+                    <div 
+                      className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground"
+                      onClick={onSearchConfirm}
+                    >
+                      <Search className="h-4 w-4" />
+                    </div>
+                    <input
+                        type="text"
+                        value={searchValue}
+                        onChange={(e) => onSearchChange?.(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Search gallery..."
+                        className="w-full pl-10 pr-10 py-2.5 border border-input rounded-xl bg-secondary/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                        autoFocus
+                    />
+                    {searchValue && (
+                        <button
+                            onClick={onClearSearch}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+            </div>
+        )}
+      </div>
+    </header>
+  );
+}

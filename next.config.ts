@@ -13,6 +13,31 @@ const nextConfig: NextConfig = {
         hostname: "q3kusohadpqcfxz4.public.blob.vercel-storage.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "*.cloudfront.net",
+      },
+      {
+        protocol: "https",
+        hostname: "*.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "dev.thinkingsoundlab.com",
+      },
+        {
+        protocol: "https",
+        hostname: "dvkbjuoh9mvcd.cloudfront.net",
+        pathname: "/**",
+      },
     ],
   },
 };

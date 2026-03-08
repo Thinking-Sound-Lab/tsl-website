@@ -15,12 +15,12 @@ export function Navigation() {
           <Link href="/" className="flex-shrink-0">
             <div className="flex items-center">
               <Image
-                src="/svgs/web_logo.svg" 
+                src="/svgs/web_logo.svg"
                 alt="Invook"
                 width={0}
                 height={0}
                 style={{ height: '1.5rem', width: 'auto' }}
-                className="h-6 w-auto brightness-0 dark:invert" 
+                className="h-6 w-auto brightness-0 dark:invert"
                 priority
               />
             </div>
@@ -28,6 +28,12 @@ export function Navigation() {
 
           {/* Center: Navigation Links */}
           <div className="hidden lg:flex items-center justify-center space-x-10 absolute left-1/2 transform -translate-x-1/2">
+            <Link
+              href="/explore"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+            >
+              Explore
+            </Link>
             <a
               href="https://docs.thinkingsoundlab.com"
               className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
@@ -42,20 +48,12 @@ export function Navigation() {
             >
               Changelog
             </Link>
-            <a
-              href="https://invook.notion.site/About-2917f199308b8035a4efc8204a1293f9?source=copy_link"
-              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              About
-            </a>
           </div>
 
           {/* Right: Sign In & Download Buttons */}
           <div className="flex items-center space-x-3">
-{/* <Link
-              href="/sign-in"
+            {/* <Link
+              href={`/sign-in?redirect=${typeof window !== "undefined" ? encodeURIComponent(window.location.pathname) : "/explore"}`}
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
             >
               Sign In
@@ -103,6 +101,13 @@ export function Navigation() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border bg-background">
             <div className="flex flex-col space-y-4 px-2">
+              <Link
+                href="/explore"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Explore
+              </Link>
               <a
                 href="https://docs.thinkingsoundlab.com"
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"
@@ -119,16 +124,7 @@ export function Navigation() {
               >
                 Changelog
               </Link>
-              <a
-                href="https://invook.notion.site/About-2917f199308b80aead5dfb1c2d6142dd"
-                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                About
-              </a>
-{/* <Link
+              {/* <Link
                 href="/sign-in"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"

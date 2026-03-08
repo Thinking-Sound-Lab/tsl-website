@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY || "dummy");
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 
 // Email validation regex (RFC 5322 compliant)
@@ -83,11 +83,10 @@ function generateEmailHTML(
 
           <div class="instructions">
             <strong>Installation Instructions:</strong>
-            ${
-              platform === "mac"
-                ? "<p>1. Open the downloaded .dmg file<br>2. Drag Invook to the Applications folder<br>3. Launch Invook from your Applications or Dock</p>"
-                : "<p>1. Open the downloaded .exe file<br>2. Follow the installation wizard<br>3. Launch Invook from the Start menu or Desktop</p>"
-            }
+            ${platform === "mac"
+      ? "<p>1. Open the downloaded .dmg file<br>2. Drag Invook to the Applications folder<br>3. Launch Invook from your Applications or Dock</p>"
+      : "<p>1. Open the downloaded .exe file<br>2. Follow the installation wizard<br>3. Launch Invook from the Start menu or Desktop</p>"
+    }
           </div>
 
           <p>If you didn't request this download, you can safely ignore this email.</p>
@@ -115,11 +114,10 @@ Thanks for choosing Invook. Download Invook for ${platformName} here:
 ${downloadUrl}
 
 Installation Instructions:
-${
-  platform === "mac"
-    ? "1. Open the downloaded .dmg file\n2. Drag Invook to the Applications folder\n3. Launch Invook from your Applications or Dock"
-    : "1. Open the downloaded .exe file\n2. Follow the installation wizard\n3. Launch Invook from the Start menu or Desktop"
-}
+${platform === "mac"
+      ? "1. Open the downloaded .dmg file\n2. Drag Invook to the Applications folder\n3. Launch Invook from your Applications or Dock"
+      : "1. Open the downloaded .exe file\n2. Follow the installation wizard\n3. Launch Invook from the Start menu or Desktop"
+    }
 
 If you didn't request this download, you can safely ignore this email.
 
@@ -166,7 +164,7 @@ export async function POST(request: Request) {
     }
 
     // Send email via Resend
-    await resend.emails.send({
+    await getResend().emails.send({
       from: `Abhishek from Invook <${FROM_EMAIL}>`,
       to: email,
       subject: "Your Invook Download Link",

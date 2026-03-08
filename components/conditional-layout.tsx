@@ -10,14 +10,14 @@ export function ConditionalLayout({
   children: React.ReactNode; 
 }) {
   const pathname = usePathname();
-  const isAuthPage = pathname?.startsWith("/auth");
-  const isDownloadsPage = pathname === "/downloads";
+  const isAuthPage = pathname?.startsWith("/auth") || pathname === "/sign-in" || pathname === "/sign-up";
+  const isExplorePage = pathname?.startsWith("/explore");
 
   return (
     <>
-      {!isAuthPage && !isDownloadsPage && <Navigation />}
+      {!isAuthPage && !isExplorePage && <Navigation />}
       {children}
-      {!isAuthPage && !isDownloadsPage && <Footer />}
+      {!isAuthPage && <Footer />}
     </>
   );
 }
