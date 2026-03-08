@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { uploadOrchestrator, type UploadMetadata } from "@/lib/upload/orchestrator";
-import { ExploreAPI, type ExploreItem, type ExploreModel } from "@/lib/api/explore";
+import { ExploreAPI, type ExploreItem, type ExploreModel, type UploadMetadata } from "@/lib/api/explore";
 import { ExploreHeader } from "@/components/explore-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -164,18 +163,9 @@ export default function ExploreGallery() {
     /* ─── Fetch Models ─── */
     const fetchModels = useCallback(async () => {
         try {
-            const res = await ExploreAPI.getModels();
-            if (res.success) {
-                // Handle both direct and nested model lists
-                const payload = res.data as unknown;
-                if (Array.isArray(payload)) {
-                    setModels(payload as ExploreModel[]);
-                } else if (payload && typeof payload === "object" && "data" in payload) {
-                    const nested = payload as { data: ExploreModel[] };
-                    if (Array.isArray(nested.data)) {
-                        setModels(nested.data);
-                    }
-                }
+            const { success, data } = await ExploreAPI.getModels();
+            if (success && Array.isArray(data)) {
+                setModels(data);
             }
         } catch (err) {
             console.error("Failed to fetch models", err);
@@ -303,6 +293,11 @@ export default function ExploreGallery() {
     };
 
     const handleSubmitUpload = async () => {
+        if (!isAuthenticated || !user?.userId) {
+            alert("Please sign in to upload assets.");
+            return;
+        }
+
         if (!editingPost && (!uploadFile || !uploadFileType)) return;
 
         // Final MIME type validation
@@ -360,12 +355,12 @@ export default function ExploreGallery() {
                     tags,
                 };
 
-                const newItem = await uploadOrchestrator({
-                    file: uploadFile,
+                const newItem = await ExploreAPI.uploadFile(
+                    uploadFile,
                     metadata,
-                    onProgress: (p) => setUploadProgress(p),
-                    signal: controller.signal,
-                });
+                    (p) => setUploadProgress(p),
+                    controller.signal,
+                );
                 capture("post_created", {
                     model: uploadModel,
                     item_type: uploadFileType,
@@ -377,13 +372,6 @@ export default function ExploreGallery() {
             setIsUploadModalOpen(false);
             resetUploadModal();
             setEditingPost(null);
-            
-            // Re-fetch after a short delay to get the full updated list from backend
-            // (in case other things changed or to sync with server state)
-            setTimeout(() => {
-                setPage(1);
-                fetchPosts(1, activeFilter, confirmedSearch);
-            }, 1500);
         } catch (err) {
             const e = err as Error;
             if (e.message !== "Aborted" && e.message !== "Upload aborted by user") {
