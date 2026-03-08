@@ -30,10 +30,10 @@ export default function DownloadContent() {
 					{/* Header Text */}
 					<div className="space-y-2 tracking-tight">
 						<h1 className="text-3xl md:text-4xl font-normal text-foreground">
-							Download Invook
+							Get the Invook App
 						</h1>
 						<p className="text-lg text-muted-foreground/60">
-							Available for macOS and Windows
+							The full Canvas experience is available on macOS and Windows.
 						</p>
 					</div>
 

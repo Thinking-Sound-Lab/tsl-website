@@ -588,7 +588,11 @@ export default function ExploreGallery() {
                                                             className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
+                                                                if (isAuthenticated) {
+                                                                    router.push("/download");
+                                                                } else {
+                                                                    router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
+                                                                }
                                                                 setOpenMenuId(null);
                                                             }}
                                                         >
@@ -803,10 +807,15 @@ export default function ExploreGallery() {
                                         </button>
 
                                         <button
-                                            onClick={() => router.push(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`)}
+                                            onClick={() => {
+                                                if (isAuthenticated) {
+                                                    router.push("/download");
+                                                } else {
+                                                    router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
+                                                }
+                                            }}
                                             className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors shadow-md"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        >                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
                                             </svg>
                                             Use in Canvas
