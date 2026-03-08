@@ -11,6 +11,7 @@ import { ExploreAPI, type ExploreItem, type ExploreModel } from "@/lib/api/explo
 import { ExploreHeader } from "@/components/explore-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 /* ─── Helpers ───────────────────────────────── */
 
@@ -44,6 +45,7 @@ const BASE_FILTERS = ["All", "Images", "Videos"] as const;
 export default function ExploreGallery() {
     const router = useRouter();
     const { isAuthenticated, user } = useAuthStore();
+    const { capture } = useAnalytics();
 
     /* Data State */
     const [posts, setPosts] = useState<ExploreItem[]>([]);
@@ -129,6 +131,14 @@ export default function ExploreGallery() {
                 const payload = res.data;
                 const items = payload?.data || [];
                 const more = payload?.hasMore || false;
+
+                if (pageNum === 1 && search.trim()) {
+                    capture("search_performed", {
+                        query: search.trim(),
+                        results_count: items.length,
+                        has_results: items.length > 0,
+                    });
+                }
 
                 setPosts((prev) => {
                     const next = append ? [...prev, ...items] : (items || []);
@@ -220,6 +230,10 @@ export default function ExploreGallery() {
     const handleCopyPrompt = async () => {
         if (!selectedPost) return;
         await navigator.clipboard.writeText(selectedPost.prompt);
+        capture("prompt_copied", {
+            post_id: selectedPost.id,
+            model: selectedPost.model_name,
+        });
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -249,6 +263,7 @@ export default function ExploreGallery() {
         if (!confirm("Are you sure you want to delete this item?")) return;
         try {
             await ExploreAPI.deleteItem(id);
+            capture("post_deleted", { post_id: id });
             setPosts((prev) => prev.filter((p) => p.id !== id));
             if (selectedPost?.id === id) setSelectedPost(null);
         } catch (err) {
@@ -289,6 +304,18 @@ export default function ExploreGallery() {
 
     const handleSubmitUpload = async () => {
         if (!editingPost && (!uploadFile || !uploadFileType)) return;
+
+        // Final MIME type validation
+        if (uploadFile) {
+            const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
+            const allowedVideoTypes = ["video/mp4", "video/webm", "video/quicktime"];
+            
+            if (!allowedImageTypes.includes(uploadFile.type) && !allowedVideoTypes.includes(uploadFile.type)) {
+                alert("Unsupported file type. Please upload PNG, JPG, WebP, AVIF, MP4, WebM, or MOV.");
+                return;
+            }
+        }
+
         setIsSubmittingUpload(true);
         setUploadProgress(0);
 
@@ -303,6 +330,7 @@ export default function ExploreGallery() {
                     prompt: uploadPrompt,
                     tags,
                 });
+                capture("post_updated", { post_id: editingPost.id });
             } else if (uploadFile && uploadFileType) {
                 let duration: number | undefined = undefined;
                 if (uploadFileType === "video") {
@@ -332,18 +360,30 @@ export default function ExploreGallery() {
                     tags,
                 };
 
-                await uploadOrchestrator({
+                const newItem = await uploadOrchestrator({
                     file: uploadFile,
                     metadata,
                     onProgress: (p) => setUploadProgress(p),
                     signal: controller.signal,
                 });
+                capture("post_created", {
+                    model: uploadModel,
+                    item_type: uploadFileType,
+                });
+
+                // Prepend new item for instant feedback
+                setPosts(prev => [newItem, ...prev]);
             }
             setIsUploadModalOpen(false);
             resetUploadModal();
             setEditingPost(null);
-            setPage(1);
-            fetchPosts(1, activeFilter, confirmedSearch);
+            
+            // Re-fetch after a short delay to get the full updated list from backend
+            // (in case other things changed or to sync with server state)
+            setTimeout(() => {
+                setPage(1);
+                fetchPosts(1, activeFilter, confirmedSearch);
+            }, 1500);
         } catch (err) {
             const e = err as Error;
             if (e.message !== "Aborted" && e.message !== "Upload aborted by user") {
@@ -784,42 +824,50 @@ export default function ExploreGallery() {
                                         </div>
                                     )}
 
-                                    <div className="flex flex-col sm:flex-row items-center gap-3 mt-8 pt-6 border-t border-border flex-shrink-0">
-                                        <button
-                                            onClick={handleCopyPrompt}
-                                            className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full border border-border hover:bg-secondary transition-colors"
-                                        >
-                                            {copied ? (
-                                                <>
-                                                    <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    Copied
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                    </svg>
-                                                    Copy Prompt
-                                                </>
-                                            )}
-                                        </button>
-
-                                        <button
-                                            onClick={() => {
-                                                if (isAuthenticated) {
-                                                    router.push("/download");
-                                                } else {
-                                                    router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
-                                                }
-                                            }}
-                                            className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors shadow-md"
-                                        >                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                    <div className="mt-8 pt-6 border-t border-border flex-shrink-0">
+                                        <p className="text-[11px] text-muted-foreground/60 mb-4 flex items-center gap-1.5 px-1">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            Use in Canvas
-                                        </button>
+                                            If the thumbnail is not visible, reload the page again to see it.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                                            <button
+                                                onClick={handleCopyPrompt}
+                                                className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full border border-border hover:bg-secondary transition-colors"
+                                            >
+                                                {copied ? (
+                                                    <>
+                                                        <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        Copied
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                        </svg>
+                                                        Copy Prompt
+                                                    </>
+                                                )}
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (isAuthenticated) {
+                                                        router.push("/download");
+                                                    } else {
+                                                        router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
+                                                    }
+                                                }}
+                                                className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors shadow-md"
+                                            >                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                                </svg>
+                                                Use in Canvas
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -929,14 +977,22 @@ export default function ExploreGallery() {
                                                     </svg>
                                                 </div>
                                                 <span className="text-lg font-medium text-foreground">Click or Drag to Upload</span>
-                                                <span className="text-sm text-foreground/50 mt-2">Images or Videos (max 50MB)</span>
+                                                <span className="text-sm text-foreground/50 mt-2">Images (PNG, JPG, WebP, AVIF) or Videos (MP4, WebM, MOV)</span>
                                                 <input
                                                     type="file"
                                                     className="hidden"
-                                                    accept="image/*,video/*"
+                                                    accept="image/png,image/jpeg,image/jpg,image/webp,image/avif,video/mp4,video/webm,video/quicktime"
                                                     onChange={(e) => {
                                                         const file = e.target.files?.[0];
                                                         if (file) {
+                                                            const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
+                                                            const allowedVideoTypes = ["video/mp4", "video/webm", "video/quicktime"];
+                                                            
+                                                            if (!allowedImageTypes.includes(file.type) && !allowedVideoTypes.includes(file.type)) {
+                                                                alert("Unsupported file type. Please upload PNG, JPG, WebP, AVIF, MP4, WebM, or MOV.");
+                                                                return;
+                                                            }
+
                                                             setUploadFile(file);
                                                             setUploadFilePreview(URL.createObjectURL(file));
                                                             setUploadFileType(file.type.startsWith("video") ? "video" : "image");
@@ -1078,6 +1134,12 @@ export default function ExploreGallery() {
 
                                     {/* Submit */}
                                     <div className="pt-6 mt-4 border-t border-border/50">
+                                        <p className="text-[11px] text-muted-foreground/60 mb-4 flex items-center gap-1.5 px-1">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            If the thumbnail is not visible after posting, reload the page to see it.
+                                        </p>
                                         <button
                                             disabled={(!editingPost && !uploadFile) || !uploadPrompt.trim() || !uploadModel || isSubmittingUpload}
                                             onClick={handleSubmitUpload}

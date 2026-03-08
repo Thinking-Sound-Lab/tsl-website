@@ -7,7 +7,7 @@ export function Footer() {
 			<div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
 				<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">
 					{/* Product Column */}
-					<div className="col-span-1">
+					{/* <div className="col-span-1">
 						<h3 className="text-sm font-normal text-muted-foreground mb-4">
 							Product
 						</h3>
@@ -21,7 +21,7 @@ export function Footer() {
 								</Link>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 
 					{/* Resources Column */}
 					<div className="col-span-1">

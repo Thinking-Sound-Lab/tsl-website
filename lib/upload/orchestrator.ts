@@ -79,7 +79,7 @@ export async function uploadOrchestrator({
     metadata,
     onProgress,
     signal,
-}: OrchestratorOptions): Promise<void> {
+}: OrchestratorOptions): Promise<ExploreItem> {
 
     if (file.size > 50 * 1024 * 1024) {
         throw new Error("File size exceeds 50MB limit");
@@ -104,16 +104,19 @@ export async function uploadOrchestrator({
         
         // 1. Init Upload
         const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size, totalParts);
-        uploadId = initRes.data.upload_id;
-        uploadKey = initRes.data.upload_key;
-
-        let presignedUrls = initRes.data.urls;
+        const initData = initRes.data;
+        
+        // Be flexible with snake_case vs camelCase from backend
+        uploadId = initData.upload_id || (initData as any).uploadId;
+        uploadKey = initData.upload_key || (initData as any).uploadKey;
+        let presignedUrls = initData.urls || [];
 
         // 2. Get more URLs if needed
         if (presignedUrls.length < totalParts) {
             if (signal?.aborted) throw new Error("Aborted");
-            const moreUrls = await ExploreAPI.getUploadUrls(uploadKey, uploadId, totalParts - presignedUrls.length);
-            presignedUrls = [...presignedUrls, ...moreUrls.data];
+            const moreUrlsRes = await ExploreAPI.getUploadUrls(uploadKey!, uploadId!, totalParts - presignedUrls.length);
+            const moreUrls = moreUrlsRes.data;
+            presignedUrls = [...presignedUrls, ...(Array.isArray(moreUrls) ? moreUrls : (moreUrls as any).urls || [])];
         }
 
         const CONCURRENCY_LIMIT = 3;
@@ -126,11 +129,15 @@ export async function uploadOrchestrator({
 
                 const taskIndex = currentIndex++;
                 const chunk = chunks[taskIndex];
-                const presignedUrlData = presignedUrls.find(p => p.part_number === chunk.partNumber);
-                const presignedUrl = presignedUrlData?.presigned_url;
+                
+                // Find matching part, handling both naming conventions
+                const presignedUrlData = presignedUrls.find(p => 
+                    p.part_number === chunk.partNumber || (p as any).partNumber === chunk.partNumber
+                );
+                const presignedUrl = presignedUrlData?.presigned_url || (presignedUrlData as any)?.presignedUrl || (presignedUrlData as any)?.url;
 
                 if (!presignedUrl) {
-                    throw new Error(`Missing presigned URL for part ${chunk.partNumber}`);
+                    throw new Error(`Missing presigned URL for part ${chunk.partNumber}. Received ${presignedUrls.length} URLs.`);
                 }
 
                 let retries = 3;
@@ -177,22 +184,23 @@ export async function uploadOrchestrator({
         completedParts.sort((a, b) => a.PartNumber - b.PartNumber);
 
         // 3. Complete Upload
-        await ExploreAPI.completeUpload({
-            upload_key: uploadKey!,
-            upload_id: uploadId!,
+        const completeRes = await ExploreAPI.completeUpload({
+            uploadKey: uploadKey!,
+            uploadId: uploadId!,
             parts: completedParts,
             prompt: metadata.prompt,
-            model_name: metadata.model_name,
-            mime_type: metadata.mime_type || file.type,
+            modelName: metadata.model_name,
+            mimeType: metadata.mime_type || file.type,
             width: metadata.width,
             height: metadata.height,
-            item_type: metadata.item_type,
+            itemType: metadata.item_type,
             tags: metadata.tags,
             duration: metadata.duration,
-            is_public: metadata.is_public,
+            isPublic: metadata.is_public,
         });
         
         onProgress?.(100);
+        return completeRes.data;
 
     } catch (error) {
         if (uploadId && uploadKey) {
