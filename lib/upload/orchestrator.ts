@@ -1,4 +1,4 @@
-import { ExploreAPI, type CompleteUploadPayload } from "../api/explore";
+import { ExploreAPI, type ExploreItem } from "../api/explore";
 import { splitFileIntoChunks } from "./chunker";
 
 interface UploadProgressCallback {
@@ -24,10 +24,6 @@ interface OrchestratorOptions {
     signal?: AbortSignal;
 }
 
-/**
- * Uploads a single part to S3 directly using XHR for progress tracking.
- * This bypasses apiClient to ensure native Authorization JWTs are not leaked to AWS.
- */
 function uploadPartWithXHR(
     url: string,
     chunk: Blob,
@@ -58,7 +54,6 @@ function uploadPartWithXHR(
         xhr.addEventListener("load", () => {
             if (aborted) return;
             if (xhr.status >= 200 && xhr.status < 300) {
-                // S3 often returns ETags wrapped in double quotes
                 const etag = xhr.getResponseHeader("ETag")?.replace(/"/g, "");
                 if (etag) {
                     resolve(etag);
@@ -74,20 +69,11 @@ function uploadPartWithXHR(
             if (!aborted) reject(new Error("Network error during S3 upload"));
         });
 
-        // Initialize PUT request directly to S3 Region
         xhr.open("PUT", url);
         xhr.send(chunk);
     });
 }
 
-/**
- * Orchestrates the full multipart upload lifecycle:
- * 1. File validation & chunking (5MB limits)
- * 2. POST /upload/init (Get upload_id, upload_key, and first batch of URLs)
- * 3. XHR PUT parts concurrently (Max 3, Retries = 3)
- * 4. POST /upload/complete (Finalize AWS assembly + DB insert)
- * 5. POST /upload/abort (Cleans up orphaned chunks on failure/cancellation)
- */
 export async function uploadOrchestrator({
     file,
     metadata,
@@ -95,7 +81,6 @@ export async function uploadOrchestrator({
     signal,
 }: OrchestratorOptions): Promise<void> {
 
-    // 1. Chunk the file
     if (file.size > 50 * 1024 * 1024) {
         throw new Error("File size exceeds 50MB limit");
     }
@@ -103,7 +88,6 @@ export async function uploadOrchestrator({
     const chunks = splitFileIntoChunks(file);
     const totalParts = chunks.length;
 
-    // Progress tracking state (aggregating bytes across all parallel requests)
     const partProgress = new Array(totalParts).fill(0);
     const updateProgress = () => {
         if (!onProgress) return;
@@ -112,30 +96,26 @@ export async function uploadOrchestrator({
         onProgress(percentage);
     };
 
-    let upload_id: string | undefined;
-    let upload_key: string | undefined;
+    let uploadId: string | undefined;
+    let uploadKey: string | undefined;
 
     try {
-        // 2. Init Upload — returns upload_id, upload_key, and first batch of presigned URLs
         if (signal?.aborted) throw new Error("Aborted");
+        
+        // 1. Init Upload
         const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size, totalParts);
-        upload_id = initRes.data.upload_id;
-        upload_key = initRes.data.upload_key;
+        uploadId = initRes.data.upload_id;
+        uploadKey = initRes.data.upload_key;
 
         let presignedUrls = initRes.data.urls;
 
-        // If the init didn't return enough URLs (unlikely but safe), fetch more
+        // 2. Get more URLs if needed
         if (presignedUrls.length < totalParts) {
             if (signal?.aborted) throw new Error("Aborted");
-            const moreUrls = await ExploreAPI.getUploadUrls(upload_key, upload_id, totalParts - presignedUrls.length);
+            const moreUrls = await ExploreAPI.getUploadUrls(uploadKey, uploadId, totalParts - presignedUrls.length);
             presignedUrls = [...presignedUrls, ...moreUrls.data];
         }
 
-        if (presignedUrls.length !== totalParts) {
-            throw new Error("Mismatch between requested parts and received URLs");
-        }
-
-        // 3. Upload Parts concurrently (Limit: 3)
         const CONCURRENCY_LIMIT = 3;
         const completedParts: { PartNumber: number; ETag: string }[] = [];
         let currentIndex = 0;
@@ -146,13 +126,13 @@ export async function uploadOrchestrator({
 
                 const taskIndex = currentIndex++;
                 const chunk = chunks[taskIndex];
-                const presignedUrl = presignedUrls.find(p => p.part_number === chunk.partNumber)?.presigned_url;
+                const presignedUrlData = presignedUrls.find(p => p.part_number === chunk.partNumber);
+                const presignedUrl = presignedUrlData?.presigned_url;
 
                 if (!presignedUrl) {
                     throw new Error(`Missing presigned URL for part ${chunk.partNumber}`);
                 }
 
-                // Chunk Retry Logic
                 let retries = 3;
                 let etag: string | null = null;
                 let lastError: Error | undefined;
@@ -175,7 +155,6 @@ export async function uploadOrchestrator({
                         retries--;
                         if (error.message === "Aborted" || error.message === "Upload aborted by user") break;
 
-                        // Exponential backoff
                         if (retries > 0) {
                             await new Promise(r => setTimeout(r, (4 - retries) * 1000));
                         }
@@ -195,12 +174,12 @@ export async function uploadOrchestrator({
 
         if (signal?.aborted) throw new Error("Aborted");
 
-        // 4. Complete Upload — flat body with parts + metadata
         completedParts.sort((a, b) => a.PartNumber - b.PartNumber);
 
-        const completePayload: CompleteUploadPayload = {
-            upload_key,
-            upload_id,
+        // 3. Complete Upload
+        await ExploreAPI.completeUpload({
+            upload_key: uploadKey!,
+            upload_id: uploadId!,
             parts: completedParts,
             prompt: metadata.prompt,
             model_name: metadata.model_name,
@@ -211,17 +190,13 @@ export async function uploadOrchestrator({
             tags: metadata.tags,
             duration: metadata.duration,
             is_public: metadata.is_public,
-        };
-
-        await ExploreAPI.completeUpload(completePayload);
-
-        // Upload success! Fill progress bar visually if calculation was off
+        });
+        
         onProgress?.(100);
 
     } catch (error) {
-        // 5. Handle Abort/Failure Cleanup
-        if (upload_id && upload_key) {
-            ExploreAPI.abortUpload(upload_key, upload_id).catch((e) => console.error("Failed to abort orphaned upload", e));
+        if (uploadId && uploadKey) {
+            ExploreAPI.abortUpload(uploadKey, uploadId).catch((e) => console.error("Failed to abort orphaned upload", e));
         }
         throw error;
     }
