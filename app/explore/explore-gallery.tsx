@@ -158,7 +158,7 @@ export default function ExploreGallery() {
                 fetchingPageRef.current = null;
             }
         },
-        [getFilterParams, user?.userId]
+        [getFilterParams, user?.userId, capture]
     );
 
     /* ─── Fetch Models ─── */

@@ -74,6 +74,22 @@ function uploadPartWithXHR(
     });
 }
 
+interface BackendInitResponse {
+    upload_id?: string;
+    uploadId?: string;
+    upload_key?: string;
+    uploadKey?: string;
+    urls?: { part_number?: number; partNumber?: number; presigned_url?: string; presignedUrl?: string; url?: string }[];
+}
+
+interface BackendPartUrl {
+    part_number?: number;
+    partNumber?: number;
+    presigned_url?: string;
+    presignedUrl?: string;
+    url?: string;
+}
+
 export async function uploadOrchestrator({
     file,
     metadata,
@@ -104,19 +120,21 @@ export async function uploadOrchestrator({
         
         // 1. Init Upload
         const initRes = await ExploreAPI.initUpload(file.name, file.type, file.size, totalParts);
-        const initData = initRes.data;
+        const initData = initRes.data as unknown as BackendInitResponse;
         
         // Be flexible with snake_case vs camelCase from backend
-        uploadId = initData.upload_id || (initData as any).uploadId;
-        uploadKey = initData.upload_key || (initData as any).uploadKey;
+        uploadId = initData.upload_id || initData.uploadId;
+        uploadKey = initData.upload_key || initData.uploadKey;
         let presignedUrls = initData.urls || [];
 
         // 2. Get more URLs if needed
         if (presignedUrls.length < totalParts) {
             if (signal?.aborted) throw new Error("Aborted");
             const moreUrlsRes = await ExploreAPI.getUploadUrls(uploadKey!, uploadId!, totalParts - presignedUrls.length);
-            const moreUrls = moreUrlsRes.data;
-            presignedUrls = [...presignedUrls, ...(Array.isArray(moreUrls) ? moreUrls : (moreUrls as any).urls || [])];
+            const moreUrls = moreUrlsRes.data as unknown as BackendPartUrl[] | { urls: BackendPartUrl[] };
+            
+            const newUrls = Array.isArray(moreUrls) ? moreUrls : (moreUrls as { urls: BackendPartUrl[] }).urls || [];
+            presignedUrls = [...presignedUrls, ...newUrls];
         }
 
         const CONCURRENCY_LIMIT = 3;
@@ -132,9 +150,9 @@ export async function uploadOrchestrator({
                 
                 // Find matching part, handling both naming conventions
                 const presignedUrlData = presignedUrls.find(p => 
-                    p.part_number === chunk.partNumber || (p as any).partNumber === chunk.partNumber
+                    p.part_number === chunk.partNumber || p.partNumber === chunk.partNumber
                 );
-                const presignedUrl = presignedUrlData?.presigned_url || (presignedUrlData as any)?.presignedUrl || (presignedUrlData as any)?.url;
+                const presignedUrl = presignedUrlData?.presigned_url || presignedUrlData?.presignedUrl || presignedUrlData?.url;
 
                 if (!presignedUrl) {
                     throw new Error(`Missing presigned URL for part ${chunk.partNumber}. Received ${presignedUrls.length} URLs.`);
