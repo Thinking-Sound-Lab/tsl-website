@@ -3,12 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, LogOut, User, Plus, X } from "lucide-react";
+import { Search, LogOut, User, Plus, X, FolderHeart } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 
 interface ExploreHeaderProps {
   onCreateClick?: () => void;
+  onMyAssetsClick?: () => void;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onSearchConfirm?: () => void;
@@ -17,6 +18,7 @@ interface ExploreHeaderProps {
 
 export function ExploreHeader({ 
   onCreateClick, 
+  onMyAssetsClick,
   searchValue = "", 
   onSearchChange, 
   onSearchConfirm,
@@ -24,6 +26,7 @@ export function ExploreHeader({
 }: ExploreHeaderProps) {
   const { user, isAuthenticated, signOut } = useAuthStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   // Close profile menu on click outside
@@ -64,10 +67,13 @@ export function ExploreHeader({
             </div>
           </Link>
 
-          {/* Center: Search Bar */}
+          {/* Center: Search Bar (Desktop) */}
           <div className="flex-1 max-w-2xl mx-auto hidden md:block relative">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-foreground transition-colors">
+              <div 
+                className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                onClick={onSearchConfirm}
+              >
                 <Search className="h-4 w-4" />
               </div>
               <input
@@ -91,20 +97,24 @@ export function ExploreHeader({
 
           {/* Right: Actions */}
           <div className="flex items-center space-x-3">
-             {/* Mobile Search Icon (visible only on small screens) */}
-             <Button variant="ghost" size="icon" className="md:hidden">
-                <Search className="h-5 w-5" />
+             {/* Mobile Search Icon */}
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden rounded-full"
+                onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+             >
+                {isMobileSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
              </Button>
 
-            {/* Create Button */}
-            <Button onClick={onCreateClick} className="hidden sm:flex items-center gap-2 px-3 py-1 h-auto text-sm font-normal rounded-full">
-                <Plus className="h-4 w-4" />
-                <span>Create</span>
+            {/* Publish Button */}
+            <Button onClick={onCreateClick} className="hidden sm:flex items-center gap-2 px-4 py-1.5 h-auto text-sm font-medium rounded-full">
+                <span>Publish</span>
             </Button>
             
-            {/* Create Button (Icon only for mobile) */}
-             <Button onClick={onCreateClick} className="sm:hidden px-2 py-1 h-auto rounded-full">
-                <Plus className="h-5 w-5" />
+            {/* Publish Button (mobile) */}
+             <Button onClick={onCreateClick} className="sm:hidden px-3 py-1.5 h-auto text-xs font-medium rounded-full">
+                <span>Publish</span>
             </Button>
 
             {isAuthenticated && (
@@ -130,19 +140,32 @@ export function ExploreHeader({
 
                 {/* Popover Menu */}
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg py-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                    <div className="px-4 py-2 border-b border-border">
-                        <p className="text-sm font-medium truncate">{user?.email}</p>
+                  <div className="absolute right-0 mt-2 w-56 bg-popover border border-border rounded-2xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                    <div className="px-4 py-2 border-b border-border mb-1">
+                        <p className="text-xs font-medium text-muted-foreground truncate">Signed in as</p>
+                        <p className="text-sm font-bold text-foreground truncate">{user?.email}</p>
                     </div>
+
+                    <button
+                      onClick={() => {
+                        onMyAssetsClick?.();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary/50 transition-colors text-left"
+                    >
+                      <FolderHeart className="h-4 w-4 text-muted-foreground" />
+                      <span>My Assets</span>
+                    </button>
+
                     <button
                       onClick={() => {
                         signOut();
                         setIsProfileOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-muted flex items-center gap-2 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors text-left"
                     >
                       <LogOut className="h-4 w-4" />
-                      Log out
+                      <span>Log out</span>
                     </button>
                   </div>
                 )}
@@ -150,6 +173,37 @@ export function ExploreHeader({
             )}
           </div>
         </div>
+
+        {/* Mobile Search Bar Expansion */}
+        {isMobileSearchOpen && (
+            <div className="md:hidden pb-4 pt-1 animate-in slide-in-from-top-2 duration-200">
+                <div className="relative">
+                    <div 
+                      className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground"
+                      onClick={onSearchConfirm}
+                    >
+                      <Search className="h-4 w-4" />
+                    </div>
+                    <input
+                        type="text"
+                        value={searchValue}
+                        onChange={(e) => onSearchChange?.(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Search gallery..."
+                        className="w-full pl-10 pr-10 py-2.5 border border-input rounded-xl bg-secondary/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                        autoFocus
+                    />
+                    {searchValue && (
+                        <button
+                            onClick={onClearSearch}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+            </div>
+        )}
       </div>
     </header>
   );

@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { uploadOrchestrator, type UploadMetadata } from "@/lib/upload/orchestrator";
 import { ExploreAPI, type ExploreItem, type ExploreModel } from "@/lib/api/explore";
 import { ExploreHeader } from "@/components/explore-header";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /* ─── Helpers ───────────────────────────────── */
@@ -397,6 +398,7 @@ export default function ExploreGallery() {
         <div className="min-h-screen bg-background pt-20 pb-16">
             <ExploreHeader
                 onCreateClick={handleUploadClick}
+                onMyAssetsClick={() => setActiveFilter("My Assets")}
                 searchValue={searchQuery}
                 onSearchChange={setSearchQuery}
                 onSearchConfirm={handleSearchConfirm}
@@ -671,7 +673,13 @@ export default function ExploreGallery() {
                             </svg>
                         </div>
                         <p className="text-foreground/60 text-lg font-medium">No items found</p>
-                        <p className="text-muted-foreground text-sm mt-1">Try a different filter or be the first to upload!</p>
+                        <p className="text-muted-foreground text-sm mt-1 mb-8">Try a different filter or be the first to upload!</p>
+                        <Button 
+                            onClick={handleUploadClick}
+                            className="rounded-full px-8 py-2.5 font-medium transition-all hover:scale-105 active:scale-95"
+                        >
+                            Publish your first asset
+                        </Button>
                     </div>
                 )}
 
