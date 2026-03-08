@@ -71,18 +71,18 @@ export interface UpdateItemPayload {
 }
 
 export interface CompleteUploadPayload {
-    upload_key: string;
-    upload_id: string;
+    uploadKey: string;
+    uploadId: string;
     parts: { PartNumber: number; ETag: string }[];
     prompt: string;
-    model_name: string;
-    mime_type: string;
+    modelName: string;
+    mimeType: string;
     width: number;
     height: number;
-    item_type?: "image" | "video";
+    itemType?: "image" | "video";
     tags?: string[];
-    duration?: number;
-    is_public?: boolean;
+    duration?: number | null;
+    isPublic?: boolean;
 }
 
 // ─── API Methods ───────────────────────────────

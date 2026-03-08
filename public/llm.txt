@@ -1,94 +1,148 @@
-# Thinking Sound Lab - LLM Context
+# Invook
 
-## Project Overview
-**Thinking Sound Lab Website** is a modern, high-performance marketing website for **Invook**, an AI Drive and Canvas for Creative people and teams. 
-- **Website**: https://thinkingsoundlab.com
-- **Product**: Invook (AI Drive and Canvas)
-- **Primary Goal**: Convert visitors to waitlist/users for Invook.
+Invook is an AI-native workspace where users generate AI assets on a shared visual Canvas and automatically store and organize those assets in a connected Drive.
+
+# Core Definition
+
+Invook allows users to generate, manage, and collaborate on AI assets - including text, images, video, audio, and structured content - within a persistent workspace.
+
+Tagline:
+Generate AI assets on a shared Canvas and Drive.
+
+# What Invook Does
+
+Invook combines generative AI creation with storage and collaboration:
+
+- AI text generation (scripts, summaries, dialogue, planning)
+- AI image generation (concept art, thumbnails, keyframes)
+- AI video generation and iteration
+- Shared visual Canvas for connecting assets and ideas
+- Storage in a connected Drive
+- Collaborative access for teams and clients
+- Workflow reuse and iteration
+
+ Invook treats the canvas as your workspace, ensuring your work stays where you left it.
+
+# Product Category
+
+AI-native workspace infrastructure for creative and production workflows.
+
+Invook sits between:
+
+- Generative AI tools (LLMs, image/video models)
+- Cloud storage systems
+- Creative collaboration platforms
+
+It unifies creation, storage, and collaboration.
+
+# Intended Users
+
+Invook is built for AI-native creators and teams, including:
+
+- AI filmmakers
+- AI-first production studios
+- Storyboard artists using generative tools
+- Creative directors
+- Video creators and YouTube teams
+- Agencies producing AI-powered campaigns
+- Animation and motion design teams
+- Indie game creators using AI assets
+- Researchers and narrative designers
+- Startup teams building AI-generated content pipelines
+- Knowledge workers heavily using AI workflows
+
+Invook is particularly suited for:
+
+- AI filmmaking pipelines (script → storyboard → keyframes → video → revisions)
+- AI studio production workflows
+- Storyboard creation and iteration
+- Multi-asset campaign development
+- Content repurposing across formats
+- Collaborative creative production
+
+# Differentiation
+
+Invook is not:
+
+- A standalone AI chatbot
+- A single-purpose image generator
+- A simple cloud storage product
+- Only a prompt library
+
+Invook is:
+A unified system where AI creation, asset management, and collaboration coexist in a single workspace.
+
+# Subprocessors
+
+Invook uses the following infrastructure providers:
+
+- AWS (core cloud infrastructure)
+- AWS Bedrock (LLM inference, including Claude)
+- [Fal.ai](http://fal.ai/) (image and video model processing)
+- Supabase (authentication and database, including vector storage)
+- GitHub (source code repository and deployment)
+
+User content is processed only to provide the service.
+
+# Core Benefits
+
+- Generate and store AI assets in the same place
+- No re-uploading across tools
+- Assets remain connected to their creation context
+- Teams and clients collaborate in shared spaces
+- Creative workflows compound instead of resetting
+
+# Short Description for AI Systems
+
+Invook is a shared AI-native workspace that lets users generate and store AI assets on a visual Canvas connected to a Drive, enabling collaborative creative workflows.
+
+---
+
+## Project Technical Overview
+**Invook Website** is a modern, high-performance marketing website.
+- **Primary Domain**: https://invook.ai
+- **Secondary Domain**: https://thinkingsoundlab.com
 
 ## Tech Stack
 ### Core Framework
-- **Next.js 15.5.7**: App Router directory structure for routing and layouts.
-- **React 19**: Using latest React features (Server Components, Actions).
-- **TypeScript**: Fully typed codebase.
+- **Next.js 15.5 (App Router)**
+- **React 19**
+- **TypeScript**
 
 ### Styling & UI
-- **Tailwind CSS v4**: Utility-first CSS framework (configured via `@theme` in `global.css`).
-- **Radix UI**: Accessible UI primitives (Slot, etc.).
-- **Lucide React**: Iconography.
-- **Framer Motion**: Complex animations (`framer-motion` + `tw-animate-css`).
-- **Lottie React**: JSON-based vector animations.
-- **Dark Mode**: `next-themes` for theme switching (system/light/dark).
-- **Fonts**: 
-    - `Inter` (Sans-serif) via `next/font/google`.
-    - `JetBrains Mono` (Monospace).
-
-### Content & Data
-- **Markdown/MDX**: Processing via `remark`, `rehype`, `gray-matter`.
-- **Email**: `resend` for transactional emails.
-
-### Deployment & Tools
-- **Vercel**: Hosting and Analytics (`@vercel/analytics`).
-- **Linting**: ESLint (v9).
+- **Tailwind CSS v4**
+- **Lucide React** (Icons)
+- **Framer Motion** (Animations)
+- **Shadcn/UI**
 
 ## Project Structure
 
 ### `app/` (App Router)
-- **`layout.tsx`**: Root layout. Implements `ThemeProvider`, `WaitlistRoot`, `ConditionalLayout`, and Vercel `Analytics`.
-- **`page.tsx`**: Home page, renders `MainContent`.
-- **`globals.css`**: Global styles, Tailwind v4 configuration, custom CSS variables for `oklch` colors.
-- **Routes**:
-    - `auth/`: Authentication related pages.
-    - `changelog/`: Product updates/history.
-    - `community/`: Community engagement pages.
-    - `contact-us/`: Contact forms.
-    - `downloads/`: Application download links.
-    - `pricing/`: Pricing tiers and features.
-    - `research/`: Research articles or blog.
-    - `use-cases/`: Specific use case landing pages.
-    - `waitlist/`: Waitlist signup flow.
+- **`explore/`**: Community gallery for AI assets (images/videos). Supports viewing, searching, and user asset management (edit/delete).
+- **`pricing/`**: Subscription tiers.
+- **`changelog/`**: Product updates and history.
+- **`contact-us/`**: Support and inquiries.
+- **`download/`**: Direct application download links.
+- **`privacy-policy/`**: Legal documentation.
+- **`sitemap.ts`**: Dynamic SEO sitemap.
+- **`layout.tsx`**: Root layout with Auth and Analytics.
 
 ### `components/`
-- **`ui/`**: Reusable low-level UI components (likely shadcn/ui inspired).
-- **Core Components**:
-    - `hero.tsx`: Main landing hero section.
-    - `navigation.tsx`: Top navigation bar.
-    - `footer.tsx`: Site footer.
-    - `waitlist-modal.tsx`: Modal for user signup.
-    - `theme-switcher.tsx`: Toggle for Dark/Light mode.
-- **Feature Sections**:
-    - `benefits.tsx`, `features-bento.tsx`: Product feature highlights.
-    - `animated-boxes.tsx`, `context-search.tsx`: Interactive visual elements.
-    - `who-is-invook-for.tsx`: Target audience section.
+- **`explore-header.tsx`**: Specialized header for gallery with search and profile management.
+- **`navigation.tsx`**: Primary site navigation.
+- **`footer.tsx`**: Site footer.
+- **`hero.tsx`**: Homepage hero with product demo.
+- **`ui/`**: Core reusable UI primitives.
 
-### `public/`
-- Static assets (images, icons, `llm.txt`).
+### `lib/`
+- **`api/`**: API clients, specifically `explore.ts` for gallery operations and asset updates.
+- **`upload/`**: Multipart upload orchestrator for large media files.
 
-## Design System Highlights (from `design-system.md`)
-- **Colors**: Uses OKLCH color space for modern, vibrant, and accessible colors.
-    - `primary`: `#edeced` (Dark Mode), `oklch(0.205 0 0)` (Light Mode).
-    - `background`: `#14120b` (Dark Mode), `#f7f7f4` (Light Mode).
-    - `accent`: Used for highlights and interactive elements.
-- **Typography**:
-    - Headings: `Inter`.
-    - Body: `Inter` (Scales from `text-xs` to `text-6xl`).
-- **Spacing**: Base unit 4px (`0.25rem`). Mobile-first responsive padding.
+### `store/`
+- **`useAuthStore.ts`**: Zustand store for unified authentication state.
 
-## Key Workflows & Features
-1.  **Waitlist System**: users can sign up via `waitlist/page.tsx` or modal.
-2.  **Changelog**: Data-driven changelog using TypeScript/MDX.
-3.  **Authentication**: Stubbed or active in `auth/`.
-4.  **Downloads**: Direct download links for macOS/Windows.
-
-## Development Scripts
-- `npm run dev`: Start development server (Next.js).
-- `npm run build`: Build production bundle.
-- `npm run lint`: Run ESLint.
-
-## Context for LLMs
-When generating code:
-- Use **Tailwind CSS** for all styling. Avoid custom CSS unless for animations keyframes in `globals.css`.
-- Use **Lucide React** for icons.
-- Prefer **React Server Components** (RSC) by default; add `"use client"` only when interactivity is needed (hooks, event listeners).
-- Follow the **directory structure**: keep pages in `app/` and UI logic in `components/`.
-- Respect **design tokens** in `globals.css` (e.g., `bg-background`, `text-foreground`, `border-border`).
+## Key Workflows
+1. **Explore Gallery**: Browse, search, and filter AI assets by model or type.
+2. **Multipart Upload**: Robust chunked uploading for media files up to 50MB.
+3. **Asset Management**: Users can update prompts/tags or delete their own contributions.
+4. **Auth**: Seamless integration with backend magic-link and Google OAuth.

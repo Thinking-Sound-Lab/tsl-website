@@ -30,6 +30,7 @@ export async function apiClient<T>(
         method,
         _skipAuth: !requiresAuth,
         headers,
+        withCredentials: true,
     };
 
     if (body) {

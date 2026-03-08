@@ -2,10 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function DownloadContent() {
 	const macDownloadUrl = process.env.NEXT_PUBLIC_MAC_DOWNLOAD_URL || "#";
 	const windowsDownloadUrl = process.env.NEXT_PUBLIC_WINDOWS_DOWNLOAD_URL || "#";
+	const { capture } = useAnalytics();
+
+	const trackDownload = (platform: string) => {
+		capture("download_clicked", { platform });
+	};
 
 	return (
 		<div className="min-h-screen bg-background flex flex-col">
@@ -30,10 +36,10 @@ export default function DownloadContent() {
 					{/* Header Text */}
 					<div className="space-y-2 tracking-tight">
 						<h1 className="text-3xl md:text-4xl font-normal text-foreground">
-							Download Invook
+							Get the Invook App
 						</h1>
 						<p className="text-lg text-muted-foreground/60">
-							Available for macOS and Windows
+							The full Canvas experience is available on macOS and Windows.
 						</p>
 					</div>
 
@@ -42,6 +48,7 @@ export default function DownloadContent() {
 						{/* macOS */}
 						<a
 							href={macDownloadUrl}
+							onClick={() => trackDownload("macOS")}
 							className="group flex items-center justify-between w-full p-5 rounded-lg bg-secondary border border-border/40 hover:bg-secondary/80 hover:border-border/60 transition-all"
 						>
 							<div className="flex items-center gap-4">
@@ -80,6 +87,7 @@ export default function DownloadContent() {
 						{/* Windows */}
 						<a
 							href={windowsDownloadUrl}
+							onClick={() => trackDownload("Windows")}
 							className="group flex items-center justify-between w-full p-5 rounded-lg bg-secondary border border-border/40 hover:bg-secondary/80 hover:border-border/60 transition-all"
 						>
 							<div className="flex items-center gap-4">

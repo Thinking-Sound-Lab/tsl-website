@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, LogOut, User, Plus, X, FolderHeart } from "lucide-react";
+import { Search, LogOut, User, X, FolderHeart } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 

@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import { ThemeProvider } from "./theme-provider";
 import { AuthInitializer } from "@/components/auth-initializer";
+import { PostHogProvider } from "./posthog-provider";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -33,16 +34,18 @@ export default function RootLayout({
 			<body
 				className={`${inter.variable} antialiased`}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<AuthInitializer />
-					<ConditionalLayout>{children}</ConditionalLayout>
-					<Analytics />
-				</ThemeProvider>
+				<PostHogProvider>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<AuthInitializer />
+						<ConditionalLayout>{children}</ConditionalLayout>
+						<Analytics />
+					</ThemeProvider>
+				</PostHogProvider>
 			</body>
 		</html>
 	);

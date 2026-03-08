@@ -5,11 +5,13 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function SignUpContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { handleOAuth, isAuthenticated } = useAuthStore();
+	const { capture } = useAnalytics();
 	const [email, setEmail] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -25,6 +27,7 @@ export default function SignUpContent() {
 			setIsLoading(true);
 			handleOAuth(window.location.href).then((res) => {
 				if (res.authenticated) {
+					capture("signup_completed", { method: "magic_link" });
 					setMessage({ type: "success", text: "Successfully authenticated!" });
 					setTimeout(() => router.push(redirectParam), 500);
 				} else {
@@ -36,11 +39,12 @@ export default function SignUpContent() {
 			// Already logged in, just redirect
 			router.push(redirectParam);
 		}
-	}, [handleOAuth, isAuthenticated, redirectParam, router]);
+	}, [handleOAuth, isAuthenticated, redirectParam, router, capture]);
 
 	const handleGoogleSignUp = async () => {
 		setIsLoading(true);
 		setMessage(null);
+		capture("signup_started", { method: "google" });
 
 		try {
 			const response = await fetch("/api/auth", {
@@ -71,6 +75,7 @@ export default function SignUpContent() {
 
 		setIsLoading(true);
 		setMessage(null);
+		capture("signup_started", { method: "email" });
 
 		try {
 			const response = await fetch("/api/auth", {
