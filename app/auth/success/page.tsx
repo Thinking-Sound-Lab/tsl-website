@@ -10,6 +10,8 @@ export default function AuthSuccessPage() {
     const { handleOAuth } = useAuthStore();
     const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
     const [userEmail, setUserEmail] = useState<string>("");
+    const [isElectronFlow, setIsElectronFlow] = useState(false);
+    const [electronUrl, setElectronUrl] = useState<string>("");
 
     useEffect(() => {
         const processAuth = async () => {
@@ -21,27 +23,30 @@ export default function AuthSuccessPage() {
 
                 const isElectron = source === "desktop" || source === "desktop-dev";
                 const isDev = source === "desktop-dev";
+                setIsElectronFlow(isElectron);
 
                 const hash = window.location.hash;
 
-                // ─── Electron Flow ──────────────────────
-                if (isElectron && hash && hash.length > 1) {
-                    const protocol = isDev ? "invook-dev" : "invook";
-                    const electronCallbackUrl = `${protocol}://oauth/callback${hash}`;
-                    window.location.href = electronCallbackUrl;
-                    return;
-                }
-
-                // ─── Web App Flow ───────────────────────
+                // ─── Process OAuth for all flows ──────────────────────
                 if (hash && hash.length > 1) {
                     const result = await handleOAuth(window.location.href);
 
                     if (result.authenticated && result.user) {
                         setUserEmail(result.user.email);
                         setStatus("success");
-                        setTimeout(() => {
-                            router.push(nextPath);
-                        }, 1500);
+
+                        if (isElectron) {
+                            const protocol = isDev ? "invook-dev" : "invook";
+                            const electronCallbackUrl = `${protocol}://oauth/callback${hash}`;
+                            setElectronUrl(electronCallbackUrl);
+                            
+                            // Automatically trigger the deep link
+                            window.location.href = electronCallbackUrl;
+                        } else {
+                            setTimeout(() => {
+                                router.push(nextPath);
+                            }, 1500);
+                        }
                         return;
                     }
                 }
@@ -55,6 +60,12 @@ export default function AuthSuccessPage() {
 
         processAuth();
     }, [handleOAuth, router]);
+
+    const handleOpenApp = () => {
+        if (electronUrl) {
+            window.location.href = electronUrl;
+        }
+    };
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -79,7 +90,23 @@ export default function AuthSuccessPage() {
                                 <p className="text-sm text-muted-foreground mt-1">{userEmail}</p>
                             )}
                         </div>
-                        <p className="text-sm text-muted-foreground">Redirecting...</p>
+                        
+                        {isElectronFlow ? (
+                            <div className="space-y-4">
+                                <p className="text-sm text-muted-foreground">
+                                    You should be automatically redirected to the app. 
+                                    If not, please click the button below.
+                                </p>
+                                <button
+                                    onClick={handleOpenApp}
+                                    className="px-8 py-3 rounded-full bg-[#F54E00] text-white font-medium hover:bg-[#F54E00]/90 transition-colors shadow-lg"
+                                >
+                                    Open Invook App
+                                </button>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">Redirecting...</p>
+                        )}
                     </>
                 )}
 
