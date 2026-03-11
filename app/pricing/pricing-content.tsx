@@ -300,7 +300,7 @@ export default function PricingContent() {
                     <div className="relative group ml-1.5 flex items-center cursor-help">
                       <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[220px] bg-background text-foreground text-[12px] p-2.5 rounded-md shadow-lg border border-border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 text-center font-normal leading-relaxed">
-                        actuals depend on the model used
+                        Actuals depend on the model used
                       </div>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function PricingContent() {
                     <div className="relative group ml-1.5 flex items-center cursor-help">
                       <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[220px] bg-background text-foreground text-[12px] p-2.5 rounded-md shadow-lg border border-border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 text-center font-normal leading-relaxed">
-                        actuals depend on the model used
+                        Actuals depend on the model used
                       </div>
                     </div>
                   </div>
