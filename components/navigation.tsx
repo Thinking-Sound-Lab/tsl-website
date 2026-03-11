@@ -34,6 +34,12 @@ export function Navigation() {
             >
               Explore
             </Link>
+            <Link
+              href="/pricing"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+            >
+              Pricing
+            </Link>
             <a
               href="https://docs.thinkingsoundlab.com"
               className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
@@ -107,6 +113,13 @@ export function Navigation() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Explore
+              </Link>
+              <Link
+                href="/pricing"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Pricing
               </Link>
               <a
                 href="https://docs.thinkingsoundlab.com"
