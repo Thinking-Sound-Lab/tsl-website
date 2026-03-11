@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CTASection } from "@/components/cta-section";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Info } from "lucide-react";
 
 export default function PricingContent() {
   const [isYearly, setIsYearly] = useState(false);
@@ -295,7 +295,15 @@ export default function PricingContent() {
 
                 {/* Row 8 */}
                 <div className="grid grid-cols-5 gap-4 py-5 border-b border-border/50 items-center">
-                  <div className="col-span-1 font-medium">Images/Month</div>
+                  <div className="col-span-1 font-medium flex items-center">
+                    Images/Month
+                    <div className="relative group ml-1.5 flex items-center cursor-help">
+                      <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[220px] bg-background text-foreground text-[12px] p-2.5 rounded-md shadow-lg border border-border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 text-center font-normal leading-relaxed">
+                        actuals depend on the model used
+                      </div>
+                    </div>
+                  </div>
                   <div className="text-center font-medium flex justify-center">~1,000</div>
                   <div className="text-center font-medium flex justify-center">~5,000</div>
                   <div className="text-center font-medium flex justify-center">~10,000</div>
@@ -304,7 +312,15 @@ export default function PricingContent() {
 
                 {/* Row 9 */}
                 <div className="grid grid-cols-5 gap-4 py-5 border-b border-border/50 items-center">
-                  <div className="col-span-1 font-medium">Videos/Month</div>
+                  <div className="col-span-1 font-medium flex items-center">
+                    Videos/Month
+                    <div className="relative group ml-1.5 flex items-center cursor-help">
+                      <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[220px] bg-background text-foreground text-[12px] p-2.5 rounded-md shadow-lg border border-border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 text-center font-normal leading-relaxed">
+                        actuals depend on the model used
+                      </div>
+                    </div>
+                  </div>
                   <div className="text-center font-medium flex justify-center">~20 (200s)</div>
                   <div className="text-center font-medium flex justify-center">~100 (1000s)</div>
                   <div className="text-center font-medium flex justify-center">~200 (2000s)</div>
