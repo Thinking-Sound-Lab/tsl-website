@@ -9,12 +9,18 @@ export default function PricingContent() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const faqs = [
-    { question: "What is the right plan for me?", answer: "Free: For individuals getting started with node-based AI. It includes a basic pool of daily credits. Pro: Designed for power users and professionals. You get a larger monthly credit allowance. Team: Best for studios and agencies. This plan unlocks our Real-time collaborative Canvas, shared asset libraries, and centralized billing for multiple seats." },
+    { question: "What is the right plan for me?", answer: (
+      <div className="space-y-3">
+        <div><span className="font-bold">Free</span>: For individuals getting started with node-based AI. It includes a basic pool of daily credits.</div>
+        <div><span className="font-bold">Pro</span>: Designed for power users and professionals. You get a larger monthly credit allowance.</div>
+        <div><span className="font-bold">Team</span>: Best for studios and agencies. This plan unlocks our Real-time collaborative Canvas, shared asset libraries, and centralized billing for multiple seats.</div>
+      </div>
+    ) },
     { question: "What are my payment options?", answer: "We accept all major credit cards including Visa, Mastercard, and American Express, as well as digital wallets like Google Pay and Apple Pay." },
     { question: "How do Credits work on Invook?", answer: "Invook uses a credit system to manage asset generation. Every generation, upscale, or node execution consumes a specific number of credits based on the complexity of the task and the model used. Plan credits are granted monthly and do not roll over on the Free plan. Available on Pro and Team plans. If you run out, you can purchase Top-up Credits. These credits can be purchased on paid plans (Starter, Pro, Team) as needed. Unused credits roll over for up to 5 months, after which they expire." },
     { question: "How does Invook use my data?", answer: "We use the enterprise-grade API tier of our model providers. This ensures that neither Invook nor our model providers use your prompts, workflows, or generated assets to train any base models." },
     { question: "Why use Invook instead of a local setup?", answer: "Invook removes the hardware and technical barriers of local setups. You get instant access to top-tier cloud GPUs without needing to manage Python environments or manual node updates. Most importantly, Invook is collaborative; unlike a local instance, our platform allows multiple team members to work on the same infinite canvas simultaneously, seeing cursors and edits in real-time." },
-    { question: "Where can I ask more questions?", answer: "Our support team is available 24/7. You can reach out via the Contact page or send an email directly to support@thinkingsoundlab.com." }
+    { question: "Where can I ask more questions?", answer: <>Our support team is available 24/7. You can reach out via the Contact page or send an email directly to <a href="mailto:support@thinkingsoundlab.com" className="text-[#f54e00] hover:underline">support@thinkingsoundlab.com</a>.</> }
   ];
 
   return (
@@ -353,9 +359,9 @@ export default function PricingContent() {
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === i ? "max-h-96 pb-6 opacity-100" : "max-h-0 opacity-0"
                       }`}
                   >
-                    <p className="text-[14px] text-foreground/70 leading-relaxed pr-8">
+                    <div className="text-[14px] text-foreground/70 leading-relaxed pr-8">
                       {faq.answer}
-                    </p>
+                    </div>
                   </div>
                 </div>
               ))}
