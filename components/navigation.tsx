@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AuthButton } from "@/components/auth-button";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,6 +35,12 @@ export function Navigation() {
             >
               Explore
             </Link>
+            <Link
+              href="/pricing"
+              className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
+            >
+              Pricing
+            </Link>
             <a
               href="https://docs.thinkingsoundlab.com"
               className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors"
@@ -52,18 +59,13 @@ export function Navigation() {
 
           {/* Right: Sign In & Download Buttons */}
           <div className="flex items-center space-x-3">
-            {/* <Link
-              href={`/sign-in?redirect=${typeof window !== "undefined" ? encodeURIComponent(window.location.pathname) : "/explore"}`}
-              className="hidden lg:inline-flex items-center justify-center px-3 py-1 text-sm font-normal text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
-            >
-              Sign In
-            </Link> */}
             <Link
               href="/download"
               className="hidden lg:inline-flex items-center justify-center px-3 py-1 border border-primary text-sm font-normal rounded-full shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors cursor-pointer"
             >
               Download
             </Link>
+            <AuthButton />
 
             {/* Mobile menu button */}
             <button
@@ -108,6 +110,13 @@ export function Navigation() {
               >
                 Explore
               </Link>
+              <Link
+                href="/pricing"
+                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
               <a
                 href="https://docs.thinkingsoundlab.com"
                 className="text-sm text-foreground hover:text-muted-foreground transition-colors"
@@ -124,13 +133,7 @@ export function Navigation() {
               >
                 Changelog
               </Link>
-              {/* <Link
-                href="/sign-in"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm text-foreground hover:text-muted-foreground transition-colors"
-              >
-                Sign In
-              </Link> */}
+
               <Link
                 href="/download"
                 onClick={() => setIsMobileMenuOpen(false)}
