@@ -33,12 +33,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "dev.thinkingsoundlab.com",
       },
-        {
+      {
         protocol: "https",
         hostname: "dvkbjuoh9mvcd.cloudfront.net",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
     ],
+
   },
 };
 

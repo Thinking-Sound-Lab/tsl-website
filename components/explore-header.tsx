@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, LogOut, User, X, FolderHeart } from "lucide-react";
-import { useAuthStore } from "@/store/useAuthStore";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AuthButton } from "@/components/auth-button";
 
 interface ExploreHeaderProps {
   onCreateClick?: () => void;
@@ -24,23 +24,7 @@ export function ExploreHeader({
   onSearchConfirm,
   onClearSearch 
 }: ExploreHeaderProps) {
-  const { user, isAuthenticated, signOut } = useAuthStore();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const profileRef = useRef<HTMLDivElement>(null);
-
-  // Close profile menu on click outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setIsProfileOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && onSearchConfirm) {
@@ -117,60 +101,7 @@ export function ExploreHeader({
                 <span>Publish</span>
             </Button>
 
-            {isAuthenticated && (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden border border-border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all hover:opacity-80"
-                >
-                  {user?.user_metadata?.avatar_url ? (
-                    <Image
-                      src={user.user_metadata.avatar_url}
-                      alt={user.email || "User"}
-                      width={36}
-                      height={36}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">
-                      <User className="h-5 w-5" />
-                    </div>
-                  )}
-                </button>
-
-                {/* Popover Menu */}
-                {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-popover border border-border rounded-2xl shadow-lg py-2 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                    <div className="px-4 py-2 border-b border-border mb-1">
-                        <p className="text-xs font-medium text-muted-foreground truncate">Signed in as</p>
-                        <p className="text-sm font-bold text-foreground truncate">{user?.email}</p>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        onMyAssetsClick?.();
-                        setIsProfileOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-secondary/50 transition-colors text-left"
-                    >
-                      <FolderHeart className="h-4 w-4 text-muted-foreground" />
-                      <span>My Assets</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        signOut();
-                        setIsProfileOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors text-left"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Log out</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+            <AuthButton onMyAssetsClick={onMyAssetsClick} />
           </div>
         </div>
 

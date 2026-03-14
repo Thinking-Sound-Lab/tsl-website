@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
 	return (
@@ -22,15 +23,20 @@ export function Hero() {
 					</Link>
 				</div>
 
-				<div className="mt-12 md:mt-16 w-full rounded-xl overflow-hidden border shadow-xl">
-					<video
-						src="https://q3kusohadpqcfxz4.public.blob.vercel-storage.com/benefits/web_demo_2.mov"
-						autoPlay
-						muted
-						loop
-						playsInline
-						className="w-full h-auto block"
+				<div className="mt-12 md:mt-20 w-full rounded-2xl overflow-hidden border shadow-2xl relative group">
+					<div 
+						className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+						style={{ backgroundImage: "url('/images/benefits-bg.png')" }}
 					/>
+					<div className="relative p-8 md:p-12 lg:p-16">
+						<Image
+							src="https://res.cloudinary.com/disoisftp/image/upload/v1773466058/Screenshot_2026-03-14_at_10.46.34_AM_c0nkuj.png"
+							alt="Hero Demo"
+							width={1400}
+							height={800}
+							className="w-full h-auto block rounded-lg shadow-2xl border border-white/10"
+						/>
+					</div>
 				</div>
 			</div>
 		</section>

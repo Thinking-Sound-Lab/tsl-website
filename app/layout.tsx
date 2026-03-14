@@ -14,6 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+	metadataBase: new URL('https://invook.ai'),
 	title: {
 		template: "%s . Invook",
 		default: "Invook",

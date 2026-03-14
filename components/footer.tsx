@@ -7,7 +7,7 @@ export function Footer() {
 			<div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
 				<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">
 					{/* Product Column */}
-					{/* <div className="col-span-1">
+					<div className="col-span-1">
 						<h3 className="text-sm font-normal text-muted-foreground mb-4">
 							Product
 						</h3>
@@ -20,15 +20,6 @@ export function Footer() {
 									Pricing
 								</Link>
 							</li>
-						</ul>
-					</div> */}
-
-					{/* Resources Column */}
-					<div className="col-span-1">
-						<h3 className="text-sm font-normal text-muted-foreground mb-4">
-							Resources
-						</h3>
-						<ul className="space-y-1">
 							<li>
 								<Link
 									href="/changelog"
@@ -37,6 +28,16 @@ export function Footer() {
 									Changelog
 								</Link>
 							</li>
+						</ul>
+					</div>
+
+					{/* Resources Column */}
+					<div className="col-span-1">
+						<h3 className="text-sm font-normal text-muted-foreground mb-4">
+							Resources
+						</h3>
+						<ul className="space-y-1">
+
 							<li>
 								<Link
 									href="https://docs.thinkingsoundlab.com"
@@ -48,6 +49,14 @@ export function Footer() {
 								</Link>
 							</li>
 							<li>
+								<a
+									href="mailto:support@thinkingsoundlab.com"
+									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
+								>
+									Support
+								</a>
+							</li>
+							<li>
 								<Link
 									href="/llm.txt"
 									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
@@ -56,6 +65,7 @@ export function Footer() {
 									llm.txt
 								</Link>
 							</li>
+
 						</ul>
 					</div>
 
@@ -80,14 +90,6 @@ export function Footer() {
 								>
 									About
 								</Link>
-							</li>
-							<li>
-								<a
-									href="mailto:support@thinkingsoundlab.com"
-									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
-								>
-									Contact
-								</a>
 							</li>
 						</ul>
 					</div>
@@ -163,6 +165,16 @@ export function Footer() {
 									Instagram
 								</Link>
 							</li>
+							<li>
+								<Link
+									href="https://x.com/Invook_ai"
+									className="text-sm font-normal text-foreground/80 hover:text-foreground dark:text-foreground dark:hover:text-muted-foreground transition-colors py-2"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									X
+								</Link>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -170,7 +182,7 @@ export function Footer() {
 				{/* Bottom Bar: Copyright & Theme Switcher */}
 				<div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
 					<p className="text-sm text-muted-foreground">
-						© 2025 Thinking Sound Lab. All rights reserved.
+						© 2026 Thinking Sound Lab. All rights reserved.
 					</p>
 
 					<div className="flex items-center gap-4">
