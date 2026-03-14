@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, User, FolderHeart } from "lucide-react";
 
 import { useAuthStore } from "@/store/useAuthStore";
@@ -15,7 +15,7 @@ interface AuthButtonProps {
 
 export function AuthButton({ onMyAssetsClick }: AuthButtonProps) {
   const router = useRouter();
-
+  const pathname = usePathname();
   const { user, isAuthenticated, signOut } = useAuthStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,7 @@ export function AuthButton({ onMyAssetsClick }: AuthButtonProps) {
         className="inline-flex items-center justify-center rounded-full px-4 py-1.5 h-auto text-sm font-medium transition-colors"
         asChild
       >
-        <Link href={`/sign-in?redirect=${typeof window !== "undefined" ? encodeURIComponent(window.location.pathname) : "/explore"}`}>
+        <Link href={`/sign-in?redirect=${encodeURIComponent(pathname || "/explore")}`}>
           Sign In
         </Link>
       </Button>
