@@ -1,0 +1,218 @@
+{
+  "plans": {
+    "individual": [
+      {
+        "id": "free",
+        "title": "Free",
+        "price": {
+          "monthly": "Free",
+          "yearly": "Free"
+        },
+        "includes": "Includes:",
+        "features": [
+          "150 Monthly Credits",
+          "Up to 500 images/month",
+          "Up to 10 videos/month (100s)",
+          "~15K chars audio/month",
+          "~1.5M LLM tokens/month",
+          "2 Canvas Projects",
+          "0 Collaborators (solo only)"
+        ],
+        "button": {
+          "text": "Download",
+          "variant": "secondary"
+        }
+      },
+      {
+        "id": "starter",
+        "title": "Starter",
+        "price": {
+          "monthly": "20",
+          "yearly": "16"
+        },
+        "includes": "Everything in Free, plus:",
+        "features": [
+          "1,500 Monthly Credits",
+          "Up to 5,000 images/month",
+          "Up to 100 videos/month (1000s)",
+          "~150K chars audio/month",
+          "~15M LLM tokens/month",
+          "Unlimited Canvas Projects",
+          "Unlimited Collaborators",
+          "Comments"
+        ],
+        "button": {
+          "text": "Get Starter",
+          "variant": "secondary"
+        }
+      },
+      {
+        "id": "pro",
+        "title": "Pro",
+        "recommended": true,
+        "price": {
+          "monthly": "35",
+          "yearly": "28"
+        },
+        "includes": "Everything in Starter, plus:",
+        "features": [
+          "3,000 Monthly Credits",
+          "Up to 10,000 images/month",
+          "Up to 200 videos/month (2000s)",
+          "~300K chars audio/month",
+          "~30M LLM tokens/month",
+          "Credit Rollover (5 months)"
+        ],
+        "button": {
+          "text": "Get Pro",
+          "variant": "primary"
+        }
+      },
+      {
+        "id": "team",
+        "title": "Team",
+        "price": {
+          "monthly": "45",
+          "yearly": "36"
+        },
+        "priceSubtext": " per user/mo.",
+        "includes": "Everything in Pro, plus:",
+        "features": [
+          "4,000 Monthly Credits per user",
+          "Up to 13,333 images/month per user",
+          "Up to 266 videos/month (2660s) per user",
+          "~400K chars audio/month per user",
+          "~40M LLM tokens/month per user",
+          "Minimum 5 members required",
+          "Unified Billing",
+          "Team level Credit Management",
+          "Shared Credit Pool"
+        ],
+        "button": {
+          "text": "Get Team",
+          "variant": "secondary"
+        }
+      }
+    ],
+    "topUps": [
+      {
+        "id": "micro",
+        "title": "Micro",
+        "price": "2",
+        "credits": "50",
+        "includes": "Includes capacity for:",
+        "features": [
+          "~166 images",
+          "~1 video",
+          "~5K chars audio",
+          "~500K LLM tokens"
+        ],
+        "button": {
+          "text": "Buy Credits",
+          "variant": "secondary"
+        }
+      },
+      {
+        "id": "small",
+        "title": "Small",
+        "price": "5",
+        "credits": "200",
+        "includes": "Includes capacity for:",
+        "features": [
+          "~666 images",
+          "~5 videos",
+          "~20K chars audio",
+          "~2M LLM tokens"
+        ],
+        "button": {
+          "text": "Buy Credits",
+          "variant": "secondary"
+        }
+      },
+      {
+        "id": "medium",
+        "title": "Medium",
+        "price": "10",
+        "credits": "450",
+        "includes": "Includes capacity for:",
+        "features": [
+          "~1,500 images",
+          "~12 videos",
+          "~45K chars audio",
+          "~4.5M LLM tokens"
+        ],
+        "button": {
+          "text": "Buy Credits",
+          "variant": "secondary"
+        }
+      },
+      {
+        "id": "max",
+        "title": "Max",
+        "price": "20",
+        "credits": "1,000",
+        "includes": "Includes capacity for:",
+        "features": [
+          "~3,333 images",
+          "~28 videos",
+          "~100K chars audio",
+          "~10M LLM tokens"
+        ],
+        "button": {
+          "text": "Buy Credits",
+          "variant": "secondary"
+        }
+      }
+    ]
+  },
+  "comparison": [
+    {
+      "feature": "Monthly Credits",
+      "values": ["150", "1,500", "3,000", "4,000/user"]
+    },
+    {
+      "feature": "Canvas Projects",
+      "values": ["2", "Unlimited", "Unlimited", "Unlimited"]
+    },
+    {
+      "feature": "Collaborators",
+      "values": ["0", "Unlimited", "Unlimited", "Unlimited"]
+    },
+    {
+      "feature": "Comments",
+      "values": [false, true, true, true]
+    },
+    {
+      "feature": "Credit Rollover",
+      "values": [false, false, "5 months", "5 months"]
+    },
+    {
+      "feature": "Credit Top-ups",
+      "values": [false, true, true, true]
+    },
+    {
+      "feature": "Team Features",
+      "values": [false, false, false, true]
+    },
+    {
+      "feature": "Images/Month",
+      "values": ["~500", "~5,000", "~10,000", "~13,333"],
+      "info": "Actuals depend on the model used"
+    },
+    {
+      "feature": "Videos/Month",
+      "values": ["~10 (100s)", "~100 (1000s)", "~200 (2000s)", "~266 (2660s)"],
+      "info": "Actuals depend on the model used"
+    },
+    {
+      "feature": "Audio/Month",
+      "values": ["~15K chars", "~150K chars", "~300K chars", "~400K chars"],
+      "info": "Based on ElevenLabs TTS (V3)"
+    },
+    {
+      "feature": "LLM Tokens/Month",
+      "values": ["~1.5M", "~15M", "~30M", "~40M"],
+      "info": "Maximum capacity using Gemini 2.5 Flash"
+    }
+  ]
+}

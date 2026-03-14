@@ -9,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/changelog',
     '/download',
     '/pricing',
-    '/contact-us',
     '/privacy-policy',
     '/sign-in',
     '/sign-up',
