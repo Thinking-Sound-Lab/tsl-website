@@ -65,7 +65,6 @@ export function Footer() {
 									llm.txt
 								</Link>
 							</li>
-
 						</ul>
 					</div>
 
