@@ -71,7 +71,8 @@ interface CustomRequestConfig extends AxiosRequestConfig {
 
 // ─── API Methods ───────────────────────────────
 
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB (Matches backend DEFAULT_PART_SIZE)
+const CHUNK_SIZE = 100 * 1024 * 1024; // 100MB (Must match backend DEFAULT_PART_SIZE)
+const MAX_CONCURRENT_UPLOADS = 3;
 
 export const ExploreAPI = {
     getPosts: async (
@@ -173,53 +174,56 @@ export const ExploreAPI = {
             delete s3Axios.defaults.headers.common["Authorization"];
 
             const partProgress = new Array(urls.length).fill(0);
-            const completedParts = await Promise.all(
-                urls.map(async (part: { partNumber?: number; url?: string; presignedUrl?: string }, index) => {
-                    // Extract URL using the correct property name from backend response
-                    const partNumber = part.partNumber || (part as Record<string, unknown>).PartNumber as number || (index + 1);
-                    const url = part.presignedUrl || part.url || (part as Record<string, unknown>).signedUrl as string;
-                    
-                    if (!url) {
-                        console.error(`Missing URL for part ${partNumber}`, part);
-                        throw new Error(`Invalid upload URL for part ${partNumber}. Object keys: ${Object.keys(part).join(", ")}`);
-                    }
+            const completedParts: { PartNumber: number; ETag: string }[] = [];
 
-                    const start = (partNumber - 1) * CHUNK_SIZE;
-                    const chunk = file.slice(start, start + CHUNK_SIZE);
+            // Upload in batches to avoid network saturation and truncated parts
+            for (let i = 0; i < urls.length; i += MAX_CONCURRENT_UPLOADS) {
+                const batch = urls.slice(i, i + MAX_CONCURRENT_UPLOADS);
+                const batchResults = await Promise.all(
+                    batch.map(async (part: { partNumber?: number; url?: string; presignedUrl?: string }, batchIdx) => {
+                        const globalIndex = i + batchIdx;
+                        const partNumber = part.partNumber || (part as Record<string, unknown>).PartNumber as number || (globalIndex + 1);
+                        const url = part.presignedUrl || part.url || (part as Record<string, unknown>).signedUrl as string;
 
-                    // Ensure URL is absolute. If backend returns relative path (e.g. /s3-proxy/...), prepend backend URL.
-                    let uploadUrl = url;
-                    if (url.startsWith("/")) {
-                        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-                        // Remove trailing slash from backendUrl if present to avoid double slash
-                        const cleanBackendUrl = backendUrl.endsWith("/") ? backendUrl.slice(0, -1) : backendUrl;
-                        uploadUrl = `${cleanBackendUrl}${url}`;
-                    }
+                        if (!url) {
+                            console.error(`Missing URL for part ${partNumber}`, part);
+                            throw new Error(`Invalid upload URL for part ${partNumber}. Object keys: ${Object.keys(part).join(", ")}`);
+                        }
 
-                    try {
-                        // S3 upload — direct axios call
-                        // Explicitly set Content-Type to match what was signed (likely the file's mime type)
-                        const res = await s3Axios.put(uploadUrl, chunk, {
-                            signal,
-                            headers: {
-                                "Content-Type": file.type || "application/octet-stream"
-                            },
-                            onUploadProgress: (e) => {
-                                partProgress[index] = e.loaded || 0;
-                                const totalUploaded = partProgress.reduce((a, b) => a + b, 0);
-                                onProgress?.(Math.min(Math.round((totalUploaded / file.size) * 100), 99));
-                            },
-                        });
+                        const start = (partNumber - 1) * CHUNK_SIZE;
+                        const chunk = file.slice(start, start + CHUNK_SIZE);
 
-                        const etag = res.headers.etag?.replace(/"/g, "");
-                        if (!etag) throw new Error(`Missing ETag for part ${partNumber}`);
-                        return { PartNumber: partNumber, ETag: etag };
-                    } catch (err) {
-                        console.error(`Failed to upload part ${partNumber} to ${uploadUrl}`, err);
-                        throw err;
-                    }
-                })
-            );
+                        let uploadUrl = url;
+                        if (url.startsWith("/")) {
+                            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+                            const cleanBackendUrl = backendUrl.endsWith("/") ? backendUrl.slice(0, -1) : backendUrl;
+                            uploadUrl = `${cleanBackendUrl}${url}`;
+                        }
+
+                        try {
+                            const res = await s3Axios.put(uploadUrl, chunk, {
+                                signal,
+                                headers: {
+                                    "Content-Type": file.type || "application/octet-stream",
+                                },
+                                onUploadProgress: (e) => {
+                                    partProgress[globalIndex] = e.loaded || 0;
+                                    const totalUploaded = partProgress.reduce((a, b) => a + b, 0);
+                                    onProgress?.(Math.min(Math.round((totalUploaded / file.size) * 100), 99));
+                                },
+                            });
+
+                            const etag = res.headers.etag?.replace(/"/g, "");
+                            if (!etag) throw new Error(`Missing ETag for part ${partNumber}`);
+                            return { PartNumber: partNumber, ETag: etag };
+                        } catch (err) {
+                            console.error(`Failed to upload part ${partNumber} to ${uploadUrl}`, err);
+                            throw err;
+                        }
+                    })
+                );
+                completedParts.push(...batchResults);
+            }
 
             // 3. Complete
             const { data: completeRes } = await api.post<ApiResponse<ExploreItem>>("/api/explore/upload/complete", {
