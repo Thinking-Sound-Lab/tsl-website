@@ -16,6 +16,162 @@ export interface ChangelogItem {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: "0.1.37-beta",
+    date: "March 15, 2026",
+    summaryTitle: "Canvas Sharing & Better AI Models",
+    summaryBody:
+      "Collaboration takes a big step forward with Canvas Sharing, plus support for the latest AI models and improved stability with Sentry.",
+    changes: [
+      {
+        type: "feature",
+        title: "Canvas Sharing",
+        description:
+          "Introduced the ability to create, view, and clone canvases, enabling better collaboration and sharing of workflows.",
+      },
+      {
+        type: "feature",
+        title: "Enhanced AI Model Support",
+        description:
+          "Added support for new high-performance models including Luma Ray 2, Ray 2 Flash, PixVerse V5, and ElevenLabs TTS.",
+      },
+      {
+        type: "feature",
+        title: "Sentry Integration",
+        description:
+          "Implemented Sentry across both frontend and backend for robust error tracking and performance monitoring.",
+      },
+      {
+        type: "improvement",
+        title: "Improved Auth Flow",
+        description:
+          "Added server-side auth redirect detection and updated redirect URLs to invook.ai for a more seamless login experience across desktop and web.",
+      },
+      {
+        type: "bugfix",
+        title: "Subscription RLS",
+        description: "Resolved issues with subscription RLS policies.",
+      },
+      {
+        type: "bugfix",
+        title: "Pricing Logic",
+        description: "Fixed zero-margin pricing logic.",
+      },
+      {
+        type: "bugfix",
+        title: "Backend Test Validation",
+        description:
+          "Improved environment variable validation in backend tests.",
+      },
+      {
+        type: "improvement",
+        title: "Bundle Size Optimization",
+        description:
+          "Cleaned up unused services and components to reduce bundle size and improve maintainability.",
+      },
+    ],
+  },
+  {
+    version: "0.1.36-beta",
+    date: "March 9, 2026",
+    summaryTitle: "Gallery Search & Upload Reliability",
+    summaryBody:
+      "Search for inspiration faster in the public gallery and enjoy a more robust media upload experience.",
+    changes: [
+      {
+        type: "feature",
+        title: "Gallery Enhancements",
+        description:
+          "Implemented an efficient search RPC and dedicated search endpoint for the public gallery. Added keyword-based prompt search to help users find specific inspiration faster.",
+      },
+      {
+        type: "feature",
+        title: "Prop-length Limits Removed",
+        description:
+          "Removed maximum prompt length limits to support complex AI instructions.",
+      },
+      {
+        type: "improvement",
+        title: "Optimized Upload Flow",
+        description:
+          "Refactored the media upload system to use a multipart flow with upfront record creation, improving reliability for large file uploads.",
+      },
+      {
+        type: "improvement",
+        title: "UI/UX Enhancements",
+        description:
+          "Updated dashboard empty states and auth taglines. Enhanced CORS support for invook.ai.",
+      },
+      {
+        type: "bugfix",
+        title: "TypeScript & Filenames",
+        description:
+          "Fixed TypeScript errors and sanitized filenames in explore service tests.",
+      },
+      {
+        type: "bugfix",
+        title: "Thumbnail Generator",
+        description:
+          "Updated thumbnail generator to handle new gallery schema column names.",
+      },
+      {
+        type: "bugfix",
+        title: "Explore RLS Policies",
+        description: "Resolved RLS policy issues for explore items.",
+      },
+    ],
+  },
+  {
+    version: "0.1.35-beta",
+    date: "March 5, 2026",
+    summaryTitle: "Explore Gallery & Monetization",
+    summaryBody:
+      "Launching the Public Explore Gallery, multi-result history for AI nodes, and our new monetization engine.",
+    changes: [
+      {
+        type: "feature",
+        title: "Public Explore Gallery",
+        description:
+          "Launched the first version of the public gallery feature, including S3 integration, CloudFront thumbnail delivery with signed URLs, and admin moderation tools.",
+      },
+      {
+        type: "feature",
+        title: "Multi-Result History",
+        description:
+          "Added the ability for model nodes to maintain a history of multiple results, allowing users to iterate more effectively.",
+      },
+      {
+        type: "feature",
+        title: "Monetization Infrastructure",
+        description:
+          "Integrated Dodo Payments and established the initial billing/subscription management system.",
+      },
+      {
+        type: "improvement",
+        title: "Canvas Refinement",
+        description:
+          "Updated max tokens and node heights for better default layouts; added media info overlays and improved download icons.",
+      },
+      {
+        type: "improvement",
+        title: "Analytics Service",
+        description:
+          "Initial implementation of analytics tracking for better product insights.",
+      },
+      {
+        type: "improvement",
+        title: "Infra Optimization",
+        description:
+          "Consolidated CI/CD stacks and implemented multi-queue extraction pipelines using S3.",
+      },
+      {
+        type: "improvement",
+        title: "UI Styling",
+        description:
+          "Refined canvas node aesthetics and enforced consistent billing plan ordering.",
+      },
+    ],
+  },
+  {
     version: "0.1.34",
     date: "March 1, 2026",
     summaryTitle: "Invook is now General Available",
