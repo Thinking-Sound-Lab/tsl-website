@@ -423,7 +423,7 @@ export default function ExploreGallery() {
 
     /* ─── Render ─── */
     return (
-        <div className="min-h-screen bg-background pt-20 pb-16">
+        <div className="min-h-screen bg-background pt-[104px] md:pt-[112px] pb-16">
             <ExploreHeader
                 onCreateClick={handleUploadClick}
                 onMyAssetsClick={() => setActiveFilter("My Assets")}

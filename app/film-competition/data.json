@@ -1,0 +1,147 @@
+{
+  "hero": {
+    "media": "https://res.cloudinary.com/disoisftp/video/upload/e_reverse/v1773924146/Output_Video_1_vbrhm0.mp4",
+    "title": "Epic Scene Challenge",
+    "description": "Create Your Masterpiece. Produce a cinematic video of at least 30 seconds using the Invook platform. We are looking for action-oriented \"Epic Scenes\" that push the boundaries of AI-powered creativity.",
+    "buttonText": "Submit Your Entry"
+  },
+  "mastering": {
+    "title": "Mastering the Invook Platform",
+    "description": "To succeed in this contest, you must place the Invook platform at the center of your creative process.",
+    "items": [
+      {
+        "title": "Original AI Creation",
+        "description": "Your video must be original content created specifically with the help of Invook."
+      },
+      {
+        "title": "AI Encouragement",
+        "description": "While you can use third-party music or images (with permission), AI-generated content is highly encouraged."
+      },
+      {
+        "title": "Technical Execution",
+        "description": "30% of your score depends on how effectively you use Invook's AI generation tools to integrate assets and maintain visual consistency."
+      },
+      {
+        "title": "Visual Style",
+        "description": "You have the freedom to use any visual style—AI-generated, edited, or animated—as long as it's powered by Invook."
+      }
+    ]
+  },
+  "eligibility": {
+    "title": "Eligibility",
+    "items": [
+      "Entrants must be 18 years of age or older at the time of entry.",
+      "Free to enter.",
+      "The Contest is void where prohibited or restricted by law, and in jurisdictions subject to international sanctions.",
+      "Each individual/team may submit multiple entries."
+    ]
+  },
+  "requirements": {
+    "title": "Content Requirements",
+    "items": [
+      { "label": "Minimum length:", "value": "30 seconds" },
+      { "label": "Maximum length:", "value": "no limit" },
+      { "label": null, "value": "Project must be in English." },
+      { "label": null, "value": "The submission must be original content created by the participant on Invook." }
+    ]
+  },
+  "rules": {
+    "title": "Submission Rules",
+    "items": [
+      "**How to enter:** All entries must be submitted only via the official Typeform submission link. Submissions via social media DMs, email, or other platforms will NOT be accepted.",
+      "**Format & orientation:** Horizontal videos only.",
+      "Submissions must be posted to at least one public social media platform (Instagram, TikTok, YouTube, X, etc.) with a link to Invook and tag Invook in the post or caption.",
+      "Participants active on Reddit are encouraged to share their submission in r/InvookAI, including a short description of their creative process. (Optional)",
+      "Invook reserves the right to disqualify any entry that violates these terms."
+    ]
+  },
+  "prohibited": {
+    "title": "Prohibited Content",
+    "items": [
+      "Use of copyrighted intellectual property without proper authorization (including characters, franchises, music, or branded content).",
+      "Pornographic, sexually explicit, or otherwise NSFW content.",
+      "Content that depicts, promotes, or glorifies violence against individuals or groups.",
+      "Political messaging, endorsements, or propaganda.",
+      "Religious promotion, messaging, or disparagement.",
+      "Illegal, defamatory, or misleading content.",
+      "Content that violates the rights of others, including privacy or publicity rights."
+    ]
+  },
+  "prize": {
+    "title": "Prize & Judging Criteria",
+    "subtitle": "The highest-scoring video will win a <strong class=\"text-xl\">$1,000 USD</strong> cash prize.",
+    "judgingNote": "Judging Panel: After the contest ends, a panel of judges (in-house experts and website visitors) will review all valid entries.",
+    "criteria": [
+      {
+        "name": "Technical Execution",
+        "weight": "30%",
+        "description": "Effective use of Invook AI tools, quality of asset integration, and consistency."
+      },
+      {
+        "name": "Platform Engagement",
+        "weight": "30%",
+        "description": "Community response, including views, likes, and shares within the Invook gallery."
+      },
+      {
+        "name": "Storytelling & Creativity",
+        "weight": "20%",
+        "description": "Narrative structure, pacing, and originality of the concept."
+      },
+      {
+        "name": "Cinematic Quality",
+        "weight": "20%",
+        "description": "Visual polish, lighting, color grading, and \"real\" action scene production value."
+      }
+    ]
+  },
+  "faqs": {
+    "title": "Got any questions left?",
+    "subtitle": "Everything you need to know about the Epic Scene Challenge.",
+    "items": [
+      {
+        "question": "Who can participate in the contest?",
+        "answer": "Anyone aged 18 or older can participate from anywhere in the world unless local laws prohibit contest participation. Employees of Invook and their immediate family members are not eligible."
+      },
+      {
+        "question": "How long does the contest run?",
+        "answer": "The contest runs for 2 months from the official launch date. Entries submitted after the deadline will not be considered."
+      },
+      {
+        "question": "What are the video requirements?",
+        "answer": "Participants must submit a video that is at least 30 seconds long. There is no maximum duration, but we recommend keeping videos concise and engaging. Accepted formats: Horizontal video only. Any visual style (AI-generated, edited, animated, etc.)"
+      },
+      {
+        "question": "How do I submit my entry?",
+        "answer": "All entries must be submitted through the official Typeform submission link. Upload your video to a platform like YouTube, Vimeo, or Google Drive. Copy the public link to the video. Fill out the short Typeform submission form. Paste your video link and submit. Entries sent via email, social media, or other methods will not be accepted."
+      },
+      {
+        "question": "Can I submit multiple videos?",
+        "answer": "Yes. Participants can submit multiple entries. However, each video must be submitted through a separate Typeform entry."
+      },
+      {
+        "question": "What does the winner receive?",
+        "answer": "The contest winner will receive: $1,000 USD cash prize. The winner will be announced after all submissions are reviewed by the judging criterion shared above."
+      },
+      {
+        "question": "Do I retain ownership of my video?",
+        "answer": "Yes. You retain full ownership of your video. By submitting your entry, you grant Invook permission to feature your video on our website, social media, and marketing materials."
+      },
+      {
+        "question": "When will the winner be announced?",
+        "answer": "The winner will be announced within 2 weeks after the contest ends. Participants will also be notified via the email they provided in the submission form."
+      },
+      {
+        "question": "Can a team submit together?",
+        "answer": "Yes, but the submission must be posted from one account and the prize will be awarded to that account holder. How teams split prizes internally is up to them."
+      },
+      {
+        "question": "What will get me disqualified?",
+        "answer": "You may be disqualified if you submit copyrighted material without permission, include pornographic or NSFW content, make political or religious statements, or violate any of the contest rules. Serious violations may also result in a permanent ban from participating in future contests."
+      },
+      {
+        "question": "Where can I ask questions?",
+        "answer": "If you still have questions, contact us at: support@thinkingsoundlab.com or reach out through our official social media channels."
+      }
+    ]
+  }
+}

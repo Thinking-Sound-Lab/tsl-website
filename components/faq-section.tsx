@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 
-const defaultFaqs = [
+export interface FAQ {
+  question: string;
+  answer: React.ReactNode;
+}
+
+const defaultFaqs: FAQ[] = [
   {
     question: "How does Invook pricing work?",
-    answer:
-      "Invook offers free and pro pricing plans. Pro is $15 per month. Student get 50% discount. Contact us for more information.",
+    answer: "Invook offers free and pro pricing plans. Pro is $15 per month. Student get 50% discount. Contact us for more information.",
   },
   {
     question: "Is Invook available on all platforms?",
-    answer:
-      "Yes, Invook is available on macOS and Windows with cross-platform support.",
+    answer: "Yes, Invook is available on macOS and Windows with cross-platform support.",
   },
   {
     question: "Are there free trials or discounts available for Invook?",
-    answer:
-      "We offer a free trial period for new users. Student discounts are also available.",
+    answer: "We offer a free trial period for new users. Student discounts are also available.",
   },
   {
     question: "What languages does Invook support?",
@@ -29,20 +31,13 @@ const defaultFaqs = [
   },
   {
     question: "Can I use Invook for technical documentation?",
-    answer:
-      "Absolutely! Invook can generate text from audio. It also works with text editor, docs, notes, and more.",
+    answer: "Absolutely! Invook can generate text from audio. It also works with text editor, docs, notes, and more.",
   },
   {
     question: "How secure is my data with Invook?",
-    answer:
-      "Your data is completely secure with end-to-end encryption and at rest or in transit.",
+    answer: "Your data is completely secure with end-to-end encryption and at rest or in transit.",
   },
 ];
-
-interface FAQ {
-  question: string;
-  answer: string;
-}
 
 interface FAQSectionProps {
   faqs?: FAQ[];
@@ -52,74 +47,52 @@ interface FAQSectionProps {
 
 export function FAQSection({
   faqs = defaultFaqs,
-  title = "Frequently Asked Questions",
-  subtitle = "Your question not answered here?",
+  title = "Questions & Answers",
+  subtitle,
 }: FAQSectionProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <section
-      className="p-6 sm:p-8 lg:p-12 py-20 sm:py-24 lg:py-28 relative border-t"
-      style={{ borderColor: "#b0b0b0" }}
-    >
-      <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        {/* Left Side - Heading */}
-        <div className="flex flex-col justify-center">
-          <div className="text-base font-mono text-emerald-800 font-medium mb-2 tracking-wide">
-            [FAQ]
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 leading-tighter tracking-tight">
+    <div className="pt-16 mt-16 border-t border-border/50">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_2fr] gap-x-40 gap-y-12">
+        <div>
+          <h2 className="text-[33px] lg:text-[36px] font-medium text-foreground tracking-tight leading-tight">
             {title}
           </h2>
-
-          <p className="text-gray-700 font-mono text-base mb-3">{subtitle}</p>
-
-          <div>
-            <a href="mailto:support@thinkingsoundlab.com">
-              <Button variant="emerald" size="lg">
-                Contact Us
-              </Button>
-            </a>
-          </div>
+          {subtitle && (
+            <p className="mt-4 text-muted-foreground text-[14px] leading-relaxed pr-8">
+              {subtitle}
+            </p>
+          )}
         </div>
 
-        {/* Right Side - FAQ List */}
-        <div className="flex flex-col gap-4">
-          {faqs.map((faq, index) => (
-            <div key={index} className="border-b border-gray-300 pb-4">
+        <div className="flex flex-col">
+          {faqs.map((faq, i) => (
+            <div key={i} className="border-b border-border/50">
               <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between text-left"
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                className="w-full flex justify-between items-center py-5 text-left text-[14px] text-foreground font-medium hover:text-foreground/80 transition-colors cursor-pointer"
               >
-                <h3 className="text-base font-mono text-gray-900 pr-4 font-medium">
-                  {faq.question}
-                </h3>
-                <svg
-                  className={`w-5 h-5 text-gray-600 transition-transform flex-shrink-0 ${
-                    openIndex === index ? "rotate-180" : ""
+                <span>{faq.question}</span>
+                <ChevronDown
+                  className={`w-4 h-4 text-muted-foreground transition-transform duration-200 flex-shrink-0 ml-4 ${
+                    openFaq === i ? "rotate-180" : ""
                   }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                />
               </button>
-              {openIndex === index && (
-                <p className="mt-4 text-gray-600 font-mono text-base leading-relaxed">
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  openFaq === i ? "max-h-96 pb-6 opacity-100" : "max-h-0 opacity-0"
+                }`}
+              >
+                <div className="text-[14px] text-foreground/70 leading-relaxed pr-8">
                   {faq.answer}
-                </p>
-              )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

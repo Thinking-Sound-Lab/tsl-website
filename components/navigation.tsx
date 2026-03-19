@@ -4,12 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AuthButton } from "@/components/auth-button";
+import { PromotionalBanner } from "@/components/promotional-banner";
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-background transition-colors duration-300">
+      <PromotionalBanner />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
         <div className="flex h-[52px] items-center justify-between">
           {/* Left: Logo */}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { CTASection } from "@/components/cta-section";
 import { ChevronDown } from "lucide-react";
 import { PricingCard } from "./pricing-card";
@@ -45,8 +46,23 @@ export default function PricingContent() {
   const { isAuthenticated } = useAuthStore();
   const [isYearly, setIsYearly] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  
+  const { capture } = useAnalytics();
+  const tracked = useRef(false);
 
-  const handleAction = async (_planId: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+  useEffect(() => {
+    if (!tracked.current) {
+      capture("pricing_page_viewed");
+      tracked.current = true;
+    }
+  }, [capture]);
+
+  const handleAction = async (planId: string) => {
+    capture("pricing_button_clicked", { 
+      plan_id: planId, 
+      billing_cycle: isYearly ? "yearly" : "monthly" 
+    });
+
     if (!isAuthenticated) {
       router.push(`/sign-up?redirect=${encodeURIComponent("/download")}`);
       return;
