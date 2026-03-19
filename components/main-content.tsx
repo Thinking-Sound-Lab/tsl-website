@@ -1,4 +1,5 @@
 import { Hero } from "@/components/hero";
+import { FilmCompetitionBanner } from "@/components/film-competition-banner";
 
 // import { SpeedComparison } from "@/components/speed-comparison";
 import { Benefits } from "@/components/benefits";
@@ -14,6 +15,7 @@ export function MainContent() {
 			{/* Content without stitched border */}
 			<div className="flex flex-col gap-6 md:gap-12 lg:gap-20">
 				<Hero />
+				<FilmCompetitionBanner />
 
 				{/* <SpeedComparison /> */}
 				<Benefits />
