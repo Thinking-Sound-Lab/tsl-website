@@ -19,7 +19,8 @@ export function FilmCompetitionBanner() {
             New Contest
           </span>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-4 drop-shadow-sm">
-            Epic Scene Competition
+            <span className="md:hidden">Epic Scene Competition. Win $1000</span>
+            <span className="hidden md:inline">Epic Scene Competition</span>
           </h2>
           <p className="text-lg tracking-tight text-balance text-white/90 mb-8 max-w-2xl">
             Create your masterpiece and push the boundaries of AI creativity with Invook. Win $1,000 USD!
