@@ -11,6 +11,7 @@ import { ExploreHeader } from "@/components/explore-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { ExploreLikeButton } from "@/components/explore-like-button";
 
 /* ─── Helpers ───────────────────────────────── */
 
@@ -63,6 +64,29 @@ export default function ExploreGallery() {
     const [copied, setCopied] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [isModelsExpanded, setIsModelsExpanded] = useState(false);
+
+    /**
+     * likeMeta — local optimistic like state keyed by post ID.
+     * Keeps card hover count and lightbox count in sync for the session.
+     * Seeded lazily on first interaction; falls back to server-provided values.
+     */
+    const [likeMeta, setLikeMeta] = useState<Record<string, { liked: boolean; count: number }>>({});
+
+    const getLikeMeta = useCallback(
+        (post: ExploreItem) =>
+            likeMeta[post.id] ?? {
+                liked: post.is_liked_by_user ?? false,
+                count: post.like_count ?? 0,
+            },
+        [likeMeta]
+    );
+
+    const handleLikeToggled = useCallback(
+        (postId: string, liked: boolean, count: number) => {
+            setLikeMeta((prev) => ({ ...prev, [postId]: { liked, count } }));
+        },
+        []
+    );
 
     /* Report Modal */
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -576,7 +600,7 @@ export default function ExploreGallery() {
                                                     </h3>
                                                     <span className="text-xs text-white/70">{getModelLabel(post.model_name, models)}</span>
                                                 </div>
-                                                <div className="gallery-card-user">
+                                                <div className="gallery-card-user flex items-center gap-2">
                                                     <span className="text-xs text-white/80">{timeAgo(post.created_at)}</span>
                                                 </div>
                                             </div>
@@ -589,8 +613,24 @@ export default function ExploreGallery() {
                                             {getModelLabel(post.model_name, models)}
                                         </span>
 
-                                        <div className="relative flex-shrink-0">
-                                            <button
+                                        <div className="flex items-center gap-0.5">
+                                            {/* Like Button & Count beside the menu */}
+                                            <div
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="flex items-center"
+                                            >
+                                                <ExploreLikeButton
+                                                    postId={post.id}
+                                                    initialLiked={getLikeMeta(post).liked}
+                                                    initialCount={getLikeMeta(post).count}
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onToggled={(liked, count) => handleLikeToggled(post.id, liked, count)}
+                                                />
+                                            </div>
+
+                                            <div className="relative flex-shrink-0">
+                                                <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setOpenMenuId(openMenuId === post.id ? null : post.id);
@@ -691,7 +731,8 @@ export default function ExploreGallery() {
                                             </AnimatePresence>
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
+                            </motion.div>
                             );
                         })}
                 </div>
@@ -820,6 +861,18 @@ export default function ExploreGallery() {
                                             If the thumbnail is not visible, reload the page again to see it.
                                         </p>
                                         <div className="flex flex-col sm:flex-row items-center gap-3">
+                                            {/* Like button — full-width on mobile, fixed on desktop */}
+                                            <ExploreLikeButton
+                                                postId={selectedPost.id}
+                                                initialLiked={getLikeMeta(selectedPost).liked}
+                                                initialCount={getLikeMeta(selectedPost).count}
+                                                size="lg"
+                                                className="w-full sm:w-auto"
+                                                onToggled={(liked, count) =>
+                                                    handleLikeToggled(selectedPost.id, liked, count)
+                                                }
+                                            />
+
                                             <button
                                                 onClick={handleCopyPrompt}
                                                 className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full border border-border hover:bg-secondary transition-colors"
@@ -834,7 +887,7 @@ export default function ExploreGallery() {
                                                 ) : (
                                                     <>
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 002 2z" />
                                                         </svg>
                                                         Copy Prompt
                                                     </>
@@ -850,7 +903,8 @@ export default function ExploreGallery() {
                                                     }
                                                 }}
                                                 className="w-full sm:flex-1 h-11 flex items-center justify-center gap-2 text-sm font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors shadow-md"
-                                            >                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
                                                 </svg>
                                                 Use in Canvas
