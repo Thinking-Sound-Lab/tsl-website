@@ -9,7 +9,7 @@ export function PromotionalBanner() {
       >
          <span className="text-xl">🎬</span> 
          <span>Invook Epic Scene Competition is live! <span className="hidden sm:inline">Win $1,000 USD.</span></span>
-         <span className="font-medium underline underline-offset-2 hidden sm:inline">Submit your entry &rarr;</span>
+         <span className="font-medium underline underline-offset-2 hidden sm:inline">Read more &rarr;</span>
       </Link>
     </div>
   );
