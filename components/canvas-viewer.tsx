@@ -47,7 +47,7 @@ interface CanvasViewerProps {
   shareToken: string;
 }
 
-export function CanvasViewer({ canvas }: CanvasViewerProps) {
+export function CanvasViewer({ canvas, shareToken }: CanvasViewerProps) {
   const initialNodes = useMemo(() => toFlowNodes(canvas.nodes), [canvas.nodes]);
   const initialEdges = useMemo(
     () => toFlowEdges(canvas.connections),
@@ -67,7 +67,7 @@ export function CanvasViewer({ canvas }: CanvasViewerProps) {
           )}
         </div>
         <a
-          href="https://invook.ai"
+          href={`invook://canvas/clone/${shareToken}`}
           className="text-sm text-blue-600 hover:underline"
         >
           Open in Invook
