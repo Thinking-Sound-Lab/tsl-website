@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth-button";
+import { PromotionalBanner } from "@/components/promotional-banner";
 
 interface ExploreHeaderProps {
   onCreateClick?: () => void;
@@ -34,6 +35,7 @@ export function ExploreHeader({
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
+      <PromotionalBanner />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
         <div className="flex h-[64px] items-center justify-between gap-4">
           {/* Left: Logo */}

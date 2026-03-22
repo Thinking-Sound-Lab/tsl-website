@@ -328,7 +328,7 @@ export default function ExploreGallery() {
         if (uploadFile) {
             const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
             const allowedVideoTypes = ["video/mp4", "video/webm", "video/quicktime"];
-            
+
             if (!allowedImageTypes.includes(uploadFile.type) && !allowedVideoTypes.includes(uploadFile.type)) {
                 alert("Unsupported file type. Please upload PNG, JPG, WebP, AVIF, MP4, WebM, or MOV.");
                 return;
@@ -447,7 +447,7 @@ export default function ExploreGallery() {
 
     /* ─── Render ─── */
     return (
-        <div className="min-h-screen bg-background pt-20 pb-16">
+        <div className="min-h-screen bg-background pt-[104px] md:pt-[112px] pb-16">
             <ExploreHeader
                 onCreateClick={handleUploadClick}
                 onMyAssetsClick={() => setActiveFilter("My Assets")}
@@ -459,8 +459,17 @@ export default function ExploreGallery() {
 
             {/* ── Header ── */}
             <header className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px] mb-10">
+                <div className="flex flex-col items-start max-w-3xl pt-12 pb-6">
+                    <h1 className="text-xl sm:text-[24px] md:text-[28px] text-foreground mb-4 text-balance tracking-tighter">
+                        AI Prompts Library: Explore Community Images & Videos
+                    </h1>
+                    <p className="text-sm sm:text-base text-muted-foreground/70 max-w-2xl">
+                        A community-powered library of AI prompts for images and videos. Discover how creators generate stunning visuals, reuse proven prompts, and remix them to create your own content.
+                    </p>
+                </div>
+
                 {/* Filter Tabs */}
-                <div className="flex flex-col gap-4 mt-6">
+                <div className="flex flex-col gap-4 mt-8">
                     <div className={`flex items-center gap-2 ${isModelsExpanded ? "flex-wrap" : "overflow-x-auto no-scrollbar pb-2"}`}>
                         {BASE_FILTERS.map((f) => (
                             <button
@@ -565,79 +574,17 @@ export default function ExploreGallery() {
                                     transition={{ duration: 0.4, delay: Math.min(i, 20) * 0.03 }}
                                     className="masonry-item"
                                 >
-                                    <button
-                                        onClick={() => { setSelectedPost(post); setCopied(false); }}
-                                        className="gallery-card group w-full text-left cursor-pointer"
-                                    >
-                                        <div className="gallery-card-image-wrapper">
-                                            {(post.thumbnail_url || post.url) ? (
-                                                <Image
-                                                    src={post.thumbnail_url || post.url}
-                                                    alt={post.prompt.slice(0, 60)}
-                                                    width={post.width}
-                                                    height={post.height}
-                                                    className="gallery-card-image"
-                                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                                                    unoptimized
-                                                    loading="lazy"
-                                                />
-                                            ) : (
-                                                <div className="w-full aspect-square bg-secondary flex items-center justify-center">
-                                                    <span className="text-xs text-muted-foreground">No preview</span>
-                                                </div>
-                                            )}
-
-                                            {post.item_type === "video" && duration && (
-                                                <div className="absolute top-2.5 left-2.5 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[11px] font-semibold text-white tracking-wide border border-white/10">
-                                                    {duration}
-                                                </div>
-                                            )}
-
-                                            <div className="gallery-card-overlay">
-                                                <div className="gallery-card-info">
-                                                    <h3 className="text-sm font-semibold text-white truncate">
-                                                        {post.prompt.slice(0, 50)}
-                                                    </h3>
-                                                    <span className="text-xs text-white/70">{getModelLabel(post.model_name, models)}</span>
-                                                </div>
-                                                <div className="gallery-card-user flex items-center gap-2">
-                                                    <span className="text-xs text-white/80">{timeAgo(post.created_at)}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                    {/* Bottom Info Bar */}
-                                    <div className="flex items-center justify-between mt-2.5 px-0.5 relative">
-                                        <span className="text-sm font-medium text-foreground/80 truncate pr-4">
-                                            {getModelLabel(post.model_name, models)}
-                                        </span>
-
-                                        <div className="flex items-center gap-0.5">
-                                            {/* Like Button & Count beside the menu */}
-                                            <div
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="flex items-center"
-                                            >
-                                                <ExploreLikeButton
-                                                    postId={post.id}
-                                                    initialLiked={getLikeMeta(post).liked}
-                                                    initialCount={getLikeMeta(post).count}
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    onToggled={(liked, count) => handleLikeToggled(post.id, liked, count)}
-                                                />
-                                            </div>
-
-                                            <div className="relative flex-shrink-0">
-                                                <button
+                                    <div className="gallery-card relative">
+                                        {/* 3-dot menu — absolute top-right */}
+                                        <div className="absolute top-2 right-2 z-10">
+                                            <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setOpenMenuId(openMenuId === post.id ? null : post.id);
                                                 }}
-                                                className="dropdown-trigger w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary text-foreground/70 hover:text-foreground transition-colors"
+                                                className="dropdown-trigger w-7 h-7 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors cursor-pointer"
                                             >
-                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                                                 </svg>
                                             </button>
@@ -652,36 +599,6 @@ export default function ExploreGallery() {
                                                         className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl overflow-hidden z-20 py-1"
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
-                                                        <button
-                                                            className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                if (isAuthenticated) {
-                                                                    router.push("/download");
-                                                                } else {
-                                                                    router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
-                                                                }
-                                                                setOpenMenuId(null);
-                                                            }}
-                                                        >
-                                                            <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
-                                                            </svg>
-                                                            Use in Canvas
-                                                        </button>
-                                                        <button
-                                                            className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                navigator.clipboard.writeText(post.prompt);
-                                                                setOpenMenuId(null);
-                                                            }}
-                                                        >
-                                                            <svg className="w-4 h-4 text-foreground/70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                            </svg>
-                                                            Copy prompt
-                                                        </button>
                                                         {activeFilter === "My Assets" && (
                                                             <>
                                                                 <button
@@ -730,9 +647,100 @@ export default function ExploreGallery() {
                                                 )}
                                             </AnimatePresence>
                                         </div>
+
+                                        {/* Image */}
+                                        <button
+                                            onClick={() => { setSelectedPost(post); setCopied(false); }}
+                                            className="gallery-card-image-wrapper w-full text-left cursor-pointer"
+                                        >
+                                            {(post.thumbnail_url || post.url) ? (
+                                                <Image
+                                                    src={post.thumbnail_url || post.url}
+                                                    alt={post.prompt.slice(0, 60)}
+                                                    width={post.width}
+                                                    height={post.height}
+                                                    className="gallery-card-image"
+                                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                                    unoptimized
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="w-full aspect-square bg-secondary flex items-center justify-center">
+                                                    <span className="text-xs text-muted-foreground">No preview</span>
+                                                </div>
+                                            )}
+
+                                            {post.item_type === "video" && duration && (
+                                                <div className="absolute top-2.5 left-2.5 z-10 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-[11px] font-semibold text-white tracking-wide border border-white/10">
+                                                    {duration}
+                                                </div>
+                                            )}
+                                        </button>
+
+                                        {/* Model + Prompt + CTAs */}
+                                        <div className="flex flex-col gap-2 mt-2.5 px-1 pb-1">
+                                            <div className="flex items-center justify-between pointer-events-auto">
+                                                <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
+                                                    {getModelLabel(post.model_name, models)}
+                                                </span>
+                                                
+                                                <div
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="flex items-center"
+                                                >
+                                                    <ExploreLikeButton
+                                                        postId={post.id}
+                                                        initialLiked={getLikeMeta(post).liked}
+                                                        initialCount={getLikeMeta(post).count}
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        onToggled={(liked, count) => handleLikeToggled(post.id, liked, count)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <p className="text-xs text-foreground/80 leading-relaxed">
+                                                {post.prompt.length > 100
+                                                    ? `${post.prompt.slice(0, 100).trimEnd()}...`
+                                                    : post.prompt}
+                                            </p>
+                                            {post.prompt.length > 100 && (
+                                                <button
+                                                    onClick={() => { setSelectedPost(post); setCopied(false); }}
+                                                    className="self-start text-[11px] text-[#F54E00] hover:underline font-semibold cursor-pointer -mt-1"
+                                                >
+                                                    more
+                                                </button>
+                                            )}
+
+                                            <button
+                                                onClick={() => navigator.clipboard.writeText(post.prompt)}
+                                                className="w-full h-8 flex items-center justify-center gap-1.5 text-xs font-semibold rounded-full border border-border hover:bg-secondary transition-colors cursor-pointer"
+                                            >
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Copy Prompt
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (isAuthenticated) {
+                                                        router.push("/download");
+                                                    } else {
+                                                        router.push(`/sign-in?redirect=${encodeURIComponent("/download")}`);
+                                                    }
+                                                }}
+                                                className="w-full h-8 flex items-center justify-center gap-1.5 text-xs font-semibold rounded-full bg-[#F54E00] text-white hover:bg-[#F54E00]/90 transition-colors cursor-pointer"
+                                            >
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                                </svg>
+                                                Remix
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
                             );
                         })}
                 </div>
@@ -747,7 +755,7 @@ export default function ExploreGallery() {
                         </div>
                         <p className="text-foreground/60 text-lg font-medium">No items found</p>
                         <p className="text-muted-foreground text-sm mt-1 mb-8">Try a different filter or be the first to upload!</p>
-                        <Button 
+                        <Button
                             onClick={handleUploadClick}
                             className="rounded-full px-8 py-2.5 font-medium transition-all hover:scale-105 active:scale-95"
                         >
@@ -1029,7 +1037,7 @@ export default function ExploreGallery() {
                                                         if (file) {
                                                             const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
                                                             const allowedVideoTypes = ["video/mp4", "video/webm", "video/quicktime"];
-                                                            
+
                                                             if (!allowedImageTypes.includes(file.type) && !allowedVideoTypes.includes(file.type)) {
                                                                 alert("Unsupported file type. Please upload PNG, JPG, WebP, AVIF, MP4, WebM, or MOV.");
                                                                 return;
