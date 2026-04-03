@@ -30,7 +30,7 @@ export function FrameUpload({ label, preview, onUpload }: FrameUploadProps) {
       <button
         onClick={() => inputRef.current?.click()}
         className={cn(
-          "flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium transition-colors border cursor-pointer",
+          "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-colors border cursor-pointer",
           preview
             ? "border-[#F54E00]/30 bg-[#F54E00]/5 text-[#F54E00]"
             : "border-border/40 bg-secondary/60 text-foreground/50 hover:text-foreground/70"

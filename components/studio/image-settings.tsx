@@ -2,7 +2,7 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  PaintBrush01Icon,
+  ArtificialIntelligence01Icon,
   AspectRatioIcon,
   Image01Icon,
   PlusSignCircleIcon,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AspectRatio, ImageStyle } from "@/types/studio";
+import type { AspectRatio, AIModel } from "@/types/studio";
 
 const ASPECT_RATIOS: { value: AspectRatio; label: string }[] = [
   { value: "1:1", label: "1:1 Square" },
@@ -26,13 +26,13 @@ const ASPECT_RATIOS: { value: AspectRatio; label: string }[] = [
   { value: "3:4", label: "3:4 Portrait" },
 ];
 
-const STYLES: { value: ImageStyle; label: string }[] = [
-  { value: "photorealistic", label: "Photorealistic" },
-  { value: "cinematic", label: "Cinematic" },
-  { value: "anime", label: "Anime" },
-  { value: "digital-art", label: "Digital Art" },
-  { value: "oil-painting", label: "Oil Painting" },
-  { value: "watercolor", label: "Watercolor" },
+const AI_MODELS: { value: AIModel; label: string }[] = [
+  { value: "invook-v2", label: "Invook V2" },
+  { value: "invook-v1", label: "Invook V1" },
+  { value: "flux-pro", label: "Flux Pro" },
+  { value: "stable-diffusion", label: "Stable Diffusion" },
+  { value: "dall-e", label: "DALL-E" },
+  { value: "midjourney", label: "Midjourney" },
 ];
 
 const RESOLUTIONS = [
@@ -45,8 +45,8 @@ export function ImageSettings() {
   const {
     imageAspectRatio,
     setImageAspectRatio,
-    imageStyle,
-    setImageStyle,
+    aiModel,
+    setAIModel,
     imageCount,
     setImageCount,
     imageResolution,
@@ -55,14 +55,14 @@ export function ImageSettings() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Style */}
-      <Select value={imageStyle} onValueChange={(v) => setImageStyle(v as ImageStyle)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-full px-2.5">
-          <HugeiconsIcon icon={PaintBrush01Icon} size={14} />
+      {/* AI Model */}
+      <Select value={aiModel} onValueChange={(v) => setAIModel(v as AIModel)}>
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
+          <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={14} />
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {STYLES.map(({ value, label }) => (
+          {AI_MODELS.map(({ value, label }) => (
             <SelectItem key={value} value={value} className="text-xs">
               {label}
             </SelectItem>
@@ -71,7 +71,7 @@ export function ImageSettings() {
       </Select>
 
       {/* Count — plus/minus */}
-      <div className="flex items-center gap-1 h-7 border border-border/40 rounded-full px-1.5">
+      <div className="flex items-center gap-1 h-7 border border-border/40 rounded-md px-1.5">
         <HugeiconsIcon icon={Image01Icon} size={14} className="text-foreground/50" />
         <button
           onClick={() => setImageCount(Math.max(1, imageCount - 1))}
@@ -92,7 +92,7 @@ export function ImageSettings() {
 
       {/* Aspect Ratio */}
       <Select value={imageAspectRatio} onValueChange={(v) => setImageAspectRatio(v as AspectRatio)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-full px-2.5">
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
           <HugeiconsIcon icon={AspectRatioIcon} size={14} />
           <SelectValue />
         </SelectTrigger>
@@ -107,7 +107,7 @@ export function ImageSettings() {
 
       {/* Resolution */}
       <Select value={imageResolution} onValueChange={setImageResolution}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-full px-2.5">
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

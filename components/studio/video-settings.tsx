@@ -6,6 +6,7 @@ import {
   Clock01Icon,
   VolumeHighIcon,
   VolumeOffIcon,
+  ArtificialIntelligence01Icon,
 } from "@hugeicons/core-free-icons";
 import { useStudioStore } from "@/store/useStudioStore";
 import {
@@ -27,6 +28,12 @@ const ASPECT_RATIOS: { value: AspectRatio; label: string }[] = [
 
 const DURATIONS = [5, 10, 15, 30];
 
+const VIDEO_MODELS = [
+  { value: "invook-v2", label: "Invook V2" },
+  { value: "invook-v1", label: "Invook V1" },
+  { value: "stable-diffusion", label: "Stable Diffusion" },
+];
+
 export function VideoSettings() {
   const {
     videoAspectRatio,
@@ -39,10 +46,27 @@ export function VideoSettings() {
     setLastFrame,
     videoAudio,
     setVideoAudio,
+    aiModel,
+    setAIModel,
   } = useStudioStore();
 
   return (
     <div className="flex items-center gap-2">
+      {/* AI Model */}
+      <Select value={aiModel} onValueChange={(v) => setAIModel(v as typeof aiModel)}>
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
+          <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={14} />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {VIDEO_MODELS.map(({ value, label }) => (
+            <SelectItem key={value} value={value} className="text-xs">
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
       {/* First Frame */}
       <FrameUpload
         label="First Frame"
@@ -62,7 +86,7 @@ export function VideoSettings() {
         value={String(videoDuration)}
         onValueChange={(v) => setVideoDuration(Number(v))}
       >
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-full px-2.5">
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
           <HugeiconsIcon icon={Clock01Icon} size={14} />
           <SelectValue />
         </SelectTrigger>
@@ -77,7 +101,7 @@ export function VideoSettings() {
 
       {/* Aspect Ratio */}
       <Select value={videoAspectRatio} onValueChange={(v) => setVideoAspectRatio(v as AspectRatio)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-full px-2.5">
+        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
           <HugeiconsIcon icon={AspectRatioIcon} size={14} />
           <SelectValue />
         </SelectTrigger>
@@ -94,7 +118,7 @@ export function VideoSettings() {
       <button
         onClick={() => setVideoAudio(!videoAudio)}
         className={cn(
-          "h-7 flex items-center gap-1.5 px-2.5 rounded-full border text-xs font-medium transition-colors cursor-pointer",
+          "h-7 flex items-center gap-1.5 px-2.5 rounded-md border text-xs font-medium transition-colors cursor-pointer",
           videoAudio
             ? "border-[#F54E00]/30 bg-[#F54E00]/5 text-[#F54E00]"
             : "border-border/40 text-foreground/50 hover:text-foreground/70"

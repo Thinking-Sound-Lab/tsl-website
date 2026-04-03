@@ -17,7 +17,10 @@ export function StudioPromptBar() {
       transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
       className="fixed bottom-0 left-0 right-0 z-50 pb-6 px-4"
     >
-      <div className="max-w-3xl mx-auto flex items-stretch gap-3">
+      {/* Subtle upward gradient glow */}
+      <div className="absolute inset-0 -top-32 pointer-events-none bg-gradient-to-t from-background/80 via-background/30 to-transparent" />
+
+      <div className="relative max-w-3xl mx-auto flex items-stretch gap-3">
         <ModeSwitcher />
         <PromptInput>
           <AnimatePresence mode="wait">

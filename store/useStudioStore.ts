@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type {
   StudioMode,
   AspectRatio,
-  ImageStyle,
+  AIModel,
   GenerationResult,
 } from "@/types/studio";
 
@@ -15,13 +15,18 @@ interface StudioState {
   prompt: string;
   setPrompt: (prompt: string) => void;
 
+  // Attachments (shared across modes)
+  attachments: { file: File; preview: string }[];
+  addAttachment: (file: File) => void;
+  removeAttachment: (index: number) => void;
+
   // Image settings
   imageAspectRatio: AspectRatio;
-  imageStyle: ImageStyle;
+  aiModel: AIModel;
   imageCount: number;
   imageResolution: string;
   setImageAspectRatio: (v: AspectRatio) => void;
-  setImageStyle: (v: ImageStyle) => void;
+  setAIModel: (v: AIModel) => void;
   setImageCount: (v: number) => void;
   setImageResolution: (v: string) => void;
 
@@ -62,13 +67,26 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   prompt: "",
   setPrompt: (prompt) => set({ prompt }),
 
+  // Attachments
+  attachments: [],
+  addAttachment: (file) => {
+    const preview = URL.createObjectURL(file);
+    set((s) => ({ attachments: [...s.attachments, { file, preview }] }));
+  },
+  removeAttachment: (index) => {
+    const attachments = get().attachments;
+    const removed = attachments[index];
+    if (removed) URL.revokeObjectURL(removed.preview);
+    set({ attachments: attachments.filter((_, i) => i !== index) });
+  },
+
   // Image settings
   imageAspectRatio: "1:1",
-  imageStyle: "photorealistic",
+  aiModel: "invook-v2",
   imageCount: 1,
   imageResolution: "2048",
   setImageAspectRatio: (v) => set({ imageAspectRatio: v }),
-  setImageStyle: (v) => set({ imageStyle: v }),
+  setAIModel: (v) => set({ aiModel: v }),
   setImageCount: (v) => set({ imageCount: v }),
   setImageResolution: (v) => set({ imageResolution: v }),
 
@@ -122,7 +140,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
           state.mode === "image"
             ? {
                 aspectRatio: state.imageAspectRatio,
-                style: state.imageStyle,
+                model: state.aiModel,
                 count: state.imageCount,
               }
             : {

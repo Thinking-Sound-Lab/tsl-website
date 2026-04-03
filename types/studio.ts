@@ -2,17 +2,17 @@ export type StudioMode = "image" | "video";
 
 export type AspectRatio = "1:1" | "16:9" | "9:16" | "4:3" | "3:4";
 
-export type ImageStyle =
-  | "photorealistic"
-  | "cinematic"
-  | "anime"
-  | "digital-art"
-  | "oil-painting"
-  | "watercolor";
+export type AIModel =
+  | "invook-v1"
+  | "invook-v2"
+  | "flux-pro"
+  | "stable-diffusion"
+  | "dall-e"
+  | "midjourney";
 
 export interface ImageGenerationSettings {
   aspectRatio: AspectRatio;
-  style: ImageStyle;
+  model: AIModel;
   count: number;
 }
 
