@@ -19,9 +19,11 @@ interface StudioState {
   imageAspectRatio: AspectRatio;
   imageStyle: ImageStyle;
   imageCount: number;
+  imageResolution: string;
   setImageAspectRatio: (v: AspectRatio) => void;
   setImageStyle: (v: ImageStyle) => void;
   setImageCount: (v: number) => void;
+  setImageResolution: (v: string) => void;
 
   // Video settings
   videoAspectRatio: AspectRatio;
@@ -30,10 +32,12 @@ interface StudioState {
   firstFramePreview: string | null;
   lastFrame: File | null;
   lastFramePreview: string | null;
+  videoAudio: boolean;
   setVideoAspectRatio: (v: AspectRatio) => void;
   setVideoDuration: (v: number) => void;
   setFirstFrame: (file: File | null) => void;
   setLastFrame: (file: File | null) => void;
+  setVideoAudio: (v: boolean) => void;
 
   // Generation
   isGenerating: boolean;
@@ -62,9 +66,11 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   imageAspectRatio: "1:1",
   imageStyle: "photorealistic",
   imageCount: 1,
+  imageResolution: "2048",
   setImageAspectRatio: (v) => set({ imageAspectRatio: v }),
   setImageStyle: (v) => set({ imageStyle: v }),
   setImageCount: (v) => set({ imageCount: v }),
+  setImageResolution: (v) => set({ imageResolution: v }),
 
   // Video settings
   videoAspectRatio: "16:9",
@@ -73,8 +79,10 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   firstFramePreview: null,
   lastFrame: null,
   lastFramePreview: null,
+  videoAudio: true,
   setVideoAspectRatio: (v) => set({ videoAspectRatio: v }),
   setVideoDuration: (v) => set({ videoDuration: v }),
+  setVideoAudio: (v) => set({ videoAudio: v }),
   setFirstFrame: (file) => {
     const prev = get().firstFramePreview;
     if (prev) URL.revokeObjectURL(prev);

@@ -1,13 +1,15 @@
 "use client";
 
-import { ImageIcon, Video } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Image01Icon, Film01Icon } from "@hugeicons/core-free-icons";
+import type { IconSvgElement } from "@hugeicons/react";
 import { useStudioStore } from "@/store/useStudioStore";
 import { cn } from "@/lib/utils";
 import type { StudioMode } from "@/types/studio";
 
-const modes: { value: StudioMode; icon: typeof ImageIcon; label: string }[] = [
-  { value: "image", icon: ImageIcon, label: "Image" },
-  { value: "video", icon: Video, label: "Video" },
+const modes: { value: StudioMode; icon: IconSvgElement; label: string }[] = [
+  { value: "image", icon: Image01Icon, label: "Image" },
+  { value: "video", icon: Film01Icon, label: "Video" },
 ];
 
 export function ModeSwitcher() {
@@ -15,7 +17,7 @@ export function ModeSwitcher() {
 
   return (
     <div className="flex flex-col gap-1.5 self-stretch justify-end pb-1">
-      {modes.map(({ value, icon: Icon, label }) => (
+      {modes.map(({ value, icon, label }) => (
         <button
           key={value}
           onClick={() => setMode(value)}
@@ -26,7 +28,7 @@ export function ModeSwitcher() {
               : "text-foreground/40 hover:text-foreground/60"
           )}
         >
-          <Icon className="h-4 w-4" />
+          <HugeiconsIcon icon={icon} size={16} />
           <span>{label}</span>
         </button>
       ))}
