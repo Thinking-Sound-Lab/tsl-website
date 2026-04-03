@@ -13,12 +13,13 @@ export function ConditionalLayout({
   const isAuthPage = pathname?.startsWith("/auth") || pathname === "/sign-in" || pathname === "/sign-up";
   const isExplorePage = pathname?.startsWith("/explore");
   const isSharePage = pathname?.startsWith("/share");
+  const isStudioPage = pathname?.startsWith("/studio");
 
   return (
     <>
-      {!isAuthPage && !isExplorePage && !isSharePage && <Navigation />}
+      {!isAuthPage && !isExplorePage && !isSharePage && !isStudioPage && <Navigation />}
       {children}
-      {!isAuthPage && !isSharePage && <Footer />}
+      {!isAuthPage && !isSharePage && !isStudioPage && <Footer />}
     </>
   );
 }
