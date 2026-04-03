@@ -1,148 +1,195 @@
 "use client";
 
-import { useRef, useCallback, useState, KeyboardEvent, ReactNode, PointerEvent } from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignCircleIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
-import { motion } from "framer-motion";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type ReactNode,
+  type KeyboardEvent,
+} from "react";
 import Image from "next/image";
+import { Plus } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
+import {
+  draggedStudioAssetToFile,
+  hasDraggedStudioAsset,
+  readDraggedStudioAsset,
+} from "@/lib/studio-drag";
 import { useStudioStore } from "@/store/useStudioStore";
-import { Textarea } from "@/components/ui/textarea";
 
 interface PromptInputProps {
   children?: ReactNode;
+  isGenerating: boolean;
+  onGenerate: () => void | Promise<void>;
 }
 
-const MIN_HEIGHT = 140;
-const MAX_HEIGHT = 400;
-const DEFAULT_HEIGHT = 180;
+const MIN_TEXTAREA_HEIGHT = 24;
+const MAX_TEXTAREA_HEIGHT = 320;
 
-export function PromptInput({ children }: PromptInputProps) {
-  const { prompt, setPrompt, isGenerating, generate, attachments, addAttachment, removeAttachment } = useStudioStore();
+export function PromptInput({
+  children,
+  isGenerating,
+  onGenerate,
+}: PromptInputProps) {
+  const {
+    prompt,
+    setPrompt,
+    attachments,
+    addAttachment,
+    removeAttachment,
+  } = useStudioStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(DEFAULT_HEIGHT);
-  const dragStart = useRef<{ y: number; h: number } | null>(null);
+  const [isDropTarget, setIsDropTarget] = useState(false);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      generate();
+  useEffect(() => {
+    const textarea = textareaRef.current;
+
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "0px";
+    const nextHeight = Math.min(
+      MAX_TEXTAREA_HEIGHT,
+      Math.max(MIN_TEXTAREA_HEIGHT, textarea.scrollHeight)
+    );
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY =
+      textarea.scrollHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
+  }, [prompt]);
+
+  const addDroppedFiles = useCallback(
+    async (event: DragEvent<HTMLDivElement>) => {
+      const files = Array.from(event.dataTransfer.files).filter((file) =>
+        file.type.startsWith("image/")
+      );
+
+      if (files.length > 0) {
+        files.forEach(addAttachment);
+        return;
+      }
+
+      const asset = readDraggedStudioAsset(event.dataTransfer);
+
+      if (!asset) {
+        return;
+      }
+
+      const file = await draggedStudioAssetToFile(asset);
+
+      if (file.type.startsWith("image/")) {
+        addAttachment(file);
+      }
+    },
+    [addAttachment]
+  );
+
+  const handleKeyDown = async (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+
+      if (!isGenerating) {
+        await onGenerate();
+      }
     }
   };
 
-  const onPointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    dragStart.current = { y: e.clientY, h: height };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  }, [height]);
-
-  const onPointerMove = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    if (!dragStart.current) return;
-    const delta = dragStart.current.y - e.clientY;
-    const newH = Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, dragStart.current.h + delta));
-    setHeight(newH);
-  }, []);
-
-  const onPointerUp = useCallback(() => {
-    dragStart.current = null;
-  }, []);
-
-  const canSubmit = prompt.trim().length > 0 && !isGenerating;
-
   return (
     <div
-      ref={containerRef}
-      className="flex-1 flex flex-col bg-secondary/60 rounded-2xl border border-border/50 overflow-hidden"
-      style={{ height }}
+      className={isDropTarget
+        ? "min-w-0 flex-1 self-end overflow-hidden rounded-l-2xl bg-foreground/5"
+        : "min-w-0 flex-1 self-end overflow-hidden"}
+      onDragOver={(event) => {
+        if (
+          event.dataTransfer.files.length > 0 ||
+          hasDraggedStudioAsset(event.dataTransfer)
+        ) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "copy";
+          setIsDropTarget(true);
+        }
+      }}
+      onDragLeave={() => setIsDropTarget(false)}
+      onDrop={(event) => {
+        event.preventDefault();
+        setIsDropTarget(false);
+        void addDroppedFiles(event);
+      }}
     >
-      {/* Resize handle */}
-      <div
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        className="flex items-center justify-center py-1.5 cursor-ns-resize shrink-0 group"
-      >
-        <div className="w-10 h-1 rounded-full bg-foreground/10 group-hover:bg-foreground/25 transition-colors" />
+      <div className="flex shrink-0 items-center gap-2 px-2.5 pt-2.5 pb-2 md:px-4 md:pt-4">
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/10 text-foreground/50 transition-colors hover:text-foreground/70 cursor-pointer md:h-10 md:w-10"
+          title="Add assets"
+        >
+          <Plus className="h-3 w-3 md:h-4 md:w-4" strokeWidth={1.9} />
+        </button>
+
+        {attachments.length > 0 ? (
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {attachments.map((attachment, index) => (
+              <div key={attachment.preview} className="relative group/att shrink-0">
+                <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-border/30">
+                  <Image
+                    src={attachment.preview}
+                    alt={`Attachment ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <button
+                  onClick={() => removeAttachment(index)}
+                  className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center rounded-full bg-foreground/80 text-background opacity-0 group-hover/att:opacity-100 transition-opacity cursor-pointer"
+                >
+                  <HugeiconsIcon icon={Cancel01Icon} size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
 
-      {/* Attachments row at top */}
-      {attachments.length > 0 && (
-        <div className="flex items-center gap-2 px-3 pb-2 shrink-0 overflow-x-auto no-scrollbar">
-          {attachments.map((att, i) => (
-            <div key={i} className="relative group/att shrink-0">
-              <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-border/30">
-                <Image src={att.preview} alt={`Attachment ${i + 1}`} fill className="object-cover" unoptimized />
-              </div>
-              <button
-                onClick={() => removeAttachment(i)}
-                className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center rounded-full bg-foreground/80 text-background opacity-0 group-hover/att:opacity-100 transition-opacity cursor-pointer"
-              >
-                <HugeiconsIcon icon={Cancel01Icon} size={10} />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="h-12 w-12 flex items-center justify-center rounded-lg border border-dashed border-border/40 text-foreground/30 hover:text-foreground/50 hover:border-border/60 transition-colors cursor-pointer shrink-0"
-          >
-            <HugeiconsIcon icon={PlusSignCircleIcon} size={18} />
-          </button>
-        </div>
-      )}
-
-      {/* Hidden file input for attachments */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
         multiple
         className="hidden"
-        onChange={(e) => {
-          const files = e.target.files;
-          if (files) Array.from(files).forEach(addAttachment);
-          e.target.value = "";
+        onChange={(event) => {
+          const files = event.target.files;
+
+          if (files) {
+            Array.from(files).forEach(addAttachment);
+          }
+
+          event.target.value = "";
         }}
       />
 
-      {/* Textarea */}
-      <div className="flex-1 px-4 overflow-hidden">
-        <Textarea
+      <div className="overflow-hidden px-3 pt-1 pb-2 md:px-4 md:pt-0 md:pb-3">
+        <textarea
           ref={textareaRef}
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onChange={(event) => setPrompt(event.target.value)}
+          onKeyDown={(event) => {
+            void handleKeyDown(event);
+          }}
           placeholder="Describe your scene..."
-          className="w-full h-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/30"
+          rows={1}
+          style={{ outline: "none", boxShadow: "none" }}
+          className="block w-full resize-none border-0 bg-transparent p-0 text-sm leading-6 text-foreground outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 caret-foreground placeholder:text-foreground/45"
         />
       </div>
 
-      {/* Bottom: settings left, generate button right */}
-      <div className="flex items-end justify-between gap-3 px-3 pb-3 pt-1 shrink-0">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 min-w-0">
-          {/* Add image button when no attachments */}
-          {attachments.length === 0 && (
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="h-7 w-7 flex items-center justify-center rounded-md border border-border/40 text-foreground/40 hover:text-foreground/60 hover:border-border/60 transition-colors cursor-pointer shrink-0"
-            >
-              <HugeiconsIcon icon={PlusSignCircleIcon} size={14} />
-            </button>
-          )}
-          {children}
-        </div>
-
-        {/* Generate button — bottom right, half the prompt bar height */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={generate}
-          disabled={!canSubmit}
-          style={{ height: DEFAULT_HEIGHT / 2 }}
-          className="w-24 flex items-center justify-center bg-[#F54E00] hover:bg-[#e04500] text-white text-sm font-semibold shrink-0 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors rounded-xl"
-        >
-          Generate
-        </motion.button>
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 px-3 pb-3 pt-1 md:gap-2 md:flex-nowrap md:overflow-x-auto md:no-scrollbar">
+        {children}
       </div>
     </div>
   );

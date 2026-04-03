@@ -1,158 +1,179 @@
 import { create } from "zustand";
 import type {
+  ImageAspectRatio,
+  ImageAIModel,
+  ImageResolution,
+  StudioCanvasAsset,
+  StudioGalleryViewerState,
   StudioMode,
-  AspectRatio,
-  AIModel,
-  GenerationResult,
+  VideoAspectRatio,
+  VideoAIModel,
 } from "@/types/studio";
 
 interface StudioState {
-  // Mode
   mode: StudioMode;
   setMode: (mode: StudioMode) => void;
 
-  // Prompt
   prompt: string;
   setPrompt: (prompt: string) => void;
 
-  // Attachments (shared across modes)
   attachments: { file: File; preview: string }[];
   addAttachment: (file: File) => void;
   removeAttachment: (index: number) => void;
+  clearAttachments: () => void;
 
-  // Image settings
-  imageAspectRatio: AspectRatio;
-  aiModel: AIModel;
+  imageAspectRatio: ImageAspectRatio;
+  imageModel: ImageAIModel;
   imageCount: number;
-  imageResolution: string;
-  setImageAspectRatio: (v: AspectRatio) => void;
-  setAIModel: (v: AIModel) => void;
-  setImageCount: (v: number) => void;
-  setImageResolution: (v: string) => void;
+  imageResolution: ImageResolution;
+  setImageAspectRatio: (value: ImageAspectRatio) => void;
+  setImageModel: (value: ImageAIModel) => void;
+  setImageCount: (value: number) => void;
+  setImageResolution: (value: ImageResolution) => void;
 
-  // Video settings
-  videoAspectRatio: AspectRatio;
+  videoAspectRatio: VideoAspectRatio;
   videoDuration: number;
+  videoModel: VideoAIModel;
   firstFrame: File | null;
   firstFramePreview: string | null;
   lastFrame: File | null;
   lastFramePreview: string | null;
   videoAudio: boolean;
-  setVideoAspectRatio: (v: AspectRatio) => void;
-  setVideoDuration: (v: number) => void;
+  setVideoAspectRatio: (value: VideoAspectRatio) => void;
+  setVideoDuration: (value: number) => void;
+  setVideoModel: (value: VideoAIModel) => void;
   setFirstFrame: (file: File | null) => void;
   setLastFrame: (file: File | null) => void;
-  setVideoAudio: (v: boolean) => void;
+  setVideoAudio: (value: boolean) => void;
 
-  // Generation
-  isGenerating: boolean;
-  generationResult: GenerationResult | null;
-  generate: () => void;
-  clearResult: () => void;
+  canvasAssets: StudioCanvasAsset[];
+  appendCanvasAssets: (assets: StudioCanvasAsset[]) => void;
+
+  selectedAssetId: StudioGalleryViewerState["selectedAssetId"];
+  openViewer: (assetId: string) => void;
+  closeViewer: () => void;
+  goToNext: () => void;
+  goToPrevious: () => void;
 }
 
-const PLACEHOLDER_IMAGES = [
-  "https://picsum.photos/seed/studio1/1024/1024",
-  "https://picsum.photos/seed/studio2/1024/1024",
-  "https://picsum.photos/seed/studio3/1024/1024",
-  "https://picsum.photos/seed/studio4/1024/1024",
-];
+function revokePreview(preview: string | null) {
+  if (preview) {
+    URL.revokeObjectURL(preview);
+  }
+}
 
 export const useStudioStore = create<StudioState>((set, get) => ({
-  // Mode
   mode: "image",
   setMode: (mode) => set({ mode }),
 
-  // Prompt
   prompt: "",
   setPrompt: (prompt) => set({ prompt }),
 
-  // Attachments
   attachments: [],
   addAttachment: (file) => {
     const preview = URL.createObjectURL(file);
-    set((s) => ({ attachments: [...s.attachments, { file, preview }] }));
+    set((state) => ({
+      attachments: [...state.attachments, { file, preview }],
+    }));
   },
   removeAttachment: (index) => {
     const attachments = get().attachments;
     const removed = attachments[index];
-    if (removed) URL.revokeObjectURL(removed.preview);
-    set({ attachments: attachments.filter((_, i) => i !== index) });
+
+    revokePreview(removed?.preview ?? null);
+
+    set({
+      attachments: attachments.filter((_, currentIndex) => currentIndex !== index),
+    });
+  },
+  clearAttachments: () => {
+    const attachments = get().attachments;
+    attachments.forEach((attachment) => revokePreview(attachment.preview));
+    set({ attachments: [] });
   },
 
-  // Image settings
   imageAspectRatio: "1:1",
-  aiModel: "invook-v2",
+  imageModel: "nano-banana-2",
   imageCount: 1,
   imageResolution: "2048",
-  setImageAspectRatio: (v) => set({ imageAspectRatio: v }),
-  setAIModel: (v) => set({ aiModel: v }),
-  setImageCount: (v) => set({ imageCount: v }),
-  setImageResolution: (v) => set({ imageResolution: v }),
+  setImageAspectRatio: (value) => set({ imageAspectRatio: value }),
+  setImageModel: (value) => set({ imageModel: value }),
+  setImageCount: (value) => set({ imageCount: value }),
+  setImageResolution: (value) => set({ imageResolution: value }),
 
-  // Video settings
   videoAspectRatio: "16:9",
   videoDuration: 5,
+  videoModel: "kling-3",
   firstFrame: null,
   firstFramePreview: null,
   lastFrame: null,
   lastFramePreview: null,
   videoAudio: true,
-  setVideoAspectRatio: (v) => set({ videoAspectRatio: v }),
-  setVideoDuration: (v) => set({ videoDuration: v }),
-  setVideoAudio: (v) => set({ videoAudio: v }),
+  setVideoAspectRatio: (value) => set({ videoAspectRatio: value }),
+  setVideoDuration: (value) => set({ videoDuration: value }),
+  setVideoModel: (value) => set({ videoModel: value }),
+  setVideoAudio: (value) => set({ videoAudio: value }),
   setFirstFrame: (file) => {
-    const prev = get().firstFramePreview;
-    if (prev) URL.revokeObjectURL(prev);
+    revokePreview(get().firstFramePreview);
     set({
       firstFrame: file,
       firstFramePreview: file ? URL.createObjectURL(file) : null,
     });
   },
   setLastFrame: (file) => {
-    const prev = get().lastFramePreview;
-    if (prev) URL.revokeObjectURL(prev);
+    revokePreview(get().lastFramePreview);
     set({
       lastFrame: file,
       lastFramePreview: file ? URL.createObjectURL(file) : null,
     });
   },
 
-  // Generation
-  isGenerating: false,
-  generationResult: null,
-  generate: () => {
-    const state = get();
-    if (!state.prompt.trim() || state.isGenerating) return;
+  canvasAssets: [],
+  appendCanvasAssets: (assets) =>
+    set((state) => ({
+      canvasAssets: [...state.canvasAssets, ...assets],
+    })),
 
-    set({ isGenerating: true, generationResult: null });
+  selectedAssetId: null,
+  openViewer: (assetId) => set({ selectedAssetId: assetId }),
+  closeViewer: () => set({ selectedAssetId: null }),
+  goToNext: () =>
+    set((state) => {
+      if (!state.selectedAssetId) {
+        return state;
+      }
 
-    const count = state.mode === "image" ? state.imageCount : 1;
-    const urls = PLACEHOLDER_IMAGES.slice(0, count);
+      const currentIndex = state.canvasAssets.findIndex(
+        (asset) => asset.id === state.selectedAssetId
+      );
 
-    setTimeout(() => {
-      const result: GenerationResult = {
-        id: crypto.randomUUID(),
-        type: state.mode,
-        urls,
-        prompt: state.prompt,
-        settings:
-          state.mode === "image"
-            ? {
-                aspectRatio: state.imageAspectRatio,
-                model: state.aiModel,
-                count: state.imageCount,
-              }
-            : {
-                aspectRatio: state.videoAspectRatio,
-                duration: state.videoDuration,
-                firstFrame: state.firstFramePreview ?? undefined,
-                lastFrame: state.lastFramePreview ?? undefined,
-              },
-        createdAt: new Date().toISOString(),
+      if (
+        currentIndex < 0 ||
+        currentIndex >= state.canvasAssets.length - 1
+      ) {
+        return state;
+      }
+
+      return {
+        selectedAssetId: state.canvasAssets[currentIndex + 1].id,
       };
-      set({ isGenerating: false, generationResult: result });
-    }, 3000);
-  },
-  clearResult: () => set({ generationResult: null }),
+    }),
+  goToPrevious: () =>
+    set((state) => {
+      if (!state.selectedAssetId) {
+        return state;
+      }
+
+      const currentIndex = state.canvasAssets.findIndex(
+        (asset) => asset.id === state.selectedAssetId
+      );
+
+      if (currentIndex <= 0) {
+        return state;
+      }
+
+      return {
+        selectedAssetId: state.canvasAssets[currentIndex - 1].id,
+      };
+    }),
 }));

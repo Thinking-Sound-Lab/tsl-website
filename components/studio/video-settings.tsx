@@ -2,33 +2,49 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  ArtificialIntelligence01Icon,
   AspectRatioIcon,
-  Clock01Icon,
   VolumeHighIcon,
   VolumeOffIcon,
-  ArtificialIntelligence01Icon,
 } from "@hugeicons/core-free-icons";
-import { useStudioStore } from "@/store/useStudioStore";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { FrameUpload } from "./frame-upload";
 import { cn } from "@/lib/utils";
-import type { AspectRatio } from "@/types/studio";
+import { useStudioStore } from "@/store/useStudioStore";
+import { DurationPicker } from "./duration-picker";
+import { SettingPicker, type SettingPickerOption } from "./setting-picker";
+import type { VideoAIModel, VideoAspectRatio } from "@/types/studio";
 
-const ASPECT_RATIOS: AspectRatio[] = ["1:1", "16:9", "9:16"];
-
-const DURATIONS = [5, 10, 15, 30];
-
-const VIDEO_MODELS = [
-  { value: "invook-v2", label: "Invook V2" },
-  { value: "invook-v1", label: "Invook V1" },
-  { value: "stable-diffusion", label: "Stable Diffusion" },
+const VIDEO_MODELS: SettingPickerOption[] = [
+  {
+    value: "kling-3",
+    label: "Kling 3",
+    description: "Balanced video generation for cinematic motion prompts.",
+    icon: <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={13} />,
+  },
 ];
+
+const ASPECT_RATIOS: SettingPickerOption[] = [
+  {
+    value: "16:9",
+    label: "16:9",
+    description: "Wide cinematic framing for landscape-first motion.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "9:16",
+    label: "9:16",
+    description: "Vertical framing for reels, stories, and mobile video.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "1:1",
+    label: "1:1",
+    description: "Square framing for balanced motion compositions.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+];
+
+const settingChipClass =
+  "h-6.5 rounded-md border-transparent bg-foreground/10 px-2 text-[11px] font-medium text-foreground shadow-none outline-none focus:border-transparent focus:outline-none focus:ring-0 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 md:h-7 md:px-2.5 md:text-xs";
 
 export function VideoSettings() {
   const {
@@ -36,91 +52,48 @@ export function VideoSettings() {
     setVideoAspectRatio,
     videoDuration,
     setVideoDuration,
-    firstFramePreview,
-    setFirstFrame,
-    lastFramePreview,
-    setLastFrame,
     videoAudio,
     setVideoAudio,
-    aiModel,
-    setAIModel,
+    videoModel,
+    setVideoModel,
   } = useStudioStore();
 
   return (
-    <div className="flex items-center gap-2">
-      {/* AI Model */}
-      <Select value={aiModel} onValueChange={(v) => setAIModel(v as typeof aiModel)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={14} />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {VIDEO_MODELS.map(({ value, label }) => (
-            <SelectItem key={value} value={value} className="text-xs">
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* First Frame */}
-      <FrameUpload
-        label="First Frame"
-        preview={firstFramePreview}
-        onUpload={setFirstFrame}
+    <div className="flex flex-wrap items-center gap-1.5 md:gap-2 md:flex-nowrap">
+      <SettingPicker
+        label="model"
+        value={videoModel}
+        options={VIDEO_MODELS}
+        onChange={(value) => setVideoModel(value as VideoAIModel)}
+        className="w-[7.1rem] md:w-[9.75rem]"
       />
 
-      {/* Last Frame */}
-      <FrameUpload
-        label="Last Frame"
-        preview={lastFramePreview}
-        onUpload={setLastFrame}
+      <DurationPicker
+        value={videoDuration}
+        onChange={setVideoDuration}
       />
 
-      {/* Duration */}
-      <Select
-        value={String(videoDuration)}
-        onValueChange={(v) => setVideoDuration(Number(v))}
-      >
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <HugeiconsIcon icon={Clock01Icon} size={14} />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {DURATIONS.map((d) => (
-            <SelectItem key={d} value={String(d)} className="text-xs">
-              {d}s
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SettingPicker
+        label="aspect ratio"
+        value={videoAspectRatio}
+        options={ASPECT_RATIOS}
+        onChange={(value) => setVideoAspectRatio(value as VideoAspectRatio)}
+      />
 
-      {/* Aspect Ratio */}
-      <Select value={videoAspectRatio} onValueChange={(v) => setVideoAspectRatio(v as AspectRatio)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <HugeiconsIcon icon={AspectRatioIcon} size={14} />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {ASPECT_RATIOS.map((ratio) => (
-            <SelectItem key={ratio} value={ratio} className="text-xs">
-              {ratio}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Audio toggle */}
       <button
         onClick={() => setVideoAudio(!videoAudio)}
         className={cn(
-          "h-7 flex items-center gap-1.5 px-2.5 rounded-md border text-xs font-medium transition-colors cursor-pointer",
+          "flex shrink-0 items-center gap-1 transition-colors cursor-pointer md:gap-1.5",
+          settingChipClass,
           videoAudio
-            ? "border-foreground/20 bg-foreground/5 text-foreground"
-            : "border-border/40 text-foreground/50 hover:text-foreground/70"
+            ? "bg-foreground/10 text-foreground"
+            : "bg-foreground/10 text-foreground/50 hover:text-foreground/70"
         )}
       >
-        <HugeiconsIcon icon={videoAudio ? VolumeHighIcon : VolumeOffIcon} size={14} />
+        <HugeiconsIcon
+          icon={videoAudio ? VolumeHighIcon : VolumeOffIcon}
+          size={13}
+        />
         <span>Audio</span>
       </button>
     </div>

@@ -4,43 +4,93 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArtificialIntelligence01Icon,
   AspectRatioIcon,
-  Image01Icon,
-  PlusSignCircleIcon,
   MinusSignCircleIcon,
+  PlusSignCircleIcon,
+  SparklesIcon,
 } from "@hugeicons/core-free-icons";
 import { useStudioStore } from "@/store/useStudioStore";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { AspectRatio, AIModel } from "@/types/studio";
+import { SettingPicker, type SettingPickerOption } from "./setting-picker";
+import type {
+  ImageAIModel,
+  ImageAspectRatio,
+  ImageResolution,
+} from "@/types/studio";
 
-const ASPECT_RATIOS: AspectRatio[] = ["1:1", "16:9", "9:16", "4:3", "3:4"];
-
-const AI_MODELS: { value: AIModel; label: string }[] = [
-  { value: "invook-v2", label: "Invook V2" },
-  { value: "invook-v1", label: "Invook V1" },
-  { value: "flux-pro", label: "Flux Pro" },
-  { value: "stable-diffusion", label: "Stable Diffusion" },
-  { value: "dall-e", label: "DALL-E" },
-  { value: "midjourney", label: "Midjourney" },
+const ASPECT_RATIOS: SettingPickerOption[] = [
+  {
+    value: "auto",
+    label: "Auto",
+    description: "Let the model choose the best framing for your prompt.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "1:1",
+    label: "1:1",
+    description: "Square framing for covers, tiles, and balanced compositions.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "16:9",
+    label: "16:9",
+    description: "Wide cinematic framing for landscapes and scene building.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "9:16",
+    label: "9:16",
+    description: "Vertical framing for phone-first visuals and stories.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "4:3",
+    label: "4:3",
+    description: "Classic frame with more height than widescreen.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
+  {
+    value: "3:4",
+    label: "3:4",
+    description: "Portrait-oriented frame with a print-like feel.",
+    icon: <HugeiconsIcon icon={AspectRatioIcon} size={13} />,
+  },
 ];
 
-const RESOLUTIONS = [
-  { value: "1024", label: "1K" },
-  { value: "2048", label: "2K" },
-  { value: "4096", label: "4K" },
+const IMAGE_MODELS: SettingPickerOption[] = [
+  {
+    value: "nano-banana-2",
+    label: "Nano Banana 2",
+    description: "Fast image generation with clean general-purpose results.",
+    icon: <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={13} />,
+  },
+];
+
+const RESOLUTIONS: SettingPickerOption[] = [
+  {
+    value: "1024",
+    label: "1K",
+    description: "Fast. Quick generation with good resolution.",
+    icon: <HugeiconsIcon icon={SparklesIcon} size={13} />,
+  },
+  {
+    value: "2048",
+    label: "2K",
+    description: "Balanced. Recommended for most use cases.",
+    icon: <HugeiconsIcon icon={SparklesIcon} size={13} />,
+  },
+  {
+    value: "4096",
+    label: "4K",
+    description: "Ultra. Highest detail with longer processing.",
+    icon: <HugeiconsIcon icon={SparklesIcon} size={13} />,
+  },
 ];
 
 export function ImageSettings() {
   const {
     imageAspectRatio,
     setImageAspectRatio,
-    aiModel,
-    setAIModel,
+    imageModel,
+    setImageModel,
     imageCount,
     setImageCount,
     imageResolution,
@@ -48,70 +98,48 @@ export function ImageSettings() {
   } = useStudioStore();
 
   return (
-    <div className="flex items-center gap-2">
-      {/* AI Model */}
-      <Select value={aiModel} onValueChange={(v) => setAIModel(v as AIModel)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <HugeiconsIcon icon={ArtificialIntelligence01Icon} size={14} />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {AI_MODELS.map(({ value, label }) => (
-            <SelectItem key={value} value={value} className="text-xs">
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="flex flex-wrap items-center gap-1.5 md:gap-2 md:flex-nowrap">
+      <SettingPicker
+        label="model"
+        value={imageModel}
+        options={IMAGE_MODELS}
+        onChange={(value) => setImageModel(value as ImageAIModel)}
+        className="w-[7.1rem] md:w-[9.75rem]"
+      />
 
-      {/* Count — plus/minus */}
-      <div className="flex items-center gap-1 h-7 border border-border/40 rounded-md px-1.5">
-        <HugeiconsIcon icon={Image01Icon} size={14} className="text-foreground/50" />
+      <div className="flex h-6.5 shrink-0 items-center gap-1 rounded-md bg-foreground/10 px-2 text-foreground md:h-7 md:px-2.5">
         <button
           onClick={() => setImageCount(Math.max(1, imageCount - 1))}
           disabled={imageCount <= 1}
-          className="text-foreground/50 hover:text-foreground/80 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-colors"
+          className="cursor-pointer text-foreground/50 transition-colors hover:text-foreground/80 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-30"
         >
-          <HugeiconsIcon icon={MinusSignCircleIcon} size={14} />
+          <HugeiconsIcon icon={MinusSignCircleIcon} size={13} />
         </button>
-        <span className="text-xs font-medium text-foreground/70 w-4 text-center">{imageCount}</span>
+        <span className="w-4 text-center text-[11px] font-medium text-foreground md:text-xs">
+          {imageCount}
+        </span>
         <button
           onClick={() => setImageCount(Math.min(4, imageCount + 1))}
           disabled={imageCount >= 4}
-          className="text-foreground/50 hover:text-foreground/80 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-colors"
+          className="cursor-pointer text-foreground/50 transition-colors hover:text-foreground/80 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-30"
         >
-          <HugeiconsIcon icon={PlusSignCircleIcon} size={14} />
+          <HugeiconsIcon icon={PlusSignCircleIcon} size={13} />
         </button>
       </div>
 
-      {/* Aspect Ratio */}
-      <Select value={imageAspectRatio} onValueChange={(v) => setImageAspectRatio(v as AspectRatio)}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <HugeiconsIcon icon={AspectRatioIcon} size={14} />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {ASPECT_RATIOS.map((ratio) => (
-            <SelectItem key={ratio} value={ratio} className="text-xs">
-              {ratio}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SettingPicker
+        label="aspect ratio"
+        value={imageAspectRatio}
+        options={ASPECT_RATIOS}
+        onChange={(value) => setImageAspectRatio(value as ImageAspectRatio)}
+      />
 
-      {/* Resolution */}
-      <Select value={imageResolution} onValueChange={setImageResolution}>
-        <SelectTrigger className="h-7 w-auto gap-1.5 text-xs bg-transparent border-border/40 rounded-md px-2.5">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {RESOLUTIONS.map(({ value, label }) => (
-            <SelectItem key={value} value={value} className="text-xs">
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SettingPicker
+        label="resolution"
+        value={imageResolution}
+        options={RESOLUTIONS}
+        onChange={(value) => setImageResolution(value as ImageResolution)}
+      />
     </div>
   );
 }
