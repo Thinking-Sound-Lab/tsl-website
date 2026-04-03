@@ -122,13 +122,13 @@ export function PromptInput({
         void addDroppedFiles(event);
       }}
     >
-      <div className="flex shrink-0 items-center gap-2 px-2.5 pt-2.5 pb-2 md:px-4 md:pt-4">
+      <div className="flex shrink-0 items-center gap-2 px-2.5 pt-2.5 pb-2.5 md:px-3 md:pt-3 md:pb-2">
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/10 text-foreground/50 transition-colors hover:text-foreground/70 cursor-pointer md:h-10 md:w-10"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/10 text-foreground/50 transition-colors hover:text-foreground/70 cursor-pointer md:h-8 md:w-8"
           title="Add assets"
         >
-          <Plus className="h-3 w-3 md:h-4 md:w-4" strokeWidth={1.9} />
+          <Plus className="h-3 w-3 md:h-3.5 md:w-3.5" strokeWidth={1.9} />
         </button>
 
         {attachments.length > 0 ? (
@@ -173,7 +173,7 @@ export function PromptInput({
         }}
       />
 
-      <div className="overflow-hidden px-3 pt-1 pb-2 md:px-4 md:pt-0 md:pb-3">
+      <div className="overflow-hidden px-3 pt-1.5 pb-2.5 md:px-4 md:pt-1 md:pb-3.5">
         <textarea
           ref={textareaRef}
           value={prompt}
@@ -188,7 +188,7 @@ export function PromptInput({
         />
       </div>
 
-      <div className="flex shrink-0 flex-wrap items-center gap-1.5 px-3 pb-3 pt-1 md:gap-2 md:flex-nowrap md:overflow-x-auto md:no-scrollbar">
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 px-3 pb-3 pt-2 md:gap-2 md:flex-nowrap md:overflow-x-auto md:no-scrollbar md:pt-2.5">
         {children}
       </div>
     </div>
