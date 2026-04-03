@@ -20,11 +20,7 @@ import { FrameUpload } from "./frame-upload";
 import { cn } from "@/lib/utils";
 import type { AspectRatio } from "@/types/studio";
 
-const ASPECT_RATIOS: { value: AspectRatio; label: string }[] = [
-  { value: "1:1", label: "1:1 Square" },
-  { value: "16:9", label: "16:9 Landscape" },
-  { value: "9:16", label: "9:16 Portrait" },
-];
+const ASPECT_RATIOS: AspectRatio[] = ["1:1", "16:9", "9:16"];
 
 const DURATIONS = [5, 10, 15, 30];
 
@@ -106,9 +102,9 @@ export function VideoSettings() {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {ASPECT_RATIOS.map(({ value, label }) => (
-            <SelectItem key={value} value={value} className="text-xs">
-              {label}
+          {ASPECT_RATIOS.map((ratio) => (
+            <SelectItem key={ratio} value={ratio} className="text-xs">
+              {ratio}
             </SelectItem>
           ))}
         </SelectContent>
@@ -120,7 +116,7 @@ export function VideoSettings() {
         className={cn(
           "h-7 flex items-center gap-1.5 px-2.5 rounded-md border text-xs font-medium transition-colors cursor-pointer",
           videoAudio
-            ? "border-[#F54E00]/30 bg-[#F54E00]/5 text-[#F54E00]"
+            ? "border-foreground/20 bg-foreground/5 text-foreground"
             : "border-border/40 text-foreground/50 hover:text-foreground/70"
         )}
       >

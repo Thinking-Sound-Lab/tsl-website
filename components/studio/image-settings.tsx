@@ -18,13 +18,7 @@ import {
 } from "@/components/ui/select";
 import type { AspectRatio, AIModel } from "@/types/studio";
 
-const ASPECT_RATIOS: { value: AspectRatio; label: string }[] = [
-  { value: "1:1", label: "1:1 Square" },
-  { value: "16:9", label: "16:9 Landscape" },
-  { value: "9:16", label: "9:16 Portrait" },
-  { value: "4:3", label: "4:3 Standard" },
-  { value: "3:4", label: "3:4 Portrait" },
-];
+const ASPECT_RATIOS: AspectRatio[] = ["1:1", "16:9", "9:16", "4:3", "3:4"];
 
 const AI_MODELS: { value: AIModel; label: string }[] = [
   { value: "invook-v2", label: "Invook V2" },
@@ -97,9 +91,9 @@ export function ImageSettings() {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {ASPECT_RATIOS.map(({ value, label }) => (
-            <SelectItem key={value} value={value} className="text-xs">
-              {label}
+          {ASPECT_RATIOS.map((ratio) => (
+            <SelectItem key={ratio} value={ratio} className="text-xs">
+              {ratio}
             </SelectItem>
           ))}
         </SelectContent>
