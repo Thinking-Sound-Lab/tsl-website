@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, KeyboardEvent, ReactNode } from "react";
+import { useRef, useCallback, useState, KeyboardEvent, ReactNode, PointerEvent } from "react";
 import { ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { useStudioStore } from "@/store/useStudioStore";
@@ -10,16 +10,16 @@ interface PromptInputProps {
   children?: ReactNode;
 }
 
+const MIN_HEIGHT = 140;
+const MAX_HEIGHT = 400;
+const DEFAULT_HEIGHT = 180;
+
 export function PromptInput({ children }: PromptInputProps) {
   const { prompt, setPrompt, isGenerating, generate } = useStudioStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const autoResize = useCallback(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
-  }, []);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(DEFAULT_HEIGHT);
+  const dragStart = useRef<{ y: number; h: number } | null>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -28,40 +28,69 @@ export function PromptInput({ children }: PromptInputProps) {
     }
   };
 
+  const onPointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    dragStart.current = { y: e.clientY, h: height };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [height]);
+
+  const onPointerMove = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    if (!dragStart.current) return;
+    // Dragging up increases height
+    const delta = dragStart.current.y - e.clientY;
+    const newH = Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, dragStart.current.h + delta));
+    setHeight(newH);
+  }, []);
+
+  const onPointerUp = useCallback(() => {
+    dragStart.current = null;
+  }, []);
+
   const canSubmit = prompt.trim().length > 0 && !isGenerating;
 
   return (
-    <div className="flex-1 flex gap-2 bg-secondary/60 rounded-2xl border border-border/50 p-3">
-      {/* Left side: textarea on top, settings at bottom */}
-      <div className="flex-1 flex flex-col justify-between gap-2">
+    <div
+      ref={containerRef}
+      className="flex-1 flex flex-col bg-secondary/60 rounded-2xl border border-border/50 overflow-hidden"
+      style={{ height }}
+    >
+      {/* Resize handle */}
+      <div
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        className="flex items-center justify-center py-1.5 cursor-ns-resize shrink-0 group"
+      >
+        <div className="w-10 h-1 rounded-full bg-foreground/10 group-hover:bg-foreground/25 transition-colors" />
+      </div>
+
+      {/* Textarea fills available space */}
+      <div className="flex-1 px-4 overflow-hidden">
         <Textarea
           ref={textareaRef}
           value={prompt}
-          onChange={(e) => {
-            setPrompt(e.target.value);
-            autoResize();
-          }}
+          onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Describe what you want to create..."
-          rows={2}
-          className="flex-1 resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/30 min-h-[40px] max-h-[120px]"
+          placeholder="Describe your scene..."
+          className="w-full h-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/30"
         />
-        {/* Settings at bottom-left */}
-        <div className="flex items-center">
-          {children}
-        </div>
       </div>
 
-      {/* Submit button - big squircle on the right, vertically centered */}
-      <div className="flex items-center">
+      {/* Bottom bar: settings left, generate button right */}
+      <div className="flex items-center justify-between gap-3 px-3 pb-3 pt-1 shrink-0">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          {children}
+        </div>
+
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
           onClick={generate}
           disabled={!canSubmit}
-          className="h-12 w-12 flex items-center justify-center rounded-2xl bg-[#F54E00] hover:bg-[#e04500] text-white shrink-0 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="h-10 px-5 flex items-center gap-2 rounded-xl bg-[#F54E00] hover:bg-[#e04500] text-white text-sm font-semibold shrink-0 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
-          <ArrowUp className="h-5 w-5" strokeWidth={2.5} />
+          Generate
+          <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
         </motion.button>
       </div>
     </div>

@@ -15,7 +15,7 @@ export function FrameUpload({ label, preview, onUpload }: FrameUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       <input
         ref={inputRef}
         type="file"
@@ -30,20 +30,20 @@ export function FrameUpload({ label, preview, onUpload }: FrameUploadProps) {
       <button
         onClick={() => inputRef.current?.click()}
         className={cn(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border cursor-pointer",
+          "flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium transition-colors border cursor-pointer",
           preview
             ? "border-[#F54E00]/30 bg-[#F54E00]/5 text-[#F54E00]"
-            : "border-border/50 bg-secondary/40 text-foreground/60 hover:text-foreground/80"
+            : "border-border/40 bg-secondary/60 text-foreground/50 hover:text-foreground/70"
         )}
       >
         {preview ? (
-          <div className="relative h-5 w-5 rounded overflow-hidden">
+          <div className="relative h-4 w-4 rounded-sm overflow-hidden">
             <Image src={preview} alt={label} fill className="object-cover" unoptimized />
           </div>
         ) : (
-          <ImagePlus className="h-3.5 w-3.5" />
+          <ImagePlus className="h-3 w-3" />
         )}
-        <span className="hidden sm:inline">{label}</span>
+        <span>{label}</span>
       </button>
       {preview && (
         <button

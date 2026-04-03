@@ -35,28 +35,10 @@ export function ImageSettings() {
   } = useStudioStore();
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      {/* Aspect Ratio */}
-      <div className="flex items-center gap-1 bg-secondary/40 rounded-lg p-1">
-        {ASPECT_RATIOS.map((ratio) => (
-          <button
-            key={ratio}
-            onClick={() => setImageAspectRatio(ratio)}
-            className={cn(
-              "px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer",
-              imageAspectRatio === ratio
-                ? "bg-background text-foreground shadow-sm"
-                : "text-foreground/50 hover:text-foreground/70"
-            )}
-          >
-            {ratio}
-          </button>
-        ))}
-      </div>
-
+    <div className="flex items-center gap-2">
       {/* Style */}
       <Select value={imageStyle} onValueChange={(v) => setImageStyle(v as ImageStyle)}>
-        <SelectTrigger className="h-7 w-[130px] text-xs bg-secondary/40 border-border/50 rounded-lg">
+        <SelectTrigger className="h-7 w-auto gap-1 text-xs bg-secondary/60 border-border/40 rounded-full px-3">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -69,19 +51,37 @@ export function ImageSettings() {
       </Select>
 
       {/* Count */}
-      <div className="flex items-center gap-1 bg-secondary/40 rounded-lg p-1">
+      <div className="flex items-center gap-0.5 bg-secondary/60 border border-border/40 rounded-full px-1 h-7">
         {COUNTS.map((count) => (
           <button
             key={count}
             onClick={() => setImageCount(count)}
             className={cn(
-              "w-7 h-6 flex items-center justify-center rounded-md text-xs font-medium transition-colors cursor-pointer",
+              "w-6 h-5 flex items-center justify-center rounded-full text-xs font-medium transition-colors cursor-pointer",
               imageCount === count
-                ? "bg-background text-foreground shadow-sm"
-                : "text-foreground/50 hover:text-foreground/70"
+                ? "bg-foreground/10 text-foreground"
+                : "text-foreground/40 hover:text-foreground/60"
             )}
           >
             {count}
+          </button>
+        ))}
+      </div>
+
+      {/* Aspect Ratio */}
+      <div className="flex items-center gap-0.5 bg-secondary/60 border border-border/40 rounded-full px-1 h-7">
+        {ASPECT_RATIOS.map((ratio) => (
+          <button
+            key={ratio}
+            onClick={() => setImageAspectRatio(ratio)}
+            className={cn(
+              "px-2 h-5 flex items-center justify-center rounded-full text-xs font-medium transition-colors cursor-pointer",
+              imageAspectRatio === ratio
+                ? "bg-foreground/10 text-foreground"
+                : "text-foreground/40 hover:text-foreground/60"
+            )}
+          >
+            {ratio}
           </button>
         ))}
       </div>
