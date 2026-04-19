@@ -92,6 +92,28 @@ export async function handleOAuthCallback(url: string): Promise<InitResult> {
     }
 }
 
+// ─── OTP Session Handler ───────────────────────
+
+export async function handleOtpSession(sessionData: {
+    access_token: string;
+    refresh_token: string;
+    expires_in?: number;
+}): Promise<InitResult> {
+    const expiresIn = sessionData.expires_in ?? 3600;
+    setTokenStore({
+        accessToken: sessionData.access_token,
+        refreshToken: sessionData.refresh_token,
+        expiresIn,
+        tokenExpiresAt: Date.now() + expiresIn * 1000,
+    });
+    const verifiedUser = await verifyToken();
+    if (verifiedUser) {
+        setUser(verifiedUser);
+        return { authenticated: true, user: verifiedUser };
+    }
+    return { authenticated: false, user: null };
+}
+
 // ─── Sign Out ──────────────────────────────────
 
 export async function signOut(): Promise<void> {
