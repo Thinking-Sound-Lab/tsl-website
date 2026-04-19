@@ -10,6 +10,7 @@ import {
     initialize,
     signOut as authSignOut,
     handleOAuthCallback,
+    handleOtpSession as authHandleOtpSession,
     type InitResult,
 } from "@/lib/authService";
 import type { UserData } from "@/lib/tokenStore";
@@ -22,6 +23,7 @@ interface AuthState {
     // Actions
     init: () => Promise<InitResult>;
     handleOAuth: (url: string) => Promise<InitResult>;
+    handleOtpSession: (sessionData: { access_token: string; refresh_token: string; expires_in?: number }) => Promise<InitResult>;
     signOut: () => Promise<void>;
     refreshAuthState: () => Promise<void>;
 }
@@ -56,6 +58,20 @@ export const useAuthStore = create<AuthState>((set) => ({
                 user: result.user,
                 isAuthenticated: result.authenticated,
             });
+            return result;
+        } catch {
+            set({ user: null, isAuthenticated: false });
+            return { authenticated: false, user: null };
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    handleOtpSession: async (sessionData) => {
+        set({ isLoading: true });
+        try {
+            const result = await authHandleOtpSession(sessionData);
+            set({ user: result.user, isAuthenticated: result.authenticated });
             return result;
         } catch {
             set({ user: null, isAuthenticated: false });
