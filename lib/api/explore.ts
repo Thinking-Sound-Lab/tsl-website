@@ -23,6 +23,16 @@ export interface ExploreItem {
     is_public: boolean;
     created_at: string;
     updated_at?: string;
+    /** Number of likes this item has received. */
+    like_count: number;
+    /** Whether the currently authenticated user has liked this item. */
+    is_liked_by_user?: boolean;
+}
+
+/** Response shape for POST /api/explore/:id/like */
+export interface LikeResponse {
+    liked: boolean;
+    likeCount: number;
 }
 
 export interface ExploreModel {
@@ -252,6 +262,16 @@ export const ExploreAPI = {
 
     deleteItem: async (postId: string): Promise<ApiResponse<void>> => {
         const response = await api.delete<ApiResponse<void>>(`/api/explore/${postId}`);
+        return response.data;
+    },
+
+    /**
+     * Toggle the like status of an explore item for the authenticated user.
+     * Requires a valid auth token — caller must ensure the user is authenticated.
+     * @returns The new liked state and updated like count.
+     */
+    toggleLike: async (postId: string): Promise<ApiResponse<LikeResponse>> => {
+        const response = await api.post<ApiResponse<LikeResponse>>(`/api/explore/${postId}/like`);
         return response.data;
     },
 };

@@ -9,10 +9,10 @@ export function Hero() {
 			<div className="container mx-auto max-w-[1400px]">
 				<div className="flex flex-col items-start max-w-3xl">
 					<h1 className="text-xl sm:text-[24px] md:text-[28px] text-foreground mb-3 max-w-lg text-balance tracking-tighter">
-						An infinite canvas for your creative mind.
+						Collaborative AI Creative Canvas
 					</h1>
 					<p className="text-sm sm:text-base text-muted-foreground/70 mb-8 max-w-md">
-						Bring your ideas to life faster than ever before. Every creative AI tool, one unified process.
+						The AI creative canvas for teams. Images, video, and text all in one place.
 					</p>
 
 					<Link
