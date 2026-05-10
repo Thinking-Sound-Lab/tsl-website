@@ -19,7 +19,7 @@ interface Provider {
 const providers: Provider[] = [
 	{
 		name: "Google",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371325/Dnd_background__view_gothic_city_gar59w.jpg",
+		imageUrl: "/images/providers/google.png",
 		colSpan: 2,
 		models: [
 			{ name: "Gemini 2.5 Flash Image", description: "State-of-the-art image generation" },
@@ -32,7 +32,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "runway",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371900/download_53_ghvo8g.jpg",
+		imageUrl: "/images/providers/runway.png",
 		rowSpan: 2,
 		models: [
 			{ name: "Aleph", description: "Creative media foundation model" },
@@ -44,12 +44,12 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Wan",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371899/%E8%8F%8A%E8%8A%B1%E8%82%96%E5%83%8F_Chrysanthemum_portrait_no_05904_yg6hwu.jpg",
+		imageUrl: "/images/providers/wan.png",
 		models: [{ name: "Wan2.2", description: "Culturally tuned image model" }],
 	},
 	{
 		name: "OpenAI",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371900/download_55_xapi87.jpg",
+		imageUrl: "/images/providers/openai.png",
 		models: [
 			{ name: "GPT-5", description: "State-of-the-art multimodal AI" },
 			{ name: "GPT-4o Mini", description: "Small, fast multimodal" },
@@ -58,7 +58,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Black Forest Labs",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380683/download_65_kpvo2q.jpg",
+		imageUrl: "/images/providers/black-forest-labs.png",
 		colSpan: 2,
 		models: [
 			{ name: "FLUX 1.1 Pro", description: "Balanced photo/creative images" },
@@ -71,14 +71,14 @@ const providers: Provider[] = [
 	},
 	{
 		name: "stability.ai",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371524/download_57_xtkts6.jpg",
+		imageUrl: "/images/providers/stability-ai.png",
 		models: [
 			{ name: "Stable Diffusion 3.5", description: "Open, versatile image synthesis" },
 		],
 	},
 	{
 		name: "Hailuo AI",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772372155/download_59_trjpl7.jpg",
+		imageUrl: "/images/providers/hailuo-ai.png",
 		models: [
 			{ name: "Minimax Hailuo", description: "General-purpose image generator" },
 			{ name: "Minimax Hailuo-02 Pro", description: "Enhanced precision image generation" },
@@ -86,14 +86,14 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Pika",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772371899/download_51_insz4l.jpg",
+		imageUrl: "/images/providers/pika.png",
 		models: [
 			{ name: "Pika", description: "Creative, fast video generation" },
 		],
 	},
 	{
 		name: "KlingAI",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380207/download_63_dzvtpu.jpg",
+		imageUrl: "/images/providers/klingai.png",
 		models: [
 			{ name: "Kling 2.1 Master", description: "Refined cinematic video model" },
 			{ name: "Kling 2.0 Master", description: "Advanced cinematic video model" },
@@ -103,7 +103,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "RECRAFT",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380035/download_60_anmzgg.jpg",
+		imageUrl: "/images/providers/recraft.png",
 		models: [
 			{ name: "Recraft V3", description: "Vector & design-oriented image generation" },
 		],
@@ -111,7 +111,7 @@ const providers: Provider[] = [
 	{
 		name: "ByteDance Seed",
 		displayName: "ByteDance | Seed",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380215/download_61_q9iyb4.jpg",
+		imageUrl: "/images/providers/bytedance-seed.png",
 		models: [
 			{ name: "Seedream 4.0", description: "Multimodal image generation and editing" },
 			{ name: "Seeldance 1.0 Pro", description: "Multi-shot videos from text or images" },
@@ -119,7 +119,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "Luma AI",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380213/download_62_qaspc5.jpg",
+		imageUrl: "/images/providers/luma-ai.png",
 		models: [
 			{ name: "Dream Machine", description: "AI video generation" },
 			{ name: "Ray2", description: "Next-gen video synthesis" },
@@ -127,7 +127,7 @@ const providers: Provider[] = [
 	},
 	{
 		name: "MOONVALLEY",
-		imageUrl: "https://res.cloudinary.com/djozgxq9k/image/upload/v1772380683/download_64_zaeu0i.jpg",
+		imageUrl: "/images/providers/moonvalley.png",
 		colSpan: 2,
 		models: [
 			{ name: "Marey", description: "Commercially safe, production-grade video creation" },
@@ -143,7 +143,7 @@ function ProviderCard({ provider }: { provider: Provider }) {
 	return (
 		<div
 			className={cn(
-				"relative rounded-sm flex flex-col h-full min-h-[380px] border border-border/50 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-border hover:shadow-lg hover:shadow-black/20",
+				"relative rounded-sm flex flex-col h-full min-h-[380px] border border-border/50 overflow-hidden bg-secondary bg-cover bg-center transition-all duration-300 hover:scale-[1.02] hover:border-border hover:shadow-lg hover:shadow-black/20",
 				colSpanClass,
 				rowSpanClass
 			)}
